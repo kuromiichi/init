@@ -17,6 +17,7 @@ import dev.kuromiichi.damprep.ui.navigation.AppNavHost
 import dev.kuromiichi.damprep.ui.navigation.AppRoute
 import dev.kuromiichi.damprep.ui.theme.DamPrepTheme
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
+import dev.kuromiichi.damprep.ui.window.WindowSizeGuard
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,40 +33,42 @@ fun App() {
     val themePreference = userPreferences?.themePreference ?: ThemePreference.System
 
     DamPrepTheme(themePreference = themePreference) {
-        val preferences = userPreferences
+        WindowSizeGuard {
+            val preferences = userPreferences
 
-        if (preferences == null) {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background,
-            ) {}
-        } else {
-            val startDestination = if (preferences.onboardingCompleted) {
-                AppRoute.Home
+            if (preferences == null) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background,
+                ) {}
             } else {
-                AppRoute.Onboarding
-            }
+                val startDestination = if (preferences.onboardingCompleted) {
+                    AppRoute.Home
+                } else {
+                    AppRoute.Onboarding
+                }
 
-            AppNavHost(
-                navController = navController,
-                startDestination = startDestination,
-                studentName = preferences.studentName,
-                pronounPreference = preferences.pronounPreference,
-                themePreference = preferences.themePreference,
-                onThemePreferenceChanged = { nextThemePreference ->
-                    coroutineScope.launch {
-                        preferencesRepository.setThemePreference(nextThemePreference)
-                    }
-                },
-                onOnboardingFinished = { studentName, pronounPreference ->
-                    coroutineScope.launch {
-                        preferencesRepository.completeOnboarding(
-                            studentName = studentName,
-                            pronounPreference = pronounPreference,
-                        )
-                    }
-                },
-            )
+                AppNavHost(
+                    navController = navController,
+                    startDestination = startDestination,
+                    studentName = preferences.studentName,
+                    pronounPreference = preferences.pronounPreference,
+                    themePreference = preferences.themePreference,
+                    onThemePreferenceChanged = { nextThemePreference ->
+                        coroutineScope.launch {
+                            preferencesRepository.setThemePreference(nextThemePreference)
+                        }
+                    },
+                    onOnboardingFinished = { studentName, pronounPreference ->
+                        coroutineScope.launch {
+                            preferencesRepository.completeOnboarding(
+                                studentName = studentName,
+                                pronounPreference = pronounPreference,
+                            )
+                        }
+                    },
+                )
+            }
         }
     }
 }

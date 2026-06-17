@@ -6,7 +6,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.ui.home.HomeScreen
+import dev.kuromiichi.damprep.ui.lessons.CurrentLessonScreen
+import dev.kuromiichi.damprep.ui.lessons.LessonListScreen
+import dev.kuromiichi.damprep.ui.notes.NotesScreen
 import dev.kuromiichi.damprep.ui.onboarding.OnboardingScreen
+import dev.kuromiichi.damprep.ui.settings.SettingsScreen
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
 
 @Composable
@@ -43,7 +47,36 @@ fun AppNavHost(
             HomeScreen(
                 studentName = studentName,
                 pronounPreference = pronounPreference,
+                completedLessons = 0,
+                onContinueLesson = {
+                    navController.navigate(AppRoute.CurrentLesson)
+                },
+                onShowLessons = {
+                    navController.navigate(AppRoute.Lessons)
+                },
+                onShowNotes = {
+                    navController.navigate(AppRoute.Notes)
+                },
+                onShowSettings = {
+                    navController.navigate(AppRoute.Settings)
+                },
             )
+        }
+
+        composable(AppRoute.CurrentLesson) {
+            CurrentLessonScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(AppRoute.Lessons) {
+            LessonListScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(AppRoute.Notes) {
+            NotesScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(AppRoute.Settings) {
+            SettingsScreen(onBack = { navController.popBackStack() })
         }
     }
 }
