@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,15 +56,15 @@ import dev.kuromiichi.damprep.ui.theme.ThemePreference
 fun OnboardingScreen(
     themePreference: ThemePreference,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
-    onFinished: (studentName: String) -> Unit,
+    onFinished: (studentName: String, pronounPreference: PronounPreference) -> Unit,
 ) {
     var currentStepIndex by remember { mutableIntStateOf(0) }
     var studentName by remember { mutableStateOf("") }
+    var pronounPreference by remember { mutableStateOf(PronounPreference.Neutral) }
 
     val currentStep = onboardingSteps[currentStepIndex]
     val isLastStep = currentStepIndex == onboardingSteps.lastIndex
     val isNameStep = currentStep.kind == OnboardingStepKind.Name
-    val isThemeStep = currentStep.kind == OnboardingStepKind.Theme
     val normalizedName = studentName.trim()
     val canContinue = !isNameStep || normalizedName.isNotEmpty()
 
@@ -73,7 +74,7 @@ fun OnboardingScreen(
         }
 
         if (isLastStep) {
-            onFinished(normalizedName)
+            onFinished(normalizedName, pronounPreference)
         } else {
             currentStepIndex += 1
         }
@@ -137,8 +138,10 @@ fun OnboardingScreen(
                         stepNumber = animatedStepIndex + 1,
                         step = animatedStep,
                         themePreference = themePreference,
+                        pronounPreference = pronounPreference,
                         studentName = studentName,
                         onThemePreferenceChanged = onThemePreferenceChanged,
+                        onPronounPreferenceChanged = { pronounPreference = it },
                         onStudentNameChanged = { studentName = it },
                         onDone = {
                             continueOnboarding()
@@ -188,8 +191,10 @@ private fun OnboardingStepContent(
     stepNumber: Int,
     step: OnboardingStep,
     themePreference: ThemePreference,
+    pronounPreference: PronounPreference,
     studentName: String,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
+    onPronounPreferenceChanged: (PronounPreference) -> Unit,
     onStudentNameChanged: (String) -> Unit,
     onDone: () -> Unit,
 ) {
@@ -227,6 +232,30 @@ private fun OnboardingStepContent(
                             shape = SegmentedButtonDefaults.itemShape(
                                 index = index,
                                 count = ThemePreference.entries.size,
+                            ),
+                        ) {
+                            Text(preference.label)
+                        }
+                    }
+                }
+            }
+        }
+
+        AnimatedVisibility(visible = step.kind == OnboardingStepKind.Pronouns) {
+            Column {
+                Spacer(modifier = Modifier.height(28.dp))
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    PronounPreference.entries.forEachIndexed { index, preference ->
+                        SegmentedButton(
+                            selected = preference == pronounPreference,
+                            onClick = {
+                                onPronounPreferenceChanged(preference)
+                            },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = PronounPreference.entries.size,
                             ),
                         ) {
                             Text(preference.label)

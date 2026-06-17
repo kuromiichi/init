@@ -12,9 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.kuromiichi.damprep.data.preferences.PronounPreference
 
 @Composable
-fun HomeScreen(studentName: String) {
+fun HomeScreen(
+    studentName: String,
+    pronounPreference: PronounPreference,
+) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
@@ -31,7 +35,7 @@ fun HomeScreen(studentName: String) {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text(
-                    text = "Hola, $studentName",
+                    text = "${pronounPreference.welcomeWord}, $studentName",
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                 )

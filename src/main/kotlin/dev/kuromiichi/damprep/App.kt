@@ -50,15 +50,19 @@ fun App() {
                 navController = navController,
                 startDestination = startDestination,
                 studentName = preferences.studentName,
+                pronounPreference = preferences.pronounPreference,
                 themePreference = preferences.themePreference,
                 onThemePreferenceChanged = { nextThemePreference ->
                     coroutineScope.launch {
                         preferencesRepository.setThemePreference(nextThemePreference)
                     }
                 },
-                onStudentNameReceived = { studentName ->
+                onOnboardingFinished = { studentName, pronounPreference ->
                     coroutineScope.launch {
-                        preferencesRepository.completeOnboarding(studentName)
+                        preferencesRepository.completeOnboarding(
+                            studentName = studentName,
+                            pronounPreference = pronounPreference,
+                        )
                     }
                 },
             )

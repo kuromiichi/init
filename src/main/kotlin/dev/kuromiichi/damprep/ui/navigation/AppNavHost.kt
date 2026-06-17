@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.ui.home.HomeScreen
 import dev.kuromiichi.damprep.ui.onboarding.OnboardingScreen
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
@@ -13,9 +14,10 @@ fun AppNavHost(
     navController: NavHostController,
     startDestination: String,
     studentName: String,
+    pronounPreference: PronounPreference,
     themePreference: ThemePreference,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
-    onStudentNameReceived: (String) -> Unit,
+    onOnboardingFinished: (String, PronounPreference) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -25,8 +27,8 @@ fun AppNavHost(
             OnboardingScreen(
                 themePreference = themePreference,
                 onThemePreferenceChanged = onThemePreferenceChanged,
-                onFinished = { name ->
-                    onStudentNameReceived(name)
+                onFinished = { name, selectedPronounPreference ->
+                    onOnboardingFinished(name, selectedPronounPreference)
                     navController.navigate(AppRoute.Home) {
                         popUpTo(AppRoute.Onboarding) {
                             inclusive = true
@@ -38,7 +40,10 @@ fun AppNavHost(
         }
 
         composable(AppRoute.Home) {
-            HomeScreen(studentName = studentName)
+            HomeScreen(
+                studentName = studentName,
+                pronounPreference = pronounPreference,
+            )
         }
     }
 }

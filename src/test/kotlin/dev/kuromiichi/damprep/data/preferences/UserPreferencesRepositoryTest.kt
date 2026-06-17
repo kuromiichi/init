@@ -21,6 +21,7 @@ class UserPreferencesRepositoryTest {
 
         assertEquals("", preferences.studentName)
         assertEquals(ThemePreference.System, preferences.themePreference)
+        assertEquals(PronounPreference.Neutral, preferences.pronounPreference)
         assertFalse(preferences.onboardingCompleted)
     }
 
@@ -37,10 +38,14 @@ class UserPreferencesRepositoryTest {
     fun `completed onboarding stores student name and completion flag`() = runBlocking {
         val repository = createRepository()
 
-        repository.completeOnboarding("Ada")
+        repository.completeOnboarding(
+            studentName = "Ada",
+            pronounPreference = PronounPreference.Feminine,
+        )
 
         val preferences = repository.preferences.first()
         assertEquals("Ada", preferences.studentName)
+        assertEquals(PronounPreference.Feminine, preferences.pronounPreference)
         assertTrue(preferences.onboardingCompleted)
     }
 
@@ -49,7 +54,10 @@ class UserPreferencesRepositoryTest {
         val repository = createRepository()
 
         repository.setThemePreference(ThemePreference.Dark)
-        repository.completeOnboarding("Ada")
+        repository.completeOnboarding(
+            studentName = "Ada",
+            pronounPreference = PronounPreference.Feminine,
+        )
 
         assertEquals(ThemePreference.Dark, repository.preferences.first().themePreference)
     }
@@ -58,11 +66,15 @@ class UserPreferencesRepositoryTest {
     fun `changing theme keeps existing onboarding data`() = runBlocking {
         val repository = createRepository()
 
-        repository.completeOnboarding("Ada")
+        repository.completeOnboarding(
+            studentName = "Ada",
+            pronounPreference = PronounPreference.Feminine,
+        )
         repository.setThemePreference(ThemePreference.Light)
 
         val preferences = repository.preferences.first()
         assertEquals("Ada", preferences.studentName)
+        assertEquals(PronounPreference.Feminine, preferences.pronounPreference)
         assertTrue(preferences.onboardingCompleted)
         assertEquals(ThemePreference.Light, preferences.themePreference)
     }
@@ -76,6 +88,17 @@ class UserPreferencesRepositoryTest {
         val repository = UserPreferencesRepository(dataStore)
 
         assertEquals(ThemePreference.System, repository.preferences.first().themePreference)
+    }
+
+    @Test
+    fun `invalid stored pronoun preference falls back to neutral`() = runBlocking {
+        val dataStore = createDataStore()
+        dataStore.edit { preferences ->
+            preferences[stringPreferencesKey("pronoun_preference")] = "Royal"
+        }
+        val repository = UserPreferencesRepository(dataStore)
+
+        assertEquals(PronounPreference.Neutral, repository.preferences.first().pronounPreference)
     }
 
     private fun createRepository(): UserPreferencesRepository {

@@ -16,6 +16,7 @@ class UserPreferencesRepository(
         UserPreferences(
             studentName = preferences[StudentNameKey].orEmpty(),
             themePreference = preferences[ThemePreferenceKey].toThemePreference(),
+            pronounPreference = preferences[PronounPreferenceKey].toPronounPreference(),
             onboardingCompleted = preferences[OnboardingCompletedKey] ?: false,
         )
     }
@@ -26,9 +27,13 @@ class UserPreferencesRepository(
         }
     }
 
-    suspend fun completeOnboarding(studentName: String) {
+    suspend fun completeOnboarding(
+        studentName: String,
+        pronounPreference: PronounPreference,
+    ) {
         dataStore.edit { preferences ->
             preferences[StudentNameKey] = studentName
+            preferences[PronounPreferenceKey] = pronounPreference.name
             preferences[OnboardingCompletedKey] = true
         }
     }
@@ -37,9 +42,14 @@ class UserPreferencesRepository(
         return ThemePreference.entries.firstOrNull { it.name == this } ?: ThemePreference.System
     }
 
+    private fun String?.toPronounPreference(): PronounPreference {
+        return PronounPreference.entries.firstOrNull { it.name == this } ?: PronounPreference.Neutral
+    }
+
     private companion object {
         val StudentNameKey = stringPreferencesKey("student_name")
         val ThemePreferenceKey = stringPreferencesKey("theme_preference")
+        val PronounPreferenceKey = stringPreferencesKey("pronoun_preference")
         val OnboardingCompletedKey = booleanPreferencesKey("onboarding_completed")
     }
 }

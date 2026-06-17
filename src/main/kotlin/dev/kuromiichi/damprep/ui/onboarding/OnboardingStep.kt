@@ -9,12 +9,13 @@ data class OnboardingStep(
 enum class OnboardingStepKind {
     Info,
     Theme,
+    Pronouns,
     Name,
 }
 
 val onboardingSteps = listOf(
     OnboardingStep(
-        title = "Bienvenido/a a DAM Prep",
+        title = "Te doy la bienvenida a DAM Prep",
         body = "Esta app te acompañará mientras aprendes los fundamentos de programación desde cero, paso a paso y con calma.",
     ),
     OnboardingStep(
@@ -29,6 +30,11 @@ val onboardingSteps = listOf(
         kind = OnboardingStepKind.Theme,
         title = "Elige cómo quieres ver la app",
         body = "Puedes usar un tema claro, uno oscuro o dejar que DAM Prep siga la configuración de tu sistema.",
+    ),
+    OnboardingStep(
+        kind = OnboardingStepKind.Pronouns,
+        title = "Elige cómo quieres que te hable",
+        body = "Usaré esta preferencia para adaptar algunos textos y dirigirme a ti de forma cómoda.",
     ),
     OnboardingStep(
         kind = OnboardingStepKind.Name,
