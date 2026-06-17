@@ -64,9 +64,9 @@ fun OnboardingScreen(
 
     val currentStep = onboardingSteps[currentStepIndex]
     val isLastStep = currentStepIndex == onboardingSteps.lastIndex
-    val isNameStep = currentStep.kind == OnboardingStepKind.Name
+    val isPersonalizationStep = currentStep.kind == OnboardingStepKind.Personalization
     val normalizedName = studentName.trim()
-    val canContinue = !isNameStep || normalizedName.isNotEmpty()
+    val canContinue = !isPersonalizationStep || normalizedName.isNotEmpty()
 
     fun continueOnboarding() {
         if (!canContinue) {
@@ -135,7 +135,6 @@ fun OnboardingScreen(
                     val animatedStep = onboardingSteps[animatedStepIndex]
 
                     OnboardingStepContent(
-                        stepNumber = animatedStepIndex + 1,
                         step = animatedStep,
                         themePreference = themePreference,
                         pronounPreference = pronounPreference,
@@ -188,7 +187,6 @@ fun OnboardingScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OnboardingStepContent(
-    stepNumber: Int,
     step: OnboardingStep,
     themePreference: ThemePreference,
     pronounPreference: PronounPreference,
@@ -199,12 +197,6 @@ private fun OnboardingStepContent(
     onDone: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "Paso $stepNumber de ${onboardingSteps.size}",
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
-        )
-        Spacer(modifier = Modifier.height(20.dp))
         Text(
             text = step.title,
             style = MaterialTheme.typography.headlineLarge,
@@ -241,7 +233,7 @@ private fun OnboardingStepContent(
             }
         }
 
-        AnimatedVisibility(visible = step.kind == OnboardingStepKind.Pronouns) {
+        AnimatedVisibility(visible = step.kind == OnboardingStepKind.Personalization) {
             Column {
                 Spacer(modifier = Modifier.height(28.dp))
                 SingleChoiceSegmentedButtonRow(
@@ -262,11 +254,7 @@ private fun OnboardingStepContent(
                         }
                     }
                 }
-            }
-        }
 
-        AnimatedVisibility(visible = step.kind == OnboardingStepKind.Name) {
-            Column {
                 Spacer(modifier = Modifier.height(28.dp))
                 OutlinedTextField(
                     value = studentName,

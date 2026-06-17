@@ -9,8 +9,7 @@ data class OnboardingStep(
 enum class OnboardingStepKind {
     Info,
     Theme,
-    Pronouns,
-    Name,
+    Personalization,
 }
 
 val onboardingSteps = listOf(
@@ -32,13 +31,8 @@ val onboardingSteps = listOf(
         body = "Puedes usar un tema claro, uno oscuro o dejar que DAM Prep siga la configuración de tu sistema.",
     ),
     OnboardingStep(
-        kind = OnboardingStepKind.Pronouns,
-        title = "Elige cómo quieres que te hable",
-        body = "Usaré esta preferencia para adaptar algunos textos y dirigirme a ti de forma cómoda.",
-    ),
-    OnboardingStep(
-        kind = OnboardingStepKind.Name,
+        kind = OnboardingStepKind.Personalization,
         title = "Antes de empezar",
-        body = "Dime cómo quieres que te llame durante esta sesión.",
+        body = "Dime cómo quieres que te llame y qué tratamiento prefieres para adaptar algunos textos.",
     ),
 )
