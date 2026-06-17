@@ -1,28 +1,67 @@
 package dev.kuromiichi.damprep
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import dev.kuromiichi.damprep.data.preferences.UserPreferences
+import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
+import dev.kuromiichi.damprep.data.preferences.createUserPreferencesDataStore
 import dev.kuromiichi.damprep.ui.navigation.AppNavHost
+import dev.kuromiichi.damprep.ui.navigation.AppRoute
 import dev.kuromiichi.damprep.ui.theme.DamPrepTheme
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
+import kotlinx.coroutines.launch
 
 @Composable
 fun App() {
     val navController = rememberNavController()
-    var themePreference by remember { mutableStateOf(ThemePreference.System) }
-    var studentName by remember { mutableStateOf("") }
+    val preferencesRepository = remember {
+        UserPreferencesRepository(createUserPreferencesDataStore())
+    }
+    val coroutineScope = rememberCoroutineScope()
+    val userPreferences by produceState<UserPreferences?>(initialValue = null) {
+        preferencesRepository.preferences.collect { value = it }
+    }
+    val themePreference = userPreferences?.themePreference ?: ThemePreference.System
 
     DamPrepTheme(themePreference = themePreference) {
-        AppNavHost(
-            navController = navController,
-            studentName = studentName,
-            themePreference = themePreference,
-            onThemePreferenceChanged = { themePreference = it },
-            onStudentNameReceived = { studentName = it },
-        )
+        val preferences = userPreferences
+
+        if (preferences == null) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background,
+            ) {}
+        } else {
+            val startDestination = if (preferences.onboardingCompleted) {
+                AppRoute.Home
+            } else {
+                AppRoute.Onboarding
+            }
+
+            AppNavHost(
+                navController = navController,
+                startDestination = startDestination,
+                studentName = preferences.studentName,
+                themePreference = preferences.themePreference,
+                onThemePreferenceChanged = { nextThemePreference ->
+                    coroutineScope.launch {
+                        preferencesRepository.setThemePreference(nextThemePreference)
+                    }
+                },
+                onStudentNameReceived = { studentName ->
+                    coroutineScope.launch {
+                        preferencesRepository.completeOnboarding(studentName)
+                    }
+                },
+            )
+        }
     }
 }

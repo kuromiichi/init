@@ -11,6 +11,7 @@ import dev.kuromiichi.damprep.ui.theme.ThemePreference
 @Composable
 fun AppNavHost(
     navController: NavHostController,
+    startDestination: String,
     studentName: String,
     themePreference: ThemePreference,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
@@ -18,7 +19,7 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppRoute.Onboarding,
+        startDestination = startDestination,
     ) {
         composable(AppRoute.Onboarding) {
             OnboardingScreen(
