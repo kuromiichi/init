@@ -20,13 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-private val MinimumUsableWidth = 720.dp
-private val MinimumUsableHeight = 520.dp
-
 @Composable
 fun WindowSizeGuard(content: @Composable () -> Unit) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val isTooSmall = maxWidth < MinimumUsableWidth || maxHeight < MinimumUsableHeight
+        val isTooSmall = maxWidth < WindowMetrics.MinimumUsableWidth ||
+            maxHeight < WindowMetrics.MinimumUsableHeight
 
         AnimatedContent(
             targetState = isTooSmall,
