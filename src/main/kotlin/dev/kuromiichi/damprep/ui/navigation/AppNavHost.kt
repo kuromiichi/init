@@ -21,6 +21,8 @@ fun AppNavHost(
     pronounPreference: PronounPreference,
     themePreference: ThemePreference,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
+    onStudentNameChanged: (String) -> Unit,
+    onPronounPreferenceChanged: (PronounPreference) -> Unit,
     onOnboardingFinished: (String, PronounPreference) -> Unit,
 ) {
     NavHost(
@@ -76,7 +78,15 @@ fun AppNavHost(
         }
 
         composable(AppRoute.Settings) {
-            SettingsScreen(onBack = { navController.popBackStack() })
+            SettingsScreen(
+                studentName = studentName,
+                pronounPreference = pronounPreference,
+                themePreference = themePreference,
+                onStudentNameChanged = onStudentNameChanged,
+                onPronounPreferenceChanged = onPronounPreferenceChanged,
+                onThemePreferenceChanged = onThemePreferenceChanged,
+                onBack = { navController.popBackStack() },
+            )
         }
     }
 }

@@ -35,6 +35,24 @@ class UserPreferencesRepositoryTest {
     }
 
     @Test
+    fun `student name is persisted`() = runBlocking {
+        val repository = createRepository()
+
+        repository.setStudentName("Emma")
+
+        assertEquals("Emma", repository.preferences.first().studentName)
+    }
+
+    @Test
+    fun `pronoun preference is persisted`() = runBlocking {
+        val repository = createRepository()
+
+        repository.setPronounPreference(PronounPreference.Masculine)
+
+        assertEquals(PronounPreference.Masculine, repository.preferences.first().pronounPreference)
+    }
+
+    @Test
     fun `completed onboarding stores student name and completion flag`() = runBlocking {
         val repository = createRepository()
 

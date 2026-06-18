@@ -59,6 +59,16 @@ fun App() {
                             preferencesRepository.setThemePreference(nextThemePreference)
                         }
                     },
+                    onStudentNameChanged = { studentName ->
+                        coroutineScope.launch {
+                            preferencesRepository.setStudentName(studentName)
+                        }
+                    },
+                    onPronounPreferenceChanged = { pronounPreference ->
+                        coroutineScope.launch {
+                            preferencesRepository.setPronounPreference(pronounPreference)
+                        }
+                    },
                     onOnboardingFinished = { studentName, pronounPreference ->
                         coroutineScope.launch {
                             preferencesRepository.completeOnboarding(

@@ -27,6 +27,18 @@ class UserPreferencesRepository(
         }
     }
 
+    suspend fun setStudentName(studentName: String) {
+        dataStore.edit { preferences ->
+            preferences[StudentNameKey] = studentName
+        }
+    }
+
+    suspend fun setPronounPreference(pronounPreference: PronounPreference) {
+        dataStore.edit { preferences ->
+            preferences[PronounPreferenceKey] = pronounPreference.name
+        }
+    }
+
     suspend fun completeOnboarding(
         studentName: String,
         pronounPreference: PronounPreference,
