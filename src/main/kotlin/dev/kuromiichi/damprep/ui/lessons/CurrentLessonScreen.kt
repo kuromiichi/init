@@ -12,6 +12,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -48,15 +49,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.kuromiichi.dam_prep.generated.resources.Res
+import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
+import dev.kuromiichi.dam_prep.generated.resources.kotlin
 import dev.kuromiichi.damprep.data.lessons.LessonContentCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 private val LessonContentMaxWidth = 1240.dp
 private val LessonCompactBreakpoint = 860.dp
 private val LessonVisualMaxWidth = 420.dp
 private val LessonCompactVisualMaxWidth = 440.dp
+private const val KotlinIntellijVisualTitle = "Kotlin e IntelliJ IDEA"
 
 @Composable
 fun CurrentLessonScreen(onBack: () -> Unit) {
@@ -221,6 +228,11 @@ private fun LessonVisual(
         color = MaterialTheme.colorScheme.surfaceVariant,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     ) {
+        if (step.visualTitle == KotlinIntellijVisualTitle) {
+            ToolLogosVisual()
+            return@Surface
+        }
+
         Column(
             modifier = Modifier.padding(32.dp),
             verticalArrangement = Arrangement.Center,
@@ -251,6 +263,75 @@ private fun LessonVisual(
             Text(
                 text = step.visualBody,
                 style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ToolLogosVisual() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(28.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ToolLogoCard(
+                title = "Kotlin",
+                subtitle = "Lenguaje",
+                logo = Res.drawable.kotlin,
+                modifier = Modifier.weight(1f),
+            )
+            ToolLogoCard(
+                title = "IntelliJ IDEA",
+                subtitle = "Entorno",
+                logo = Res.drawable.intellij_idea,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ToolLogoCard(
+    title: String,
+    subtitle: String,
+    logo: DrawableResource,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Image(
+                painter = painterResource(logo),
+                contentDescription = title,
+                modifier = Modifier.size(72.dp),
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
         }

@@ -17,10 +17,19 @@ class LessonContentCatalogTest {
     fun `current lesson has navigable steps with visual content`() {
         val steps = LessonContentCatalog.currentLesson.steps
 
-        assertTrue(steps.size > 1)
+        assertEquals(6, steps.size)
         assertTrue(steps.all { it.title.isNotBlank() })
         assertTrue(steps.all { it.body.isNotBlank() })
         assertTrue(steps.all { it.visualTitle.isNotBlank() })
         assertTrue(steps.all { it.visualBody.isNotBlank() })
+    }
+
+    @Test
+    fun `current lesson introduces kotlin and intellij idea`() {
+        val toolStep = LessonContentCatalog.currentLesson.steps[2]
+
+        assertEquals("Usaremos Kotlin e IntelliJ IDEA", toolStep.title)
+        assertTrue(toolStep.body.contains("Kotlin"))
+        assertTrue(toolStep.body.contains("IntelliJ IDEA"))
     }
 }

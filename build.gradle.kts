@@ -18,6 +18,7 @@ dependencies {
     implementation(compose.desktop.currentOs)
     implementation(compose.material3)
     implementation(compose.materialIconsExtended)
+    implementation(compose.components.resources)
     implementation("androidx.datastore:datastore-preferences:1.2.1")
     implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
     testImplementation(kotlin("test"))
