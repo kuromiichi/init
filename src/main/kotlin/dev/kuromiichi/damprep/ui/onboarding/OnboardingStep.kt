@@ -19,11 +19,11 @@ val onboardingSteps = listOf(
     ),
     OnboardingStep(
         title = "Teoría guiada por pantallas",
-        body = "Los contenidos estarán organizados por temas y secciones breves. La idea es que puedas avanzar sin abrir apuntes ni manejar archivos directamente.",
+        body = "Los contenidos estarán organizados por temas y secciones breves. La idea es que puedas avanzar a tu ritmo sin tener que leer apuntes aburridos.",
     ),
     OnboardingStep(
         title = "Avance progresivo",
-        body = "Más adelante, cada tema podrá terminar con ejercicios para desbloquear el siguiente. La app podrá revisar entregas, compilar proyectos y darte feedback.",
+        body = "Más adelante, cada tema podrá terminar con ejercicios para desbloquear el siguiente. La app podrá revisar entregas automáticamente o solicitar verificación externa.",
     ),
     OnboardingStep(
         kind = OnboardingStepKind.Theme,
@@ -33,6 +33,10 @@ val onboardingSteps = listOf(
     OnboardingStep(
         kind = OnboardingStepKind.Personalization,
         title = "Antes de empezar",
-        body = "Dime cómo quieres que te llame y qué tratamiento prefieres para adaptar algunos textos.",
+        body = "Dime cómo quieres que te llame y qué tratamiento prefieres.",
+    ),
+    OnboardingStep(
+        title = "Aquí comienza tu viaje",
+        body = "Ya está todo listo para empezar a adentrarte en el mundo de la programación. ¡Mucho ánimo!",
     ),
 )
