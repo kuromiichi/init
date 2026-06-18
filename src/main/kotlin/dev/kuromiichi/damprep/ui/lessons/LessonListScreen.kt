@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.lessons.SubjectArea
@@ -95,7 +94,6 @@ private fun LessonListItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            SubjectTag(subjectArea = lesson.subjectArea)
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -112,6 +110,7 @@ private fun LessonListItem(
                     color = contentColor,
                 )
             }
+            SubjectTag(subjectArea = lesson.subjectArea)
             Icon(
                 imageVector = if (lesson.isUnlocked) Icons.Filled.PlayArrow else Icons.Filled.Lock,
                 contentDescription = if (lesson.isUnlocked) "Abrir lección" else "Lección bloqueada",
@@ -131,8 +130,8 @@ private fun SubjectTag(subjectArea: SubjectArea) {
 
     Surface(
         shape = MaterialTheme.shapes.small,
-        color = color,
-        contentColor = color.readableContentColor(),
+        color = color.copy(alpha = 0.22f),
+        contentColor = MaterialTheme.colorScheme.onSurface,
     ) {
         Text(
             text = subjectArea.label,
@@ -148,11 +147,4 @@ private fun SubjectArea.accentColor(): Color =
         SubjectArea.Mixed -> Color(0xFFF5BDE6)
         SubjectArea.Programming -> Color(0xFFA6DA95)
         SubjectArea.DevelopmentEnvironments -> Color(0xFF8AADF4)
-    }
-
-private fun Color.readableContentColor(): Color =
-    if (luminance() > 0.5f) {
-        Color(0xFF181926)
-    } else {
-        Color.White
     }
