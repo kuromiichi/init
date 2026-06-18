@@ -12,7 +12,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,24 +19,20 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,17 +57,33 @@ import dev.kuromiichi.dam_prep.generated.resources.Res
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
 import dev.kuromiichi.dam_prep.generated.resources.kotlin
 import dev.kuromiichi.damprep.data.lessons.LessonContentCatalog
+import dev.kuromiichi.damprep.data.lessons.LessonCodeLine
+import dev.kuromiichi.damprep.data.lessons.LessonCodeToken
+import dev.kuromiichi.damprep.data.lessons.LessonCodeTokenKind
 import dev.kuromiichi.damprep.data.lessons.LessonStep
+import dev.kuromiichi.damprep.data.lessons.LessonToolLogo
+import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
+import dev.kuromiichi.damprep.ui.common.CodeExamplesVisual
+import dev.kuromiichi.damprep.ui.common.CycleDiagram
+import dev.kuromiichi.damprep.ui.common.FlowDiagram
+import dev.kuromiichi.damprep.ui.common.IconTextLearningVisual
+import dev.kuromiichi.damprep.ui.common.LearningCodeExample
+import dev.kuromiichi.damprep.ui.common.LearningCodeLine
+import dev.kuromiichi.damprep.ui.common.LearningCodeToken
+import dev.kuromiichi.damprep.ui.common.LearningCodeTokenKind
+import dev.kuromiichi.damprep.ui.common.LearningToolCard
+import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
+import dev.kuromiichi.damprep.ui.common.ToolLogoCards
 import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 
 private val LessonContentMaxWidth = 1240.dp
 private val LessonCompactBreakpoint = 860.dp
 private val LessonVisualMaxWidth = 420.dp
 private val LessonCompactVisualMaxWidth = 440.dp
-private const val KotlinIntellijVisualTitle = "Kotlin e IntelliJ IDEA"
+private val LessonRichVisualMaxWidth = 560.dp
+private val LessonCompactRichVisualMaxWidth = 560.dp
 
 @Composable
 fun CurrentLessonScreen(
@@ -249,6 +260,17 @@ private fun LessonStepContent(step: LessonStep) {
 
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
             val useCompactLayout = maxWidth < LessonCompactBreakpoint
+            val hasRichVisual = step.visual.isRich
+            val visualMaxWidth = if (hasRichVisual) {
+                LessonRichVisualMaxWidth
+            } else {
+                LessonVisualMaxWidth
+            }
+            val compactVisualMaxWidth = if (hasRichVisual) {
+                LessonCompactRichVisualMaxWidth
+            } else {
+                LessonCompactVisualMaxWidth
+            }
 
             if (useCompactLayout) {
                 Column(
@@ -258,7 +280,7 @@ private fun LessonStepContent(step: LessonStep) {
                     LessonVisual(
                         step = step,
                         modifier = Modifier
-                            .widthIn(max = LessonCompactVisualMaxWidth)
+                            .widthIn(max = compactVisualMaxWidth)
                             .fillMaxWidth()
                             .align(Alignment.CenterHorizontally),
                     )
@@ -271,16 +293,16 @@ private fun LessonStepContent(step: LessonStep) {
                 ) {
                     LessonText(
                         text = step.body,
-                        modifier = Modifier.weight(1.25f),
+                        modifier = Modifier.weight(if (hasRichVisual) 1f else 1.25f),
                     )
                     Box(
-                        modifier = Modifier.weight(0.75f),
+                        modifier = Modifier.weight(if (hasRichVisual) 1f else 0.75f),
                         contentAlignment = Alignment.Center,
                     ) {
                         LessonVisual(
                             step = step,
                             modifier = Modifier
-                                .widthIn(max = LessonVisualMaxWidth)
+                                .widthIn(max = visualMaxWidth)
                                 .fillMaxWidth(),
                         )
                     }
@@ -308,121 +330,74 @@ private fun LessonVisual(
     step: LessonStep,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier.aspectRatio(1.25f),
-        shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-    ) {
-        if (step.visualTitle == KotlinIntellijVisualTitle) {
-            ToolLogosVisual()
-            return@Surface
-        }
-
-        Column(
-            modifier = Modifier.padding(32.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Surface(
-                modifier = Modifier.size(76.dp),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Filled.AutoStories,
-                        contentDescription = null,
-                        modifier = Modifier.size(38.dp),
+    LearningVisualSurface(modifier = modifier) {
+        when (val visual = step.visual) {
+            is LessonVisualContent.CodeExamples -> CodeExamplesVisual(
+                examples = visual.examples.map { example ->
+                    LearningCodeExample(
+                        title = example.title,
+                        lines = example.lines.map { it.toLearningCodeLine() },
+                        note = example.note,
                     )
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = step.visualTitle,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center,
+                },
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = step.visualBody,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
+
+            is LessonVisualContent.Cycle -> CycleDiagram(
+                steps = visual.steps,
+            )
+
+            is LessonVisualContent.Flow -> FlowDiagram(nodes = visual.nodes)
+            is LessonVisualContent.IconText -> IconTextLearningVisual(
+                title = visual.title,
+                body = visual.body,
+            )
+
+            is LessonVisualContent.ToolCards -> ToolLogoCards(
+                tools = visual.tools.map { tool ->
+                    LearningToolCard(
+                        title = tool.name,
+                        subtitle = tool.kind,
+                        logo = tool.logo.drawableResource,
+                    )
+                },
             )
         }
     }
 }
 
-@Composable
-private fun ToolLogosVisual() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(28.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            ToolLogoCard(
-                title = "Kotlin",
-                subtitle = "Lenguaje",
-                logo = Res.drawable.kotlin,
-                modifier = Modifier.weight(1f),
-            )
-            ToolLogoCard(
-                title = "IntelliJ IDEA",
-                subtitle = "Entorno",
-                logo = Res.drawable.intellij_idea,
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
-}
+private val LessonVisualContent.isRich: Boolean
+    get() = this is LessonVisualContent.Flow ||
+        this is LessonVisualContent.Cycle ||
+        this is LessonVisualContent.CodeExamples
 
-@Composable
-private fun ToolLogoCard(
-    title: String,
-    subtitle: String,
-    logo: DrawableResource,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-    ) {
-        Column(
-            modifier = Modifier.padding(18.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Image(
-                painter = painterResource(logo),
-                contentDescription = title,
-                modifier = Modifier.size(72.dp),
-            )
-            Spacer(modifier = Modifier.height(14.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-        }
+private fun LessonCodeLine.toLearningCodeLine(): LearningCodeLine =
+    LearningCodeLine(tokens = tokens.map { it.toLearningCodeToken() })
+
+private fun LessonCodeToken.toLearningCodeToken(): LearningCodeToken =
+    LearningCodeToken(
+        text = text,
+        kind = kind.toLearningCodeTokenKind(),
+        hasErrorUnderline = hasErrorUnderline,
+    )
+
+private fun LessonCodeTokenKind.toLearningCodeTokenKind(): LearningCodeTokenKind =
+    when (this) {
+        LessonCodeTokenKind.Plain -> LearningCodeTokenKind.Plain
+        LessonCodeTokenKind.Keyword -> LearningCodeTokenKind.Keyword
+        LessonCodeTokenKind.Function -> LearningCodeTokenKind.Function
+        LessonCodeTokenKind.Number -> LearningCodeTokenKind.Number
+        LessonCodeTokenKind.Operator -> LearningCodeTokenKind.Operator
+        LessonCodeTokenKind.Punctuation -> LearningCodeTokenKind.Punctuation
+        LessonCodeTokenKind.StringLiteral -> LearningCodeTokenKind.StringLiteral
+        LessonCodeTokenKind.Interpolation -> LearningCodeTokenKind.Interpolation
+        LessonCodeTokenKind.Comment -> LearningCodeTokenKind.Comment
     }
-}
+
+private val LessonToolLogo.drawableResource: DrawableResource
+    get() = when (this) {
+        LessonToolLogo.Kotlin -> Res.drawable.kotlin
+        LessonToolLogo.IntellijIdea -> Res.drawable.intellij_idea
+    }
 
 @Composable
 private fun LessonStepNavigation(
