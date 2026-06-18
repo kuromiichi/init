@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.data.lessons
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class LessonContentCatalogTest {
@@ -11,6 +12,22 @@ class LessonContentCatalogTest {
             LessonCatalog.lessons.first().id,
             LessonContentCatalog.currentLesson.lessonId,
         )
+    }
+
+    @Test
+    fun `initial catalog lessons have content`() {
+        val lessonIdsWithContent = LessonContentCatalog.lessons.map { it.lessonId }
+
+        assertEquals(LessonCatalog.lessons.take(1).map { it.id }, lessonIdsWithContent)
+    }
+
+    @Test
+    fun `lesson content can be found by lesson id`() {
+        val welcomeLesson = LessonContentCatalog.findByLessonId("welcome-roadmap")
+
+        assertEquals("welcome-roadmap", welcomeLesson?.lessonId)
+        assertTrue(LessonContentCatalog.hasContent("welcome-roadmap"))
+        assertFalse(LessonContentCatalog.hasContent("software-development"))
     }
 
     @Test
@@ -32,4 +49,5 @@ class LessonContentCatalogTest {
         assertTrue(toolStep.body.contains("Kotlin"))
         assertTrue(toolStep.body.contains("IntelliJ IDEA"))
     }
+
 }

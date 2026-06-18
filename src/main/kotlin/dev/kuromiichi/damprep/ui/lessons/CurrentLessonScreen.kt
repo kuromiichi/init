@@ -75,10 +75,20 @@ private val LessonCompactVisualMaxWidth = 440.dp
 private const val KotlinIntellijVisualTitle = "Kotlin e IntelliJ IDEA"
 
 @Composable
-fun CurrentLessonScreen(onBack: () -> Unit) {
-    val lessonContent = LessonContentCatalog.currentLesson
+fun CurrentLessonScreen(
+    lessonId: String,
+    onBack: () -> Unit,
+) {
+    val lessonContent = remember(lessonId) {
+        LessonContentCatalog.findByLessonId(lessonId)
+    }
+    if (lessonContent == null) {
+        MissingLessonScreen(onBack = onBack)
+        return
+    }
+
     val focusRequester = remember { FocusRequester() }
-    var currentStepIndex by remember { mutableIntStateOf(0) }
+    var currentStepIndex by remember(lessonContent.lessonId) { mutableIntStateOf(0) }
     val isFirstStep = currentStepIndex == 0
     val isLastStep = currentStepIndex == lessonContent.steps.lastIndex
     val goToPreviousStep = {
@@ -92,7 +102,7 @@ fun CurrentLessonScreen(onBack: () -> Unit) {
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(lessonContent.lessonId) {
         focusRequester.requestFocus()
     }
 
@@ -189,6 +199,37 @@ fun CurrentLessonScreen(onBack: () -> Unit) {
                 canGoForward = !isLastStep,
                 onPrevious = goToPreviousStep,
                 onNext = goToNextStep,
+            )
+        }
+    }
+}
+
+@Composable
+private fun MissingLessonScreen(onBack: () -> Unit) {
+    AppScreen(
+        onBack = onBack,
+        contentMaxWidth = LessonContentMaxWidth,
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .widthIn(max = LessonContentMaxWidth)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "Lección no disponible",
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Todavía no hemos preparado el contenido de esta lección.",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
             )
         }
     }
