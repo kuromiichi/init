@@ -13,6 +13,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -39,6 +40,7 @@ import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +48,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,9 +77,24 @@ private const val KotlinIntellijVisualTitle = "Kotlin e IntelliJ IDEA"
 @Composable
 fun CurrentLessonScreen(onBack: () -> Unit) {
     val lessonContent = LessonContentCatalog.currentLesson
+    val focusRequester = remember { FocusRequester() }
     var currentStepIndex by remember { mutableIntStateOf(0) }
     val isFirstStep = currentStepIndex == 0
     val isLastStep = currentStepIndex == lessonContent.steps.lastIndex
+    val goToPreviousStep = {
+        if (!isFirstStep) {
+            currentStepIndex -= 1
+        }
+    }
+    val goToNextStep = {
+        if (!isLastStep) {
+            currentStepIndex += 1
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     AppScreen(
         onBack = onBack,
@@ -81,6 +105,35 @@ fun CurrentLessonScreen(onBack: () -> Unit) {
                 .weight(1f)
                 .widthIn(max = LessonContentMaxWidth)
                 .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .onPreviewKeyEvent { event ->
+                    if (event.type != KeyEventType.KeyDown) {
+                        return@onPreviewKeyEvent false
+                    }
+
+                    when (event.key) {
+                        Key.DirectionLeft -> {
+                            if (!isFirstStep) {
+                                goToPreviousStep()
+                                true
+                            } else {
+                                false
+                            }
+                        }
+
+                        Key.DirectionRight -> {
+                            if (!isLastStep) {
+                                goToNextStep()
+                                true
+                            } else {
+                                false
+                            }
+                        }
+
+                        else -> false
+                    }
+                }
+                .focusable()
                 .padding(top = 8.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -134,16 +187,8 @@ fun CurrentLessonScreen(onBack: () -> Unit) {
                 stepCount = lessonContent.steps.size,
                 canGoBack = !isFirstStep,
                 canGoForward = !isLastStep,
-                onPrevious = {
-                    if (!isFirstStep) {
-                        currentStepIndex -= 1
-                    }
-                },
-                onNext = {
-                    if (!isLastStep) {
-                        currentStepIndex += 1
-                    }
-                },
+                onPrevious = goToPreviousStep,
+                onNext = goToNextStep,
             )
         }
     }
