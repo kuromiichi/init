@@ -74,6 +74,7 @@ import dev.kuromiichi.damprep.ui.common.LearningCodeTokenKind
 import dev.kuromiichi.damprep.ui.common.LearningToolCard
 import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
 import dev.kuromiichi.damprep.ui.common.ToolLogoCards
+import dev.kuromiichi.damprep.ui.common.hoverScale
 import org.jetbrains.compose.resources.DrawableResource
 
 private val LessonContentMaxWidth = 1240.dp
@@ -406,6 +407,7 @@ private fun LessonStepNavigation(
         OutlinedIconButton(
             onClick = onPrevious,
             enabled = canGoBack,
+            modifier = Modifier.hoverScale(enabled = canGoBack),
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -421,6 +423,7 @@ private fun LessonStepNavigation(
         FilledIconButton(
             onClick = onNext,
             enabled = canGoForward,
+            modifier = Modifier.hoverScale(enabled = canGoForward),
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,

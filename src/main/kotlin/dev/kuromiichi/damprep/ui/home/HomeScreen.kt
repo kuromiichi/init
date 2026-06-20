@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.kuromiichi.damprep.ui.common.hoverScale
 
 private val HomeContentMaxWidth = 720.dp
 private val HomeControlsMaxWidth = 640.dp
@@ -109,7 +110,9 @@ fun HomeScreen(
                 ) {
                     Button(
                         onClick = onContinueLesson,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .hoverScale(),
                     ) {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
@@ -186,7 +189,9 @@ fun HomeScreen(
 
             OutlinedButton(
                 onClick = onShowSettings,
-                modifier = Modifier.widthIn(min = 220.dp, max = HomeSettingsMaxWidth),
+                modifier = Modifier
+                    .widthIn(min = 220.dp, max = HomeSettingsMaxWidth)
+                    .hoverScale(),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Settings,
@@ -208,7 +213,7 @@ private fun SecondaryHomeButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.hoverScale(),
     ) {
         icon()
         Spacer(modifier = Modifier.width(8.dp))
