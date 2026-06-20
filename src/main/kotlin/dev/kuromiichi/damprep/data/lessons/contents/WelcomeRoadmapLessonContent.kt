@@ -1,4 +1,4 @@
-package dev.kuromiichi.damprep.data.lessons.content
+package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonContent

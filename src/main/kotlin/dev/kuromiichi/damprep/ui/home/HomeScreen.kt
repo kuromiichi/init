@@ -28,8 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dev.kuromiichi.damprep.data.lessons.LessonCatalog
-import dev.kuromiichi.damprep.data.preferences.PronounPreference
 
 private val HomeContentMaxWidth = 720.dp
 private val HomeControlsMaxWidth = 640.dp
@@ -39,22 +37,12 @@ private val HomeCompactBreakpoint = 560.dp
 
 @Composable
 fun HomeScreen(
-    studentName: String,
-    pronounPreference: PronounPreference,
-    completedLessons: Int,
+    uiState: HomeUiState,
     onContinueLesson: () -> Unit,
     onShowLessons: () -> Unit,
     onShowNotes: () -> Unit,
     onShowSettings: () -> Unit,
 ) {
-    val totalLessons = LessonCatalog.lessons.size
-    val clampedCompletedLessons = completedLessons.coerceIn(0, totalLessons)
-    val progress = if (totalLessons == 0) {
-        0f
-    } else {
-        clampedCompletedLessons.toFloat() / totalLessons
-    }
-
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
@@ -79,7 +67,7 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(
-                        text = "${pronounPreference.welcomeWord}, $studentName",
+                        text = uiState.welcomeMessage,
                         style = MaterialTheme.typography.headlineLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center,
@@ -99,14 +87,14 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
-                        text = "$clampedCompletedLessons de $totalLessons temas completados",
+                        text = uiState.progressLabel,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     LinearProgressIndicator(
-                        progress = { progress },
+                        progress = { uiState.progress },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(8.dp),

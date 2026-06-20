@@ -38,11 +38,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,26 +57,13 @@ fun OnboardingScreen(
     onThemePreferenceChanged: (ThemePreference) -> Unit,
     onFinished: (studentName: String, pronounPreference: PronounPreference) -> Unit,
 ) {
-    var currentStepIndex by remember { mutableIntStateOf(0) }
-    var studentName by remember { mutableStateOf("") }
-    var pronounPreference by remember { mutableStateOf(PronounPreference.Neutral) }
+    val viewModel = remember {
+        OnboardingViewModel(initialThemePreference = themePreference)
+    }
+    val uiState by viewModel.uiState.collectAsState()
 
-    val currentStep = onboardingSteps[currentStepIndex]
-    val isLastStep = currentStepIndex == onboardingSteps.lastIndex
-    val isPersonalizationStep = currentStep.kind == OnboardingStepKind.Personalization
-    val normalizedName = studentName.trim()
-    val canContinue = !isPersonalizationStep || normalizedName.isNotEmpty()
-
-    fun continueOnboarding() {
-        if (!canContinue) {
-            return
-        }
-
-        if (isLastStep) {
-            onFinished(normalizedName, pronounPreference)
-        } else {
-            currentStepIndex += 1
-        }
+    LaunchedEffect(themePreference) {
+        viewModel.syncThemePreference(themePreference)
     }
 
     Surface(
@@ -104,7 +90,7 @@ fun OnboardingScreen(
                 verticalArrangement = Arrangement.Center,
             ) {
                 AnimatedContent(
-                    targetState = currentStepIndex,
+                    targetState = uiState.currentStepIndex,
                     transitionSpec = {
                         val direction = if (targetState > initialState) 1 else -1
 
@@ -132,18 +118,23 @@ fun OnboardingScreen(
                     },
                     label = "Onboarding step",
                 ) { animatedStepIndex ->
-                    val animatedStep = onboardingSteps[animatedStepIndex]
+                    val animatedStep = uiState.steps[animatedStepIndex]
 
                     OnboardingStepContent(
                         step = animatedStep,
-                        themePreference = themePreference,
-                        pronounPreference = pronounPreference,
-                        studentName = studentName,
-                        onThemePreferenceChanged = onThemePreferenceChanged,
-                        onPronounPreferenceChanged = { pronounPreference = it },
-                        onStudentNameChanged = { studentName = it },
+                        themePreference = uiState.themePreference,
+                        pronounPreference = uiState.pronounPreference,
+                        studentName = uiState.studentName,
+                        onThemePreferenceChanged = { preference ->
+                            viewModel.updateThemePreference(preference)
+                            onThemePreferenceChanged(preference)
+                        },
+                        onPronounPreferenceChanged = viewModel::updatePronounPreference,
+                        onStudentNameChanged = viewModel::updateStudentName,
                         onDone = {
-                            continueOnboarding()
+                            viewModel.continueOnboarding()?.let { completion ->
+                                onFinished(completion.studentName, completion.pronounPreference)
+                            }
                         },
                     )
                 }
@@ -156,11 +147,9 @@ fun OnboardingScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (currentStepIndex > 0) {
+                if (!uiState.isFirstStep) {
                     TextButton(
-                        onClick = {
-                            currentStepIndex -= 1
-                        },
+                        onClick = viewModel::goToPreviousStep,
                     ) {
                         Text("Atrás")
                     }
@@ -170,16 +159,21 @@ fun OnboardingScreen(
 
                 Button(
                     onClick = {
-                        continueOnboarding()
+                        viewModel.continueOnboarding()?.let { completion ->
+                            onFinished(completion.studentName, completion.pronounPreference)
+                        }
                     },
-                    enabled = canContinue,
+                    enabled = uiState.canContinue,
                 ) {
-                    Text(if (isLastStep) "Entrar" else "Siguiente")
+                    Text(if (uiState.isLastStep) "Entrar" else "Siguiente")
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            OnboardingProgressDots(currentStepIndex = currentStepIndex)
+            OnboardingProgressDots(
+                currentStepIndex = uiState.currentStepIndex,
+                stepCount = uiState.steps.size,
+            )
         }
     }
 }
@@ -275,12 +269,15 @@ private fun OnboardingStepContent(
 }
 
 @Composable
-private fun OnboardingProgressDots(currentStepIndex: Int) {
+private fun OnboardingProgressDots(
+    currentStepIndex: Int,
+    stepCount: Int,
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        onboardingSteps.forEachIndexed { index, _ ->
+        repeat(stepCount) { index ->
             val isCurrent = index == currentStepIndex
             val dotColor by animateColorAsState(
                 targetValue = if (isCurrent) {

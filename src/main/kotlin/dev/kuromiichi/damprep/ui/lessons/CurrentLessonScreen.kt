@@ -36,10 +36,9 @@ import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,7 +55,6 @@ import androidx.compose.ui.unit.sp
 import dev.kuromiichi.dam_prep.generated.resources.Res
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
 import dev.kuromiichi.dam_prep.generated.resources.kotlin
-import dev.kuromiichi.damprep.data.lessons.LessonContentCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonCodeLine
 import dev.kuromiichi.damprep.data.lessons.LessonCodeToken
 import dev.kuromiichi.damprep.data.lessons.LessonCodeTokenKind
@@ -90,28 +88,18 @@ fun CurrentLessonScreen(
     lessonId: String,
     onBack: () -> Unit,
 ) {
-    val lessonContent = remember(lessonId) {
-        LessonContentCatalog.findByLessonId(lessonId)
+    val viewModel = remember(lessonId) {
+        CurrentLessonViewModel(lessonId = lessonId)
     }
-    if (lessonContent == null) {
+    val uiState by viewModel.uiState.collectAsState()
+    val lessonContent = uiState.lessonContent
+
+    if (uiState.isMissing || lessonContent == null) {
         MissingLessonScreen(onBack = onBack)
         return
     }
 
     val focusRequester = remember { FocusRequester() }
-    var currentStepIndex by remember(lessonContent.lessonId) { mutableIntStateOf(0) }
-    val isFirstStep = currentStepIndex == 0
-    val isLastStep = currentStepIndex == lessonContent.steps.lastIndex
-    val goToPreviousStep = {
-        if (!isFirstStep) {
-            currentStepIndex -= 1
-        }
-    }
-    val goToNextStep = {
-        if (!isLastStep) {
-            currentStepIndex += 1
-        }
-    }
 
     LaunchedEffect(lessonContent.lessonId) {
         focusRequester.requestFocus()
@@ -134,8 +122,8 @@ fun CurrentLessonScreen(
 
                     when (event.key) {
                         Key.DirectionLeft -> {
-                            if (!isFirstStep) {
-                                goToPreviousStep()
+                            if (uiState.canGoBack) {
+                                viewModel.goToPreviousStep()
                                 true
                             } else {
                                 false
@@ -143,8 +131,8 @@ fun CurrentLessonScreen(
                         }
 
                         Key.DirectionRight -> {
-                            if (!isLastStep) {
-                                goToNextStep()
+                            if (uiState.canGoForward) {
+                                viewModel.goToNextStep()
                                 true
                             } else {
                                 false
@@ -171,7 +159,7 @@ fun CurrentLessonScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     AnimatedContent(
-                        targetState = currentStepIndex,
+                        targetState = uiState.currentStepIndex,
                         modifier = Modifier.fillMaxWidth(),
                         transitionSpec = {
                             val direction = if (targetState > initialState) 1 else -1
@@ -204,12 +192,12 @@ fun CurrentLessonScreen(
             }
 
             LessonStepNavigation(
-                currentStepIndex = currentStepIndex,
-                stepCount = lessonContent.steps.size,
-                canGoBack = !isFirstStep,
-                canGoForward = !isLastStep,
-                onPrevious = goToPreviousStep,
-                onNext = goToNextStep,
+                currentStepIndex = uiState.currentStepIndex,
+                stepCount = uiState.stepCount,
+                canGoBack = uiState.canGoBack,
+                canGoForward = uiState.canGoForward,
+                onPrevious = viewModel::goToPreviousStep,
+                onNext = viewModel::goToNextStep,
             )
         }
     }

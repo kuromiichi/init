@@ -16,16 +16,13 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.ui.common.AppScreen
@@ -46,35 +43,26 @@ fun SettingsScreen(
     onBack: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    var isStudentNameFocused by remember { mutableStateOf(false) }
-    var studentNameField by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = studentName,
-                selection = TextRange(studentName.length),
-            ),
+    val viewModel = remember {
+        SettingsViewModel(
+            studentName = studentName,
+            pronounPreference = pronounPreference,
+            themePreference = themePreference,
         )
     }
+    val uiState by viewModel.uiState.collectAsState()
 
-    fun commitStudentName() {
-        val nextStudentName = studentNameField.text
-        if (nextStudentName != studentName) {
-            onStudentNameChanged(nextStudentName)
-        }
-    }
-
-    LaunchedEffect(studentName) {
-        if (!isStudentNameFocused && studentName != studentNameField.text) {
-            studentNameField = TextFieldValue(
-                text = studentName,
-                selection = TextRange(studentName.length),
-            )
-        }
+    LaunchedEffect(studentName, pronounPreference, themePreference) {
+        viewModel.syncPreferences(
+            studentName = studentName,
+            pronounPreference = pronounPreference,
+            themePreference = themePreference,
+        )
     }
 
     AppScreen(
         onBack = {
-            commitStudentName()
+            viewModel.commitStudentName()?.let(onStudentNameChanged)
             onBack()
         },
     ) {
@@ -108,18 +96,14 @@ fun SettingsScreen(
                     description = "Se usa en saludos y mensajes de progreso.",
                 ) {
                     OutlinedTextField(
-                        value = studentNameField,
-                        onValueChange = { nextValue ->
-                            studentNameField = nextValue
-                        },
+                        value = uiState.studentNameDraft,
+                        onValueChange = viewModel::updateStudentNameDraft,
                         modifier = Modifier
                             .widthIn(max = SettingControlMaxWidth)
                             .fillMaxWidth()
                             .onFocusChanged { focusState ->
-                                if (isStudentNameFocused && !focusState.isFocused) {
-                                    commitStudentName()
-                                }
-                                isStudentNameFocused = focusState.isFocused
+                                viewModel.updateStudentNameFocus(focusState.isFocused)
+                                    ?.let(onStudentNameChanged)
                             },
                         label = { Text("Nombre") },
                         singleLine = true,
@@ -143,8 +127,9 @@ fun SettingsScreen(
                     ) {
                         PronounPreference.entries.forEachIndexed { index, preference ->
                             SegmentedButton(
-                                selected = preference == pronounPreference,
+                                selected = preference == uiState.pronounPreference,
                                 onClick = {
+                                    viewModel.updatePronounPreference(preference)
                                     onPronounPreferenceChanged(preference)
                                 },
                                 shape = SegmentedButtonDefaults.itemShape(
@@ -169,8 +154,9 @@ fun SettingsScreen(
                     ) {
                         ThemePreference.entries.forEachIndexed { index, preference ->
                             SegmentedButton(
-                                selected = preference == themePreference,
+                                selected = preference == uiState.themePreference,
                                 onClick = {
+                                    viewModel.updateThemePreference(preference)
                                     onThemePreferenceChanged(preference)
                                 },
                                 shape = SegmentedButtonDefaults.itemShape(

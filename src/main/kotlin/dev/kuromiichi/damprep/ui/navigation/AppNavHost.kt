@@ -1,17 +1,20 @@
 package dev.kuromiichi.damprep.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import dev.kuromiichi.damprep.data.lessons.LessonCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonContentCatalog
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.ui.home.HomeScreen
+import dev.kuromiichi.damprep.ui.home.HomeViewModel
 import dev.kuromiichi.damprep.ui.lessons.CurrentLessonScreen
 import dev.kuromiichi.damprep.ui.lessons.LessonListScreen
-import dev.kuromiichi.damprep.ui.lessons.toLessonListItemUiModel
+import dev.kuromiichi.damprep.ui.lessons.LessonListViewModel
 import dev.kuromiichi.damprep.ui.notes.NotesScreen
 import dev.kuromiichi.damprep.ui.onboarding.OnboardingScreen
 import dev.kuromiichi.damprep.ui.settings.SettingsScreen
@@ -50,10 +53,14 @@ fun AppNavHost(
         }
 
         composable<AppRoute.Home> {
+            val homeViewModel = remember { HomeViewModel() }
+
             HomeScreen(
-                studentName = studentName,
-                pronounPreference = pronounPreference,
-                completedLessons = 0,
+                uiState = homeViewModel.createUiState(
+                    studentName = studentName,
+                    pronounPreference = pronounPreference,
+                    completedLessons = 0,
+                ),
                 onContinueLesson = {
                     navController.navigate(AppRoute.Lesson(LessonContentCatalog.currentLesson.lessonId))
                 },
@@ -79,15 +86,11 @@ fun AppNavHost(
         }
 
         composable<AppRoute.Lessons> {
-            val lessons = LessonCatalog.lessons.mapIndexed { index, lesson ->
-                lesson.toLessonListItemUiModel(
-                    index = index,
-                    isUnlocked = LessonContentCatalog.hasContent(lesson.id),
-                )
-            }
+            val lessonListViewModel = remember { LessonListViewModel() }
+            val lessonListUiState by lessonListViewModel.uiState.collectAsState()
 
             LessonListScreen(
-                lessons = lessons,
+                uiState = lessonListUiState,
                 onBack = { navController.popBackStack() },
                 onLessonSelected = { lessonId ->
                     navController.navigate(AppRoute.Lesson(lessonId))

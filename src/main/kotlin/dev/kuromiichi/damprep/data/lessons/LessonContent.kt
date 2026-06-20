@@ -1,7 +1,7 @@
 package dev.kuromiichi.damprep.data.lessons
 
-import dev.kuromiichi.damprep.data.lessons.content.softwareDevelopmentLessonContent
-import dev.kuromiichi.damprep.data.lessons.content.welcomeRoadmapLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.softwareDevelopmentLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.welcomeRoadmapLessonContent
 
 data class LessonStep(
     val title: String,

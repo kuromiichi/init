@@ -30,7 +30,7 @@ import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
 
 @Composable
 fun LessonListScreen(
-    lessons: List<LessonListItemUiModel>,
+    uiState: LessonListUiState,
     onBack: () -> Unit,
     onLessonSelected: (String) -> Unit,
 ) {
@@ -48,7 +48,7 @@ fun LessonListScreen(
                 color = MaterialTheme.colorScheme.onBackground,
             )
             Spacer(modifier = Modifier.height(24.dp))
-            lessons.forEach { lesson ->
+            uiState.lessons.forEach { lesson ->
                 LessonListItem(
                     lesson = lesson,
                     onClick = { onLessonSelected(lesson.id) },
