@@ -48,17 +48,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen(
     themePreference: ThemePreference,
+    detectedOperatingSystem: TargetOperatingSystem?,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
-    onFinished: (studentName: String, pronounPreference: PronounPreference) -> Unit,
+    onFinished: (
+        studentName: String,
+        pronounPreference: PronounPreference,
+        targetOperatingSystem: TargetOperatingSystem,
+    ) -> Unit,
 ) {
     val viewModel = remember {
-        OnboardingViewModel(initialThemePreference = themePreference)
+        OnboardingViewModel(
+            initialThemePreference = themePreference,
+            initialTargetOperatingSystem = detectedOperatingSystem,
+        )
     }
     val uiState by viewModel.uiState.collectAsState()
 
@@ -124,16 +133,23 @@ fun OnboardingScreen(
                         step = animatedStep,
                         themePreference = uiState.themePreference,
                         pronounPreference = uiState.pronounPreference,
+                        targetOperatingSystem = uiState.targetOperatingSystem,
+                        isTargetOperatingSystemConfirmed = uiState.isTargetOperatingSystemConfirmed,
                         studentName = uiState.studentName,
                         onThemePreferenceChanged = { preference ->
                             viewModel.updateThemePreference(preference)
                             onThemePreferenceChanged(preference)
                         },
                         onPronounPreferenceChanged = viewModel::updatePronounPreference,
+                        onTargetOperatingSystemConfirmed = viewModel::confirmTargetOperatingSystem,
                         onStudentNameChanged = viewModel::updateStudentName,
                         onDone = {
                             viewModel.continueOnboarding()?.let { completion ->
-                                onFinished(completion.studentName, completion.pronounPreference)
+                                onFinished(
+                                    completion.studentName,
+                                    completion.pronounPreference,
+                                    completion.targetOperatingSystem,
+                                )
                             }
                         },
                     )
@@ -160,7 +176,11 @@ fun OnboardingScreen(
                 Button(
                     onClick = {
                         viewModel.continueOnboarding()?.let { completion ->
-                            onFinished(completion.studentName, completion.pronounPreference)
+                            onFinished(
+                                completion.studentName,
+                                completion.pronounPreference,
+                                completion.targetOperatingSystem,
+                            )
                         }
                     },
                     enabled = uiState.canContinue,
@@ -184,9 +204,12 @@ private fun OnboardingStepContent(
     step: OnboardingStep,
     themePreference: ThemePreference,
     pronounPreference: PronounPreference,
+    targetOperatingSystem: TargetOperatingSystem?,
+    isTargetOperatingSystemConfirmed: Boolean,
     studentName: String,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
     onPronounPreferenceChanged: (PronounPreference) -> Unit,
+    onTargetOperatingSystemConfirmed: (TargetOperatingSystem) -> Unit,
     onStudentNameChanged: (String) -> Unit,
     onDone: () -> Unit,
 ) {
@@ -224,6 +247,43 @@ private fun OnboardingStepContent(
                         }
                     }
                 }
+            }
+        }
+
+        AnimatedVisibility(visible = step.kind == OnboardingStepKind.OperatingSystem) {
+            Column {
+                Spacer(modifier = Modifier.height(28.dp))
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    TargetOperatingSystem.entries.forEachIndexed { index, operatingSystem ->
+                        SegmentedButton(
+                            selected = operatingSystem == targetOperatingSystem,
+                            onClick = {
+                                onTargetOperatingSystemConfirmed(operatingSystem)
+                            },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = TargetOperatingSystem.entries.size,
+                            ),
+                        ) {
+                            Text(operatingSystem.label)
+                        }
+                    }
+                }
+
+                Text(
+                    text = when {
+                        targetOperatingSystem == null -> "No hemos podido detectar el sistema actual. Elige una opción."
+                        isTargetOperatingSystemConfirmed ->
+                            "Usaremos instrucciones para ${targetOperatingSystem.label}."
+                        else ->
+                            "Hemos detectado ${targetOperatingSystem.label}. Pulsa una opción para confirmarla."
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 12.dp),
+                )
             }
         }
 

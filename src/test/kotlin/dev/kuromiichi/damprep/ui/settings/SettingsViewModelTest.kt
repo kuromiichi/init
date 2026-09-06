@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.settings
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,6 +13,7 @@ class SettingsViewModelTest {
         val viewModel = SettingsViewModel(
             studentName = "Emma",
             pronounPreference = PronounPreference.Feminine,
+            targetOperatingSystem = TargetOperatingSystem.MacOS,
             themePreference = ThemePreference.Dark,
         )
 
@@ -20,6 +22,7 @@ class SettingsViewModelTest {
         viewModel.syncPreferences(
             studentName = "Emma externa",
             pronounPreference = PronounPreference.Neutral,
+            targetOperatingSystem = TargetOperatingSystem.Linux,
             themePreference = ThemePreference.Light,
         )
 
@@ -28,6 +31,7 @@ class SettingsViewModelTest {
         assertEquals("Emma externa", state.savedStudentName)
         assertEquals("Em", state.studentNameDraft)
         assertEquals(PronounPreference.Neutral, state.pronounPreference)
+        assertEquals(TargetOperatingSystem.Linux, state.targetOperatingSystem)
         assertEquals(ThemePreference.Light, state.themePreference)
     }
 
@@ -36,12 +40,14 @@ class SettingsViewModelTest {
         val viewModel = SettingsViewModel(
             studentName = "Emma",
             pronounPreference = PronounPreference.Feminine,
+            targetOperatingSystem = TargetOperatingSystem.MacOS,
             themePreference = ThemePreference.Dark,
         )
 
         viewModel.syncPreferences(
             studentName = "Ari",
             pronounPreference = PronounPreference.Neutral,
+            targetOperatingSystem = TargetOperatingSystem.Windows,
             themePreference = ThemePreference.Light,
         )
 
@@ -49,6 +55,7 @@ class SettingsViewModelTest {
 
         assertEquals("Ari", state.savedStudentName)
         assertEquals("Ari", state.studentNameDraft)
+        assertEquals(TargetOperatingSystem.Windows, state.targetOperatingSystem)
     }
 
     @Test
@@ -56,6 +63,7 @@ class SettingsViewModelTest {
         val viewModel = SettingsViewModel(
             studentName = "Emma",
             pronounPreference = PronounPreference.Feminine,
+            targetOperatingSystem = TargetOperatingSystem.MacOS,
             themePreference = ThemePreference.Dark,
         )
 
@@ -71,6 +79,7 @@ class SettingsViewModelTest {
         val viewModel = SettingsViewModel(
             studentName = "Emma",
             pronounPreference = PronounPreference.Feminine,
+            targetOperatingSystem = TargetOperatingSystem.MacOS,
             themePreference = ThemePreference.Dark,
         )
 
@@ -79,5 +88,19 @@ class SettingsViewModelTest {
 
         assertEquals("Ari", viewModel.updateStudentNameFocus(isFocused = false))
         assertEquals("Ari", viewModel.uiState.value.savedStudentName)
+    }
+
+    @Test
+    fun `target operating system can be changed`() {
+        val viewModel = SettingsViewModel(
+            studentName = "Emma",
+            pronounPreference = PronounPreference.Feminine,
+            targetOperatingSystem = TargetOperatingSystem.MacOS,
+            themePreference = ThemePreference.Dark,
+        )
+
+        viewModel.updateTargetOperatingSystem(TargetOperatingSystem.Linux)
+
+        assertEquals(TargetOperatingSystem.Linux, viewModel.uiState.value.targetOperatingSystem)
     }
 }

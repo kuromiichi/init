@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.settings
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,12 +13,14 @@ data class SettingsUiState(
     val studentNameDraft: String,
     val isStudentNameFocused: Boolean = false,
     val pronounPreference: PronounPreference,
+    val targetOperatingSystem: TargetOperatingSystem?,
     val themePreference: ThemePreference,
 )
 
 class SettingsViewModel(
     studentName: String,
     pronounPreference: PronounPreference,
+    targetOperatingSystem: TargetOperatingSystem?,
     themePreference: ThemePreference,
 ) {
     private val _uiState = MutableStateFlow(
@@ -25,6 +28,7 @@ class SettingsViewModel(
             savedStudentName = studentName,
             studentNameDraft = studentName,
             pronounPreference = pronounPreference,
+            targetOperatingSystem = targetOperatingSystem,
             themePreference = themePreference,
         ),
     )
@@ -33,6 +37,7 @@ class SettingsViewModel(
     fun syncPreferences(
         studentName: String,
         pronounPreference: PronounPreference,
+        targetOperatingSystem: TargetOperatingSystem?,
         themePreference: ThemePreference,
     ) {
         _uiState.update { state ->
@@ -44,6 +49,7 @@ class SettingsViewModel(
                     studentName
                 },
                 pronounPreference = pronounPreference,
+                targetOperatingSystem = targetOperatingSystem,
                 themePreference = themePreference,
             )
         }
@@ -76,6 +82,12 @@ class SettingsViewModel(
     fun updateThemePreference(themePreference: ThemePreference) {
         _uiState.update { state ->
             state.copy(themePreference = themePreference)
+        }
+    }
+
+    fun updateTargetOperatingSystem(targetOperatingSystem: TargetOperatingSystem) {
+        _uiState.update { state ->
+            state.copy(targetOperatingSystem = targetOperatingSystem)
         }
     }
 

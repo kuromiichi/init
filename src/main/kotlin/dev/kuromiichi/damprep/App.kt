@@ -44,10 +44,12 @@ fun App() {
                     startDestination = uiState.startDestination,
                     studentName = preferences.studentName,
                     pronounPreference = preferences.pronounPreference,
+                    targetOperatingSystem = preferences.targetOperatingSystem,
                     themePreference = preferences.themePreference,
                     onThemePreferenceChanged = appViewModel::setThemePreference,
                     onStudentNameChanged = appViewModel::setStudentName,
                     onPronounPreferenceChanged = appViewModel::setPronounPreference,
+                    onTargetOperatingSystemChanged = appViewModel::setTargetOperatingSystem,
                     onOnboardingFinished = appViewModel::completeOnboarding,
                 )
             }

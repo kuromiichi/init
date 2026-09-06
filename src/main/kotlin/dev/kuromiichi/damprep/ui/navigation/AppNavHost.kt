@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import dev.kuromiichi.damprep.data.lessons.LessonContentCatalog
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.home.HomeScreen
 import dev.kuromiichi.damprep.ui.home.HomeViewModel
 import dev.kuromiichi.damprep.ui.lessons.CurrentLessonScreen
@@ -26,11 +27,13 @@ fun AppNavHost(
     startDestination: AppRoute,
     studentName: String,
     pronounPreference: PronounPreference,
+    targetOperatingSystem: TargetOperatingSystem?,
     themePreference: ThemePreference,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
     onStudentNameChanged: (String) -> Unit,
     onPronounPreferenceChanged: (PronounPreference) -> Unit,
-    onOnboardingFinished: (String, PronounPreference) -> Unit,
+    onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
+    onOnboardingFinished: (String, PronounPreference, TargetOperatingSystem) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -39,9 +42,10 @@ fun AppNavHost(
         composable<AppRoute.Onboarding> {
             OnboardingScreen(
                 themePreference = themePreference,
+                detectedOperatingSystem = targetOperatingSystem ?: TargetOperatingSystem.detect(),
                 onThemePreferenceChanged = onThemePreferenceChanged,
-                onFinished = { name, selectedPronounPreference ->
-                    onOnboardingFinished(name, selectedPronounPreference)
+                onFinished = { name, selectedPronounPreference, selectedOperatingSystem ->
+                    onOnboardingFinished(name, selectedPronounPreference, selectedOperatingSystem)
                     navController.navigate(AppRoute.Home) {
                         popUpTo<AppRoute.Onboarding> {
                             inclusive = true
@@ -106,9 +110,11 @@ fun AppNavHost(
             SettingsScreen(
                 studentName = studentName,
                 pronounPreference = pronounPreference,
+                targetOperatingSystem = targetOperatingSystem,
                 themePreference = themePreference,
                 onStudentNameChanged = onStudentNameChanged,
                 onPronounPreferenceChanged = onPronounPreferenceChanged,
+                onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
                 onThemePreferenceChanged = onThemePreferenceChanged,
                 onBack = { navController.popBackStack() },
             )

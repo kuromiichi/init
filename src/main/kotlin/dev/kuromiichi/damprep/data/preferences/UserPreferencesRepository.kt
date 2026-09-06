@@ -17,6 +17,7 @@ class UserPreferencesRepository(
             studentName = preferences[StudentNameKey].orEmpty(),
             themePreference = preferences[ThemePreferenceKey].toThemePreference(),
             pronounPreference = preferences[PronounPreferenceKey].toPronounPreference(),
+            targetOperatingSystem = preferences[TargetOperatingSystemKey].toTargetOperatingSystem(),
             onboardingCompleted = preferences[OnboardingCompletedKey] ?: false,
         )
     }
@@ -39,13 +40,21 @@ class UserPreferencesRepository(
         }
     }
 
+    suspend fun setTargetOperatingSystem(targetOperatingSystem: TargetOperatingSystem) {
+        dataStore.edit { preferences ->
+            preferences[TargetOperatingSystemKey] = targetOperatingSystem.name
+        }
+    }
+
     suspend fun completeOnboarding(
         studentName: String,
         pronounPreference: PronounPreference,
+        targetOperatingSystem: TargetOperatingSystem,
     ) {
         dataStore.edit { preferences ->
             preferences[StudentNameKey] = studentName
             preferences[PronounPreferenceKey] = pronounPreference.name
+            preferences[TargetOperatingSystemKey] = targetOperatingSystem.name
             preferences[OnboardingCompletedKey] = true
         }
     }
@@ -58,10 +67,15 @@ class UserPreferencesRepository(
         return PronounPreference.entries.firstOrNull { it.name == this } ?: PronounPreference.Neutral
     }
 
+    private fun String?.toTargetOperatingSystem(): TargetOperatingSystem? {
+        return TargetOperatingSystem.entries.firstOrNull { it.name == this }
+    }
+
     private companion object {
         val StudentNameKey = stringPreferencesKey("student_name")
         val ThemePreferenceKey = stringPreferencesKey("theme_preference")
         val PronounPreferenceKey = stringPreferencesKey("pronoun_preference")
+        val TargetOperatingSystemKey = stringPreferencesKey("target_operating_system")
         val OnboardingCompletedKey = booleanPreferencesKey("onboarding_completed")
     }
 }

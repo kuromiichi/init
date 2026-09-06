@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +27,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
 import dev.kuromiichi.damprep.ui.common.SettingControlMaxWidth
@@ -36,9 +39,11 @@ import dev.kuromiichi.damprep.ui.theme.ThemePreference
 fun SettingsScreen(
     studentName: String,
     pronounPreference: PronounPreference,
+    targetOperatingSystem: TargetOperatingSystem?,
     themePreference: ThemePreference,
     onStudentNameChanged: (String) -> Unit,
     onPronounPreferenceChanged: (PronounPreference) -> Unit,
+    onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -47,15 +52,17 @@ fun SettingsScreen(
         SettingsViewModel(
             studentName = studentName,
             pronounPreference = pronounPreference,
+            targetOperatingSystem = targetOperatingSystem,
             themePreference = themePreference,
         )
     }
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(studentName, pronounPreference, themePreference) {
+    LaunchedEffect(studentName, pronounPreference, targetOperatingSystem, themePreference) {
         viewModel.syncPreferences(
             studentName = studentName,
             pronounPreference = pronounPreference,
+            targetOperatingSystem = targetOperatingSystem,
             themePreference = themePreference,
         )
     }
@@ -70,7 +77,8 @@ fun SettingsScreen(
             modifier = Modifier
                 .weight(1f)
                 .widthIn(max = AppScreenContentMaxWidth)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
@@ -79,7 +87,7 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.onBackground,
             )
             Text(
-                text = "Ajusta cómo quieres que la aplicación se dirija a ti y cómo se ve mientras estudias.",
+                text = "Ajusta cómo quieres que la aplicación se dirija a ti, qué instrucciones muestra y cómo se ve mientras estudias.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 12.dp),
@@ -138,6 +146,33 @@ fun SettingsScreen(
                                 ),
                             ) {
                                 Text(preference.label)
+                            }
+                        }
+                    }
+                }
+
+                SettingRow(
+                    title = "Sistema operativo",
+                    description = "Elige el sistema cuyas instrucciones y comandos quieres seguir.",
+                ) {
+                    SingleChoiceSegmentedButtonRow(
+                        modifier = Modifier
+                            .widthIn(max = SettingControlMaxWidth)
+                            .fillMaxWidth(),
+                    ) {
+                        TargetOperatingSystem.entries.forEachIndexed { index, operatingSystem ->
+                            SegmentedButton(
+                                selected = operatingSystem == uiState.targetOperatingSystem,
+                                onClick = {
+                                    viewModel.updateTargetOperatingSystem(operatingSystem)
+                                    onTargetOperatingSystemChanged(operatingSystem)
+                                },
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = TargetOperatingSystem.entries.size,
+                                ),
+                            ) {
+                                Text(operatingSystem.label)
                             }
                         }
                     }

@@ -9,6 +9,7 @@ data class OnboardingStep(
 enum class OnboardingStepKind {
     Info,
     Theme,
+    OperatingSystem,
     Personalization,
 }
 
@@ -29,6 +30,11 @@ val onboardingSteps = listOf(
         kind = OnboardingStepKind.Theme,
         title = "Elige cómo quieres ver la app",
         body = "Puedes usar un tema claro, uno oscuro o dejar que DAM Prep siga la configuración de tu sistema.",
+    ),
+    OnboardingStep(
+        kind = OnboardingStepKind.OperatingSystem,
+        title = "Elige el sistema que utilizarás",
+        body = "Adaptaremos las instrucciones y los comandos al sistema operativo con el que quieras trabajar. Si reconocemos el sistema actual, aparecerá marcado como sugerencia, pero debes confirmar tu elección para continuar.",
     ),
     OnboardingStep(
         kind = OnboardingStepKind.Personalization,

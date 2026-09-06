@@ -22,6 +22,7 @@ class UserPreferencesRepositoryTest {
         assertEquals("", preferences.studentName)
         assertEquals(ThemePreference.System, preferences.themePreference)
         assertEquals(PronounPreference.Neutral, preferences.pronounPreference)
+        assertEquals(null, preferences.targetOperatingSystem)
         assertFalse(preferences.onboardingCompleted)
     }
 
@@ -59,11 +60,13 @@ class UserPreferencesRepositoryTest {
         repository.completeOnboarding(
             studentName = "Ada",
             pronounPreference = PronounPreference.Feminine,
+            targetOperatingSystem = TargetOperatingSystem.Linux,
         )
 
         val preferences = repository.preferences.first()
         assertEquals("Ada", preferences.studentName)
         assertEquals(PronounPreference.Feminine, preferences.pronounPreference)
+        assertEquals(TargetOperatingSystem.Linux, preferences.targetOperatingSystem)
         assertTrue(preferences.onboardingCompleted)
     }
 
@@ -75,6 +78,7 @@ class UserPreferencesRepositoryTest {
         repository.completeOnboarding(
             studentName = "Ada",
             pronounPreference = PronounPreference.Feminine,
+            targetOperatingSystem = TargetOperatingSystem.MacOS,
         )
 
         assertEquals(ThemePreference.Dark, repository.preferences.first().themePreference)
@@ -87,6 +91,7 @@ class UserPreferencesRepositoryTest {
         repository.completeOnboarding(
             studentName = "Ada",
             pronounPreference = PronounPreference.Feminine,
+            targetOperatingSystem = TargetOperatingSystem.Windows,
         )
         repository.setThemePreference(ThemePreference.Light)
 
@@ -95,6 +100,16 @@ class UserPreferencesRepositoryTest {
         assertEquals(PronounPreference.Feminine, preferences.pronounPreference)
         assertTrue(preferences.onboardingCompleted)
         assertEquals(ThemePreference.Light, preferences.themePreference)
+        assertEquals(TargetOperatingSystem.Windows, preferences.targetOperatingSystem)
+    }
+
+    @Test
+    fun `target operating system is persisted`() = runBlocking {
+        val repository = createRepository()
+
+        repository.setTargetOperatingSystem(TargetOperatingSystem.MacOS)
+
+        assertEquals(TargetOperatingSystem.MacOS, repository.preferences.first().targetOperatingSystem)
     }
 
     @Test
@@ -117,6 +132,17 @@ class UserPreferencesRepositoryTest {
         val repository = UserPreferencesRepository(dataStore)
 
         assertEquals(PronounPreference.Neutral, repository.preferences.first().pronounPreference)
+    }
+
+    @Test
+    fun `invalid stored target operating system falls back to no selection`() = runBlocking {
+        val dataStore = createDataStore()
+        dataStore.edit { preferences ->
+            preferences[stringPreferencesKey("target_operating_system")] = "Solaris"
+        }
+        val repository = UserPreferencesRepository(dataStore)
+
+        assertEquals(null, repository.preferences.first().targetOperatingSystem)
     }
 
     private fun createRepository(): UserPreferencesRepository {

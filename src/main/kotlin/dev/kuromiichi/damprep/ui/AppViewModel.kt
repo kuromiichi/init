@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.UserPreferences
 import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
 import dev.kuromiichi.damprep.ui.navigation.AppRoute
@@ -56,14 +57,22 @@ class AppViewModel(
         }
     }
 
+    fun setTargetOperatingSystem(targetOperatingSystem: TargetOperatingSystem) {
+        scope.launch {
+            preferencesRepository.setTargetOperatingSystem(targetOperatingSystem)
+        }
+    }
+
     fun completeOnboarding(
         studentName: String,
         pronounPreference: PronounPreference,
+        targetOperatingSystem: TargetOperatingSystem,
     ) {
         scope.launch {
             preferencesRepository.completeOnboarding(
                 studentName = studentName,
                 pronounPreference = pronounPreference,
+                targetOperatingSystem = targetOperatingSystem,
             )
         }
     }

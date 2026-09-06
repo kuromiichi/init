@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.onboarding
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.update
 data class OnboardingCompletion(
     val studentName: String,
     val pronounPreference: PronounPreference,
+    val targetOperatingSystem: TargetOperatingSystem,
 )
 
 data class OnboardingUiState(
@@ -18,23 +20,31 @@ data class OnboardingUiState(
     val studentName: String = "",
     val pronounPreference: PronounPreference = PronounPreference.Neutral,
     val themePreference: ThemePreference = ThemePreference.System,
+    val targetOperatingSystem: TargetOperatingSystem? = null,
+    val isTargetOperatingSystemConfirmed: Boolean = false,
 ) {
     val currentStep: OnboardingStep = steps[currentStepIndex]
     val isLastStep: Boolean = currentStepIndex == steps.lastIndex
     val isFirstStep: Boolean = currentStepIndex == 0
     val normalizedName: String = studentName.trim()
-    val canContinue: Boolean =
-        currentStep.kind != OnboardingStepKind.Personalization || normalizedName.isNotEmpty()
+    val canContinue: Boolean = when (currentStep.kind) {
+        OnboardingStepKind.OperatingSystem ->
+            targetOperatingSystem != null && isTargetOperatingSystemConfirmed
+        OnboardingStepKind.Personalization -> normalizedName.isNotEmpty()
+        else -> true
+    }
 }
 
 class OnboardingViewModel(
     initialThemePreference: ThemePreference,
+    initialTargetOperatingSystem: TargetOperatingSystem? = TargetOperatingSystem.detect(),
     private val steps: List<OnboardingStep> = onboardingSteps,
 ) {
     private val _uiState = MutableStateFlow(
         OnboardingUiState(
             steps = steps,
             themePreference = initialThemePreference,
+            targetOperatingSystem = initialTargetOperatingSystem,
         ),
     )
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
@@ -63,6 +73,15 @@ class OnboardingViewModel(
         }
     }
 
+    fun confirmTargetOperatingSystem(targetOperatingSystem: TargetOperatingSystem) {
+        _uiState.update { state ->
+            state.copy(
+                targetOperatingSystem = targetOperatingSystem,
+                isTargetOperatingSystemConfirmed = true,
+            )
+        }
+    }
+
     fun goToPreviousStep() {
         _uiState.update { state ->
             if (state.isFirstStep) {
@@ -80,9 +99,14 @@ class OnboardingViewModel(
         }
 
         if (state.isLastStep) {
+            if (!state.isTargetOperatingSystemConfirmed) {
+                return null
+            }
+            val targetOperatingSystem = state.targetOperatingSystem ?: return null
             return OnboardingCompletion(
                 studentName = state.normalizedName,
                 pronounPreference = state.pronounPreference,
+                targetOperatingSystem = targetOperatingSystem,
             )
         }
 

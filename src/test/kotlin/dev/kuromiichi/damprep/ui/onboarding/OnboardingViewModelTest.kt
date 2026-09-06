@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.onboarding
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,19 +44,61 @@ class OnboardingViewModelTest {
     }
 
     @Test
+    fun `detected operating system is preselected but requires confirmation`() {
+        val viewModel = OnboardingViewModel(
+            initialThemePreference = ThemePreference.System,
+            initialTargetOperatingSystem = TargetOperatingSystem.MacOS,
+            steps = listOf(
+                step(kind = OnboardingStepKind.OperatingSystem),
+                step(),
+            ),
+        )
+
+        assertEquals(TargetOperatingSystem.MacOS, viewModel.uiState.value.targetOperatingSystem)
+        assertFalse(viewModel.uiState.value.isTargetOperatingSystemConfirmed)
+        assertFalse(viewModel.uiState.value.canContinue)
+        assertNull(viewModel.continueOnboarding())
+        assertEquals(0, viewModel.uiState.value.currentStepIndex)
+
+        viewModel.confirmTargetOperatingSystem(TargetOperatingSystem.MacOS)
+
+        assertTrue(viewModel.uiState.value.isTargetOperatingSystemConfirmed)
+        assertTrue(viewModel.uiState.value.canContinue)
+        assertNull(viewModel.continueOnboarding())
+        assertEquals(1, viewModel.uiState.value.currentStepIndex)
+    }
+
+    @Test
+    fun `user can confirm a different operating system from the detected one`() {
+        val viewModel = OnboardingViewModel(
+            initialThemePreference = ThemePreference.System,
+            initialTargetOperatingSystem = TargetOperatingSystem.MacOS,
+            steps = listOf(step(kind = OnboardingStepKind.OperatingSystem)),
+        )
+
+        viewModel.confirmTargetOperatingSystem(TargetOperatingSystem.Windows)
+        val completion = viewModel.continueOnboarding()
+
+        assertEquals(TargetOperatingSystem.Windows, completion?.targetOperatingSystem)
+    }
+
+    @Test
     fun `last onboarding step returns trimmed completion data`() {
         val viewModel = OnboardingViewModel(
             initialThemePreference = ThemePreference.System,
+            initialTargetOperatingSystem = TargetOperatingSystem.Linux,
             steps = listOf(step()),
         )
 
         viewModel.updateStudentName(" Emma ")
         viewModel.updatePronounPreference(PronounPreference.Feminine)
+        viewModel.confirmTargetOperatingSystem(TargetOperatingSystem.Linux)
 
         val completion = viewModel.continueOnboarding()
 
         assertEquals("Emma", completion?.studentName)
         assertEquals(PronounPreference.Feminine, completion?.pronounPreference)
+        assertEquals(TargetOperatingSystem.Linux, completion?.targetOperatingSystem)
         assertEquals(0, viewModel.uiState.value.currentStepIndex)
     }
 

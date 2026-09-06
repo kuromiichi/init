@@ -20,7 +20,7 @@ El proyecto se encuentra en una fase inicial funcional.
 
 Actualmente incluye:
 
-- onboarding y preferencias de usuario persistentes;
+- onboarding y preferencias persistentes de nombre, tratamiento, sistema operativo y tema;
 - temas claro, oscuro y según el sistema;
 - navegación entre portada, listado y lecciones;
 - navegación por botones y teclado dentro de las lecciones;
