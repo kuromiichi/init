@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import dev.kuromiichi.damprep.data.lessons.LessonCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonContentCatalog
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
@@ -85,6 +86,10 @@ fun AppNavHost(
 
             CurrentLessonScreen(
                 lessonId = route.lessonId,
+                lessonTitle = LessonCatalog.lessons
+                    .firstOrNull { lesson -> lesson.id == route.lessonId }
+                    ?.title
+                    ?: "Lección",
                 targetOperatingSystem = targetOperatingSystem ?: TargetOperatingSystem.detect(),
                 onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
                 onBack = { navController.popBackStack() },

@@ -93,6 +93,7 @@ private val LessonScrollFadeHeight = 48.dp
 @Composable
 fun CurrentLessonScreen(
     lessonId: String,
+    lessonTitle: String,
     targetOperatingSystem: TargetOperatingSystem?,
     onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
     onBack: () -> Unit,
@@ -118,6 +119,7 @@ fun CurrentLessonScreen(
     AppScreen(
         onBack = onBack,
         contentMaxWidth = LessonContentMaxWidth,
+        topBarTitle = lessonTitle,
         topBarActions = {
             if (uiState.currentStep?.isOperatingSystemSensitive == true) {
                 OperatingSystemDropdown(
