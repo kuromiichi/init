@@ -422,13 +422,20 @@ fun ToolLogoCards(
     tools: List<LearningToolCard>,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Column(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        tools.forEach { tool ->
-            ToolLogoCard(tool = tool)
+        tools.chunked(2).forEach { rowTools ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                rowTools.forEach { tool ->
+                    ToolLogoCard(tool = tool)
+                }
+            }
         }
     }
 }

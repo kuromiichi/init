@@ -14,6 +14,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -322,6 +323,11 @@ private fun OnboardingProgressDots(
     stepCount: Int,
 ) {
     Row(
+        modifier = Modifier.progressSemantics(
+            value = (currentStepIndex + 1).toFloat(),
+            valueRange = 0f..stepCount.toFloat(),
+            steps = (stepCount - 1).coerceAtLeast(0),
+        ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

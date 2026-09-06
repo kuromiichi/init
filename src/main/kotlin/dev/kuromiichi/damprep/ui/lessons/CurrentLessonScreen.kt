@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -462,6 +463,11 @@ private fun LessonProgressDots(
     stepCount: Int,
 ) {
     Row(
+        modifier = Modifier.progressSemantics(
+            value = (currentStepIndex + 1).toFloat(),
+            valueRange = 0f..stepCount.toFloat(),
+            steps = (stepCount - 1).coerceAtLeast(0),
+        ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

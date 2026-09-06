@@ -184,9 +184,10 @@ private fun SubjectTag(subjectArea: SubjectArea) {
     }
 }
 
+@Composable
 private fun SubjectArea.accentColor(): Color =
     when (this) {
-        SubjectArea.Mixed -> Color(0xFFF5BDE6)
-        SubjectArea.Programming -> Color(0xFFA6DA95)
-        SubjectArea.DevelopmentEnvironments -> Color(0xFF8AADF4)
+        SubjectArea.Mixed -> MaterialTheme.colorScheme.secondary
+        SubjectArea.Programming -> MaterialTheme.colorScheme.tertiary
+        SubjectArea.DevelopmentEnvironments -> MaterialTheme.colorScheme.primary
     }
