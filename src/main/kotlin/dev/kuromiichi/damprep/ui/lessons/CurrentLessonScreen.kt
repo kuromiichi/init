@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,6 +78,7 @@ import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
 import dev.kuromiichi.damprep.ui.common.OperatingSystemDropdown
 import dev.kuromiichi.damprep.ui.common.ToolLogoCards
 import dev.kuromiichi.damprep.ui.common.hoverScale
+import dev.kuromiichi.damprep.ui.common.verticalFadingEdges
 import org.jetbrains.compose.resources.DrawableResource
 
 private val LessonContentMaxWidth = 1240.dp
@@ -85,6 +87,7 @@ private val LessonVisualMaxWidth = 420.dp
 private val LessonCompactVisualMaxWidth = 440.dp
 private val LessonRichVisualMaxWidth = 560.dp
 private val LessonCompactRichVisualMaxWidth = 560.dp
+private val LessonScrollFadeHeight = 48.dp
 
 @Composable
 fun CurrentLessonScreen(
@@ -105,6 +108,7 @@ fun CurrentLessonScreen(
     }
 
     val focusRequester = remember { FocusRequester() }
+    val scrollState = key(lessonId, uiState.currentStepIndex) { rememberScrollState() }
 
     LaunchedEffect(lessonContent.lessonId) {
         focusRequester.requestFocus()
@@ -162,18 +166,25 @@ fun CurrentLessonScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .verticalFadingEdges(
+                        scrollState = scrollState,
+                        color = MaterialTheme.colorScheme.background,
+                        length = LessonScrollFadeHeight,
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
+                        .verticalScroll(scrollState),
                     contentAlignment = Alignment.Center,
                 ) {
                     AnimatedContent(
                         targetState = uiState.currentStepIndex,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = LessonScrollFadeHeight),
                         transitionSpec = {
                             val direction = if (targetState > initialState) 1 else -1
 
