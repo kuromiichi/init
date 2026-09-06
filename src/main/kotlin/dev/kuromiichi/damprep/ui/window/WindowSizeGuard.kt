@@ -1,9 +1,8 @@
 package dev.kuromiichi.damprep.ui.window
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -26,18 +25,15 @@ fun WindowSizeGuard(content: @Composable () -> Unit) {
         val isTooSmall = maxWidth < WindowMetrics.MinimumUsableWidth ||
             maxHeight < WindowMetrics.MinimumUsableHeight
 
-        AnimatedContent(
-            targetState = isTooSmall,
-            transitionSpec = {
-                fadeIn().togetherWith(fadeOut())
-            },
-            label = "Window size guard",
-        ) { showWarning ->
-            if (showWarning) {
-                WindowTooSmallScreen()
-            } else {
-                content()
-            }
+        content()
+
+        AnimatedVisibility(
+            visible = isTooSmall,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            label = "Window size warning",
+        ) {
+            WindowTooSmallScreen()
         }
     }
 }
