@@ -113,20 +113,20 @@ class LessonContentCatalogTest {
         assertNotNull(cycleStep)
         assertTrue(visual is LessonVisualContent.Cycle)
         assertEquals(
-            listOf("Planificar", "Analizar", "Diseñar", "Codificar", "Probar", "Mantener"),
+            listOf("Analizar", "Diseñar", "Codificar", "Probar", "Documentar", "Desplegar", "Mantener"),
             visual.steps,
         )
     }
 
     @Test
-    fun `error explanation step provides syntax and semantic code examples`() {
+    fun `error explanation step provides syntax and logic code examples`() {
         val softwareLesson = LessonContentCatalog.findByLessonId("software-development")
-        val errorStep = softwareLesson?.steps?.firstOrNull { it.title == "Errores: reglas y significado" }
+        val errorStep = softwareLesson?.steps?.firstOrNull { it.title == "Errores: sintaxis y lógica" }
         val visual = errorStep?.visual
 
         assertNotNull(errorStep)
         assertTrue(visual is LessonVisualContent.CodeExamples)
-        assertEquals(listOf("Error sintáctico", "Error semántico"), visual.examples.map { it.title })
+        assertEquals(listOf("Error sintáctico", "Error lógico"), visual.examples.map { it.title })
         val syntaxExampleText = visual.examples.first().lines.joinToString("\n") { line ->
             line.tokens.joinToString("") { token -> token.text }
         }

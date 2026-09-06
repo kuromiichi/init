@@ -42,21 +42,22 @@ val softwareDevelopmentLessonContent = LessonContent(
         ),
         LessonStep(
             title = "El ciclo básico de desarrollo",
-            body = "Para construir software con cabeza solemos pasar por varias fases: planificar, analizar, diseñar, codificar, probar, desplegar y mantener. No hace falta memorizar esos nombres ahora, pero sí entender la idea: no se trata de lanzarse a escribir código a ciegas. Primero aclaramos qué hay que hacer, luego pensamos cómo hacerlo, después lo construimos y finalmente comprobamos si realmente funciona.",
+            body = "Para construir software con cabeza solemos pasar por varias fases: analizar, diseñar, codificar, probar, documentar, desplegar y mantener. No hace falta memorizar esos nombres ahora, pero sí entender la idea: no se trata de lanzarse a escribir código a ciegas. Primero aclaramos qué hay que hacer, luego pensamos cómo hacerlo, después lo construimos y finalmente comprobamos si realmente funciona.",
             visual = LessonVisualContent.Cycle(
                 steps = listOf(
-                    "Planificar",
                     "Analizar",
                     "Diseñar",
                     "Codificar",
                     "Probar",
+                    "Documentar",
+                    "Desplegar",
                     "Mantener",
                 ),
             ),
         ),
         LessonStep(
-            title = "Errores: reglas y significado",
-            body = "Al programar aparecerán errores, y eso no significa que estés haciendo algo mal: significa que estás trabajando con un sistema preciso. Algunos errores son sintácticos: el código no respeta las reglas del lenguaje, como una frase con palabras mal colocadas. Otros son semánticos: el código se puede ejecutar, pero la solución no hace lo que queríamos. Aprender a distinguirlos te ahorrará mucha frustración.",
+            title = "Errores: sintaxis y lógica",
+            body = "Al programar aparecerán errores, y eso no significa que estés haciendo algo mal: significa que estás trabajando con un sistema preciso. Algunos errores son sintácticos: el código no respeta las reglas del lenguaje, como una frase con palabras mal colocadas. Otros son lógicos: el código se puede ejecutar, pero la solución no hace lo que queríamos. Aprender a distinguirlos te ahorrará mucha frustración.",
             visual = LessonVisualContent.CodeExamples(
                 examples = listOf(
                     LessonCodeExample(
@@ -71,7 +72,7 @@ val softwareDevelopmentLessonContent = LessonContent(
                         note = "Faltan comillas y paréntesis de cierre: la frase queda incompleta.",
                     ),
                     LessonCodeExample(
-                        title = "Error semántico",
+                        title = "Error lógico",
                         lines = listOf(
                             codeLine(
                                 keyword("val"),
