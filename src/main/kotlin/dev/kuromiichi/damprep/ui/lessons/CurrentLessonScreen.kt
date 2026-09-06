@@ -61,6 +61,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonCodeTokenKind
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonToolLogo
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
 import dev.kuromiichi.damprep.ui.common.CodeExamplesVisual
@@ -73,6 +74,7 @@ import dev.kuromiichi.damprep.ui.common.LearningCodeToken
 import dev.kuromiichi.damprep.ui.common.LearningCodeTokenKind
 import dev.kuromiichi.damprep.ui.common.LearningToolCard
 import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
+import dev.kuromiichi.damprep.ui.common.OperatingSystemDropdown
 import dev.kuromiichi.damprep.ui.common.ToolLogoCards
 import dev.kuromiichi.damprep.ui.common.hoverScale
 import org.jetbrains.compose.resources.DrawableResource
@@ -87,6 +89,8 @@ private val LessonCompactRichVisualMaxWidth = 560.dp
 @Composable
 fun CurrentLessonScreen(
     lessonId: String,
+    targetOperatingSystem: TargetOperatingSystem?,
+    onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
     onBack: () -> Unit,
 ) {
     val viewModel = remember(lessonId) {
@@ -109,6 +113,14 @@ fun CurrentLessonScreen(
     AppScreen(
         onBack = onBack,
         contentMaxWidth = LessonContentMaxWidth,
+        topBarActions = {
+            if (uiState.currentStep?.isOperatingSystemSensitive == true) {
+                OperatingSystemDropdown(
+                    selectedOperatingSystem = targetOperatingSystem,
+                    onOperatingSystemSelected = onTargetOperatingSystemChanged,
+                )
+            }
+        },
     ) {
         Column(
             modifier = Modifier

@@ -85,6 +85,8 @@ fun AppNavHost(
 
             CurrentLessonScreen(
                 lessonId = route.lessonId,
+                targetOperatingSystem = targetOperatingSystem ?: TargetOperatingSystem.detect(),
+                onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
                 onBack = { navController.popBackStack() },
             )
         }

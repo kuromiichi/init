@@ -7,6 +7,7 @@ data class LessonStep(
     val title: String,
     val body: String,
     val visual: LessonVisualContent,
+    val isOperatingSystemSensitive: Boolean = false,
 )
 
 sealed interface LessonVisualContent {
