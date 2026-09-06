@@ -30,6 +30,7 @@ import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
+import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
 import dev.kuromiichi.damprep.ui.common.SettingControlMaxWidth
 import dev.kuromiichi.damprep.ui.common.SettingRow
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
@@ -155,27 +156,16 @@ fun SettingsScreen(
                     title = "Sistema operativo",
                     description = "Elige el sistema cuyas instrucciones y comandos quieres seguir.",
                 ) {
-                    SingleChoiceSegmentedButtonRow(
+                    OperatingSystemSelector(
+                        selectedOperatingSystem = uiState.targetOperatingSystem,
+                        onOperatingSystemSelected = { operatingSystem ->
+                            viewModel.updateTargetOperatingSystem(operatingSystem)
+                            onTargetOperatingSystemChanged(operatingSystem)
+                        },
                         modifier = Modifier
                             .widthIn(max = SettingControlMaxWidth)
                             .fillMaxWidth(),
-                    ) {
-                        TargetOperatingSystem.entries.forEachIndexed { index, operatingSystem ->
-                            SegmentedButton(
-                                selected = operatingSystem == uiState.targetOperatingSystem,
-                                onClick = {
-                                    viewModel.updateTargetOperatingSystem(operatingSystem)
-                                    onTargetOperatingSystemChanged(operatingSystem)
-                                },
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    index = index,
-                                    count = TargetOperatingSystem.entries.size,
-                                ),
-                            ) {
-                                Text(operatingSystem.label)
-                            }
-                        }
-                    }
+                    )
                 }
 
                 SettingRow(

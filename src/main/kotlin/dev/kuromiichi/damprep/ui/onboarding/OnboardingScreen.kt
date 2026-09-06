@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
+import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
 import dev.kuromiichi.damprep.ui.theme.ThemePreference
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -253,24 +254,11 @@ private fun OnboardingStepContent(
         AnimatedVisibility(visible = step.kind == OnboardingStepKind.OperatingSystem) {
             Column {
                 Spacer(modifier = Modifier.height(28.dp))
-                SingleChoiceSegmentedButtonRow(
+                OperatingSystemSelector(
+                    selectedOperatingSystem = targetOperatingSystem,
+                    onOperatingSystemSelected = onTargetOperatingSystemConfirmed,
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    TargetOperatingSystem.entries.forEachIndexed { index, operatingSystem ->
-                        SegmentedButton(
-                            selected = operatingSystem == targetOperatingSystem,
-                            onClick = {
-                                onTargetOperatingSystemConfirmed(operatingSystem)
-                            },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = TargetOperatingSystem.entries.size,
-                            ),
-                        ) {
-                            Text(operatingSystem.label)
-                        }
-                    }
-                }
+                )
 
                 Text(
                     text = when {
