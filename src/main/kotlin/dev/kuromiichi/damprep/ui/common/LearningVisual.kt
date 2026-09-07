@@ -379,8 +379,31 @@ fun CycleDiagram(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
-        val diagramSize = if (maxWidth < 380.dp) 300.dp else 340.dp
-        val nodeRadius = if (maxWidth < 380.dp) 112.dp else 128.dp
+        if (maxWidth < 480.dp) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                steps.forEachIndexed { index, step ->
+                    CycleStepNode(
+                        index = index + 1,
+                        text = step,
+                    )
+                    if (index < steps.lastIndex) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowDownward,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+            }
+            return@BoxWithConstraints
+        }
+
+        val diagramSize = 480.dp
+        val nodeRadius = 164.dp
 
         Box(
             modifier = Modifier.size(diagramSize),
@@ -389,11 +412,10 @@ fun CycleDiagram(
             val ringColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.42f)
 
             Canvas(modifier = Modifier.matchParentSize()) {
-                val radius = size.minDimension * 0.34f
                 val center = Offset(size.width / 2f, size.height / 2f)
                 drawCircle(
                     color = ringColor,
-                    radius = radius,
+                    radius = nodeRadius.toPx(),
                     center = center,
                     style = Stroke(
                         width = 3.dp.toPx(),
