@@ -12,11 +12,12 @@ data class CurrentLessonUiState(
     val lessonContent: LessonContent?,
     val currentStepIndex: Int = 0,
     val confirmedCheckpointIds: Set<String> = emptySet(),
+    val isCompletionVisible: Boolean = false,
 ) {
     val currentStep: LessonStep? = lessonContent?.steps?.getOrNull(currentStepIndex)
     val stepCount: Int = lessonContent?.steps?.size ?: 0
     val isMissing: Boolean = lessonContent == null
-    val canGoBack: Boolean = currentStepIndex > 0
+    val canGoBack: Boolean = isCompletionVisible || currentStepIndex > 0
     val isLastStep: Boolean = lessonContent != null && currentStepIndex == stepCount - 1
     val isCurrentCheckpointConfirmed: Boolean
         get() = currentStep?.checkpoint?.id?.let(confirmedCheckpointIds::contains) ?: true
@@ -24,9 +25,10 @@ data class CurrentLessonUiState(
         get() =
             lessonContent != null &&
                 currentStepIndex < stepCount - 1 &&
-                isCurrentCheckpointConfirmed
-    val canFinish: Boolean
-        get() = isLastStep && isCurrentCheckpointConfirmed
+                isCurrentCheckpointConfirmed &&
+                !isCompletionVisible
+    val canShowCompletion: Boolean
+        get() = isLastStep && isCurrentCheckpointConfirmed && !isCompletionVisible
 }
 
 class CurrentLessonViewModel(
@@ -43,20 +45,20 @@ class CurrentLessonViewModel(
 
     fun goToPreviousStep() {
         _uiState.update { state ->
-            if (state.canGoBack) {
-                state.copy(currentStepIndex = state.currentStepIndex - 1)
-            } else {
-                state
+            when {
+                state.isCompletionVisible -> state.copy(isCompletionVisible = false)
+                state.canGoBack -> state.copy(currentStepIndex = state.currentStepIndex - 1)
+                else -> state
             }
         }
     }
 
     fun goToNextStep() {
         _uiState.update { state ->
-            if (state.canGoForward) {
-                state.copy(currentStepIndex = state.currentStepIndex + 1)
-            } else {
-                state
+            when {
+                state.canGoForward -> state.copy(currentStepIndex = state.currentStepIndex + 1)
+                state.canShowCompletion -> state.copy(isCompletionVisible = true)
+                else -> state
             }
         }
     }

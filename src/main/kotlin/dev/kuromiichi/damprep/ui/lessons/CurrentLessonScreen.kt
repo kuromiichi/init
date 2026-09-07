@@ -82,6 +82,7 @@ fun CurrentLessonScreen(
         key(
             lessonId,
             uiState.currentStepIndex,
+            uiState.isCompletionVisible,
             targetOperatingSystem,
         ) {
             rememberScrollState()
@@ -92,11 +93,16 @@ fun CurrentLessonScreen(
     }
 
     AppScreen(
-        onBack = onBack,
+        onBack =
+            if (uiState.isCompletionVisible) {
+                viewModel::goToPreviousStep
+            } else {
+                onBack
+            },
         contentMaxWidth = LessonContentMaxWidth,
         topBarTitle = lessonTitle,
         topBarActions = {
-            if (uiState.currentStep?.isOperatingSystemSensitive == true) {
+            if (!uiState.isCompletionVisible && uiState.currentStep?.isOperatingSystemSensitive == true) {
                 OperatingSystemDropdown(
                     selectedOperatingSystem = targetOperatingSystem,
                     onOperatingSystemSelected = onTargetOperatingSystemChanged,
@@ -133,8 +139,8 @@ fun CurrentLessonScreen(
                                         true
                                     }
 
-                                    uiState.canFinish -> {
-                                        onLessonFinished()
+                                    uiState.canShowCompletion -> {
+                                        viewModel.goToNextStep()
                                         true
                                     }
 
@@ -168,13 +174,20 @@ fun CurrentLessonScreen(
                     contentAlignment = Alignment.Center,
                 ) {
                     AnimatedContent(
-                        targetState = uiState.currentStepIndex,
+                        targetState = uiState.currentStepIndex to uiState.isCompletionVisible,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = LessonScrollFadeHeight),
                         transitionSpec = {
-                            val direction = if (targetState > initialState) 1 else -1
+                            val direction =
+                                if (
+                                    targetState.second || targetState.first > initialState.first
+                                ) {
+                                    1
+                                } else {
+                                    -1
+                                }
 
                             (
                                 fadeIn(animationSpec = tween(durationMillis = 220)) +
@@ -199,35 +212,41 @@ fun CurrentLessonScreen(
                             ).using(SizeTransform(clip = true))
                         },
                         label = "Lesson step",
-                    ) { animatedStepIndex ->
-                        val step = lessonContent.steps[animatedStepIndex]
-                        LessonStepContent(
-                            step = step,
-                            targetOperatingSystem = targetOperatingSystem,
-                            isLastStep = animatedStepIndex == lessonContent.steps.lastIndex,
-                            isCheckpointConfirmed =
-                                step.checkpoint
-                                    ?.id
-                                    ?.let(uiState.confirmedCheckpointIds::contains)
-                                    ?: true,
-                            onCheckpointConfirmationChanged =
-                                viewModel::setCurrentCheckpointConfirmed,
-                        )
+                    ) { (animatedStepIndex, isCompletionVisible) ->
+                        if (isCompletionVisible) {
+                            LessonCompletion(
+                                lessonTitle = lessonTitle,
+                                onFinish = onLessonFinished,
+                            )
+                        } else {
+                            val step = lessonContent.steps[animatedStepIndex]
+                            LessonStepContent(
+                                step = step,
+                                targetOperatingSystem = targetOperatingSystem,
+                                isLastStep = animatedStepIndex == lessonContent.steps.lastIndex,
+                                isCheckpointConfirmed =
+                                    step.checkpoint
+                                        ?.id
+                                        ?.let(uiState.confirmedCheckpointIds::contains)
+                                        ?: true,
+                                onCheckpointConfirmationChanged =
+                                    viewModel::setCurrentCheckpointConfirmed,
+                            )
+                        }
                     }
                 }
             }
 
-            LessonStepNavigation(
-                currentStepIndex = uiState.currentStepIndex,
-                stepCount = uiState.stepCount,
-                canGoBack = uiState.canGoBack,
-                canGoForward = uiState.canGoForward,
-                isLastStep = uiState.isLastStep,
-                canFinish = uiState.canFinish,
-                onPrevious = viewModel::goToPreviousStep,
-                onNext = viewModel::goToNextStep,
-                onFinish = onLessonFinished,
-            )
+            if (!uiState.isCompletionVisible) {
+                LessonStepNavigation(
+                    currentStepIndex = uiState.currentStepIndex,
+                    stepCount = uiState.stepCount,
+                    canGoBack = uiState.canGoBack,
+                    canContinue = uiState.canGoForward || uiState.canShowCompletion,
+                    onPrevious = viewModel::goToPreviousStep,
+                    onNext = viewModel::goToNextStep,
+                )
+            }
         }
     }
 }

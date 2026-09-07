@@ -26,7 +26,7 @@ class CurrentLessonViewModelTest {
         assertEquals(0, state.stepCount)
         assertFalse(state.canGoBack)
         assertFalse(state.canGoForward)
-        assertFalse(state.canFinish)
+        assertFalse(state.canShowCompletion)
     }
 
     @Test
@@ -52,10 +52,15 @@ class CurrentLessonViewModelTest {
         viewModel.goToNextStep()
         assertEquals(2, viewModel.uiState.value.currentStepIndex)
         assertFalse(viewModel.uiState.value.canGoForward)
-        assertTrue(viewModel.uiState.value.canFinish)
+        assertTrue(viewModel.uiState.value.canShowCompletion)
 
         viewModel.goToNextStep()
         assertEquals(2, viewModel.uiState.value.currentStepIndex)
+        assertTrue(viewModel.uiState.value.isCompletionVisible)
+
+        viewModel.goToPreviousStep()
+        assertEquals(2, viewModel.uiState.value.currentStepIndex)
+        assertFalse(viewModel.uiState.value.isCompletionVisible)
     }
 
     @Test
@@ -136,11 +141,16 @@ class CurrentLessonViewModelTest {
         viewModel.goToNextStep()
 
         assertTrue(viewModel.uiState.value.isLastStep)
-        assertFalse(viewModel.uiState.value.canFinish)
+        assertFalse(viewModel.uiState.value.canShowCompletion)
 
         viewModel.setCurrentCheckpointConfirmed(true)
 
-        assertTrue(viewModel.uiState.value.canFinish)
+        assertTrue(viewModel.uiState.value.canShowCompletion)
+
+        viewModel.goToNextStep()
+
+        assertTrue(viewModel.uiState.value.isCompletionVisible)
+        assertFalse(viewModel.uiState.value.canShowCompletion)
     }
 
     private fun sampleLessonContent(): LessonContent =

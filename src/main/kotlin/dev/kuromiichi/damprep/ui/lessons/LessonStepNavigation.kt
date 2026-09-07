@@ -16,7 +16,6 @@ import androidx.compose.foundation.progressSemantics
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,12 +34,9 @@ internal fun LessonStepNavigation(
     currentStepIndex: Int,
     stepCount: Int,
     canGoBack: Boolean,
-    canGoForward: Boolean,
-    isLastStep: Boolean,
-    canFinish: Boolean,
+    canContinue: Boolean,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
-    onFinish: () -> Unit,
 ) {
     Row(
         modifier =
@@ -66,28 +62,20 @@ internal fun LessonStepNavigation(
             stepCount = stepCount,
         )
 
-        if (isLastStep) {
-            FilledIconButton(
-                onClick = onFinish,
-                enabled = canFinish,
-                modifier = Modifier.hoverScale(enabled = canFinish),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Check,
-                    contentDescription = "Finalizar lección",
-                )
-            }
-        } else {
-            FilledIconButton(
-                onClick = onNext,
-                enabled = canGoForward,
-                modifier = Modifier.hoverScale(enabled = canGoForward),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = "Paso siguiente",
-                )
-            }
+        FilledIconButton(
+            onClick = onNext,
+            enabled = canContinue,
+            modifier = Modifier.hoverScale(enabled = canContinue),
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription =
+                    if (currentStepIndex == stepCount - 1) {
+                        "Continuar al final de la lección"
+                    } else {
+                        "Paso siguiente"
+                    },
+            )
         }
     }
 }
