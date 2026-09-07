@@ -93,6 +93,36 @@ fun CurrentLessonScreen(
     }
 
     AppScreen(
+        modifier =
+            Modifier
+                .focusRequester(focusRequester)
+                .onPreviewKeyEvent { event ->
+                    if (event.type != KeyEventType.KeyDown) {
+                        return@onPreviewKeyEvent false
+                    }
+
+                    when (event.key) {
+                        Key.DirectionLeft -> {
+                            if (uiState.canGoBack) {
+                                viewModel.goToPreviousStep()
+                                true
+                            } else {
+                                false
+                            }
+                        }
+
+                        Key.DirectionRight -> {
+                            if (uiState.canGoForward || uiState.canShowCompletion) {
+                                viewModel.goToNextStep()
+                                true
+                            } else {
+                                false
+                            }
+                        }
+
+                        else -> false
+                    }
+                }.focusable(),
         onBack =
             if (uiState.isCompletionVisible) {
                 viewModel::goToPreviousStep
@@ -116,41 +146,6 @@ fun CurrentLessonScreen(
                     .weight(1f)
                     .widthIn(max = LessonContentMaxWidth)
                     .fillMaxWidth()
-                    .focusRequester(focusRequester)
-                    .onPreviewKeyEvent { event ->
-                        if (event.type != KeyEventType.KeyDown) {
-                            return@onPreviewKeyEvent false
-                        }
-
-                        when (event.key) {
-                            Key.DirectionLeft -> {
-                                if (uiState.canGoBack) {
-                                    viewModel.goToPreviousStep()
-                                    true
-                                } else {
-                                    false
-                                }
-                            }
-
-                            Key.DirectionRight -> {
-                                when {
-                                    uiState.canGoForward -> {
-                                        viewModel.goToNextStep()
-                                        true
-                                    }
-
-                                    uiState.canShowCompletion -> {
-                                        viewModel.goToNextStep()
-                                        true
-                                    }
-
-                                    else -> false
-                                }
-                            }
-
-                            else -> false
-                        }
-                    }.focusable()
                     .padding(top = 8.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
