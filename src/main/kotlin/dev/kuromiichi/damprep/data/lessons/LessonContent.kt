@@ -1,13 +1,95 @@
 package dev.kuromiichi.damprep.data.lessons
 
+import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.softwareDevelopmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.welcomeRoadmapLessonContent
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 
 data class LessonStep(
     val title: String,
     val body: String,
     val visual: LessonVisualContent,
-    val isOperatingSystemSensitive: Boolean = false,
+    val links: List<LessonLink> = emptyList(),
+    val explanation: List<LessonExplanationBlock> = body.toParagraphBlocks(),
+    val operatingSystemContent: Map<TargetOperatingSystem, LessonStepContent> = emptyMap(),
+    val checkpoint: LessonCheckpoint? = null,
+) {
+    val isOperatingSystemSensitive: Boolean
+        get() = operatingSystemContent.isNotEmpty()
+
+    fun contentFor(targetOperatingSystem: TargetOperatingSystem?): LessonStepContent =
+        targetOperatingSystem
+            ?.let(operatingSystemContent::get)
+            ?: LessonStepContent(
+                body = body,
+                visual = visual,
+                links = links,
+                explanation = explanation,
+            )
+}
+
+data class LessonCheckpoint(
+    val id: String,
+    val prompt: String,
+)
+
+data class LessonStepContent(
+    val body: String,
+    val visual: LessonVisualContent,
+    val links: List<LessonLink> = emptyList(),
+    val explanation: List<LessonExplanationBlock> = body.toParagraphBlocks(),
+)
+
+sealed interface LessonExplanationBlock {
+    data class Paragraph(
+        val text: LessonRichText,
+    ) : LessonExplanationBlock
+
+    data class Steps(
+        val items: List<LessonRichText>,
+    ) : LessonExplanationBlock
+
+    data class Callout(
+        val title: String,
+        val text: LessonRichText,
+        val tone: LessonCalloutTone = LessonCalloutTone.Information,
+    ) : LessonExplanationBlock
+
+    data class Code(
+        val title: String,
+        val lines: List<String>,
+        val note: String,
+    ) : LessonExplanationBlock
+}
+
+data class LessonRichText(
+    val spans: List<LessonTextSpan>,
+) {
+    val plainText: String
+        get() = spans.joinToString(separator = "", transform = LessonTextSpan::text)
+}
+
+data class LessonTextSpan(
+    val text: String,
+    val style: LessonTextSpanStyle = LessonTextSpanStyle.Regular,
+)
+
+enum class LessonTextSpanStyle {
+    Regular,
+    Emphasis,
+    Highlight,
+    InlineCode,
+}
+
+enum class LessonCalloutTone {
+    Information,
+    Tip,
+    Warning,
+}
+
+data class LessonLink(
+    val label: String,
+    val url: String,
 )
 
 sealed interface LessonVisualContent {
@@ -22,6 +104,11 @@ sealed interface LessonVisualContent {
 
     data class Flow(
         val nodes: List<String>,
+    ) : LessonVisualContent
+
+    data class Screenshot(
+        val image: LessonScreenshot,
+        val description: String,
     ) : LessonVisualContent
 
     data class Cycle(
@@ -70,6 +157,12 @@ data class LessonTool(
 enum class LessonToolLogo {
     Kotlin,
     IntellijIdea,
+    Jdk,
+    Git,
+}
+
+enum class LessonScreenshot {
+    IntellijIdeWorkspace,
 }
 
 data class LessonContent(
@@ -81,6 +174,7 @@ object LessonContentCatalog {
     val lessons = listOf(
         welcomeRoadmapLessonContent,
         softwareDevelopmentLessonContent,
+        developmentEnvironmentLessonContent,
     )
 
     val currentLesson = lessons.first()
@@ -127,3 +221,67 @@ internal fun string(text: String, hasErrorUnderline: Boolean = false): LessonCod
         kind = LessonCodeTokenKind.StringLiteral,
         hasErrorUnderline = hasErrorUnderline,
     )
+
+internal fun paragraph(vararg spans: LessonTextSpan): LessonExplanationBlock.Paragraph =
+    LessonExplanationBlock.Paragraph(LessonRichText(spans.toList()))
+
+internal fun paragraph(text: String): LessonExplanationBlock.Paragraph =
+    paragraph(regular(text))
+
+internal fun steps(vararg items: String): LessonExplanationBlock.Steps =
+    LessonExplanationBlock.Steps(items.map { item -> LessonRichText(listOf(regular(item))) })
+
+internal fun callout(
+    title: String,
+    text: String,
+    tone: LessonCalloutTone = LessonCalloutTone.Information,
+): LessonExplanationBlock.Callout = LessonExplanationBlock.Callout(
+    title = title,
+    text = LessonRichText(listOf(regular(text))),
+    tone = tone,
+)
+
+internal fun explanationCode(
+    title: String,
+    note: String,
+    vararg lines: String,
+): LessonExplanationBlock.Code = LessonExplanationBlock.Code(
+    title = title,
+    lines = lines.toList(),
+    note = note,
+)
+
+internal fun structuredStepContent(
+    explanation: List<LessonExplanationBlock>,
+    visual: LessonVisualContent,
+    links: List<LessonLink> = emptyList(),
+): LessonStepContent = LessonStepContent(
+    body = explanation.joinToString("\n\n", transform = LessonExplanationBlock::plainText),
+    visual = visual,
+    links = links,
+    explanation = explanation,
+)
+
+internal fun regular(text: String): LessonTextSpan = LessonTextSpan(text)
+
+internal fun emphasis(text: String): LessonTextSpan =
+    LessonTextSpan(text, LessonTextSpanStyle.Emphasis)
+
+internal fun highlight(text: String): LessonTextSpan =
+    LessonTextSpan(text, LessonTextSpanStyle.Highlight)
+
+internal fun inlineCode(text: String): LessonTextSpan =
+    LessonTextSpan(text, LessonTextSpanStyle.InlineCode)
+
+private fun String.toParagraphBlocks(): List<LessonExplanationBlock> =
+    trim()
+        .split(Regex("\\n\\s*\\n"))
+        .filter(String::isNotBlank)
+        .map(::paragraph)
+
+private fun LessonExplanationBlock.plainText(): String = when (this) {
+    is LessonExplanationBlock.Callout -> "$title: ${text.plainText}"
+    is LessonExplanationBlock.Code -> listOf(title, lines.joinToString("\n"), note).joinToString("\n")
+    is LessonExplanationBlock.Paragraph -> text.plainText
+    is LessonExplanationBlock.Steps -> items.joinToString("\n") { item -> item.plainText }
+}

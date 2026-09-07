@@ -30,14 +30,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.kuromiichi.damprep.ui.theme.CatppuccinLatte
@@ -84,6 +87,7 @@ enum class LearningCodeTokenKind {
 @Composable
 fun LearningVisualSurface(
     modifier: Modifier = Modifier,
+    contentPadding: Dp = 28.dp,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Surface(
@@ -95,7 +99,7 @@ fun LearningVisualSurface(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(28.dp),
+                .padding(contentPadding),
             contentAlignment = Alignment.Center,
             content = content,
         )
@@ -158,6 +162,23 @@ fun IconTextLearningVisual(
             textAlign = TextAlign.Center,
         )
     }
+}
+
+@Composable
+fun ScreenshotLearningVisual(
+    image: DrawableResource,
+    description: String,
+    modifier: Modifier = Modifier,
+) {
+    Image(
+        painter = painterResource(image),
+        contentDescription = description,
+        contentScale = ContentScale.Fit,
+        modifier = modifier
+            .widthIn(max = 720.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp)),
+    )
 }
 
 @Composable

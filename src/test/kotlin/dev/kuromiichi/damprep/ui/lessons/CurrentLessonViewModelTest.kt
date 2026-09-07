@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.lessons
 
 import dev.kuromiichi.damprep.data.lessons.LessonContent
+import dev.kuromiichi.damprep.data.lessons.LessonCheckpoint
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import kotlin.test.Test
@@ -24,6 +25,7 @@ class CurrentLessonViewModelTest {
         assertEquals(0, state.stepCount)
         assertFalse(state.canGoBack)
         assertFalse(state.canGoForward)
+        assertFalse(state.canFinish)
     }
 
     @Test
@@ -48,9 +50,89 @@ class CurrentLessonViewModelTest {
         viewModel.goToNextStep()
         assertEquals(2, viewModel.uiState.value.currentStepIndex)
         assertFalse(viewModel.uiState.value.canGoForward)
+        assertTrue(viewModel.uiState.value.canFinish)
 
         viewModel.goToNextStep()
         assertEquals(2, viewModel.uiState.value.currentStepIndex)
+    }
+
+    @Test
+    fun `checkpoint blocks navigation until it is manually confirmed`() {
+        val checkpoint = LessonCheckpoint(
+            id = "hello-world",
+            prompt = "He ejecutado el programa.",
+        )
+        val viewModel = CurrentLessonViewModel(
+            lessonId = "lesson",
+            findLessonById = { id ->
+                if (id == "lesson") {
+                    LessonContent(
+                        lessonId = id,
+                        steps = listOf(
+                            sampleStep("Uno"),
+                            sampleStep("Dos", checkpoint),
+                            sampleStep("Tres"),
+                        ),
+                    )
+                } else {
+                    null
+                }
+            },
+        )
+
+        viewModel.goToNextStep()
+
+        assertEquals(1, viewModel.uiState.value.currentStepIndex)
+        assertFalse(viewModel.uiState.value.isCurrentCheckpointConfirmed)
+        assertFalse(viewModel.uiState.value.canGoForward)
+
+        viewModel.goToNextStep()
+        assertEquals(1, viewModel.uiState.value.currentStepIndex)
+
+        viewModel.setCurrentCheckpointConfirmed(true)
+        assertTrue(viewModel.uiState.value.isCurrentCheckpointConfirmed)
+        assertTrue(viewModel.uiState.value.canGoForward)
+
+        viewModel.goToNextStep()
+        viewModel.goToPreviousStep()
+        assertEquals(1, viewModel.uiState.value.currentStepIndex)
+        assertTrue(viewModel.uiState.value.isCurrentCheckpointConfirmed)
+
+        viewModel.setCurrentCheckpointConfirmed(false)
+        assertFalse(viewModel.uiState.value.canGoForward)
+    }
+
+    @Test
+    fun `last checkpoint must be confirmed before finishing the lesson`() {
+        val checkpoint = LessonCheckpoint(
+            id = "final-check",
+            prompt = "He completado la práctica.",
+        )
+        val viewModel = CurrentLessonViewModel(
+            lessonId = "lesson",
+            findLessonById = { id ->
+                if (id == "lesson") {
+                    LessonContent(
+                        lessonId = id,
+                        steps = listOf(
+                            sampleStep("Uno"),
+                            sampleStep("Práctica final", checkpoint),
+                        ),
+                    )
+                } else {
+                    null
+                }
+            },
+        )
+
+        viewModel.goToNextStep()
+
+        assertTrue(viewModel.uiState.value.isLastStep)
+        assertFalse(viewModel.uiState.value.canFinish)
+
+        viewModel.setCurrentCheckpointConfirmed(true)
+
+        assertTrue(viewModel.uiState.value.canFinish)
     }
 
     private fun sampleLessonContent(): LessonContent =
@@ -63,7 +145,10 @@ class CurrentLessonViewModelTest {
             ),
         )
 
-    private fun sampleStep(title: String): LessonStep =
+    private fun sampleStep(
+        title: String,
+        checkpoint: LessonCheckpoint? = null,
+    ): LessonStep =
         LessonStep(
             title = title,
             body = "Contenido",
@@ -71,5 +156,6 @@ class CurrentLessonViewModelTest {
                 title = "Visual",
                 body = "Detalle",
             ),
+            checkpoint = checkpoint,
         )
 }

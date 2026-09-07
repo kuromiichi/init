@@ -11,12 +11,22 @@ import kotlinx.coroutines.flow.update
 data class CurrentLessonUiState(
     val lessonContent: LessonContent?,
     val currentStepIndex: Int = 0,
+    val confirmedCheckpointIds: Set<String> = emptySet(),
 ) {
     val currentStep: LessonStep? = lessonContent?.steps?.getOrNull(currentStepIndex)
     val stepCount: Int = lessonContent?.steps?.size ?: 0
     val isMissing: Boolean = lessonContent == null
     val canGoBack: Boolean = currentStepIndex > 0
-    val canGoForward: Boolean = lessonContent != null && currentStepIndex < stepCount - 1
+    val isLastStep: Boolean = lessonContent != null && currentStepIndex == stepCount - 1
+    val isCurrentCheckpointConfirmed: Boolean
+        get() = currentStep?.checkpoint?.id?.let(confirmedCheckpointIds::contains) ?: true
+    val canGoForward: Boolean
+        get() =
+            lessonContent != null &&
+                currentStepIndex < stepCount - 1 &&
+                isCurrentCheckpointConfirmed
+    val canFinish: Boolean
+        get() = isLastStep && isCurrentCheckpointConfirmed
 }
 
 class CurrentLessonViewModel(
@@ -47,6 +57,19 @@ class CurrentLessonViewModel(
             } else {
                 state
             }
+        }
+    }
+
+    fun setCurrentCheckpointConfirmed(confirmed: Boolean) {
+        _uiState.update { state ->
+            val checkpointId = state.currentStep?.checkpoint?.id ?: return@update state
+            state.copy(
+                confirmedCheckpointIds = if (confirmed) {
+                    state.confirmedCheckpointIds + checkpointId
+                } else {
+                    state.confirmedCheckpointIds - checkpointId
+                },
+            )
         }
     }
 }
