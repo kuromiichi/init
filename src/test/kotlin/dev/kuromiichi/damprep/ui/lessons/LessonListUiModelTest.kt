@@ -9,16 +9,18 @@ import kotlin.test.assertTrue
 class LessonListUiModelTest {
     @Test
     fun `lesson summary maps to list item ui model`() {
-        val lesson = LessonSummary(
-            id = "software-development",
-            title = "Qué es el software y cómo se construye",
-            subjectArea = SubjectArea.DevelopmentEnvironments,
-        )
+        val lesson =
+            LessonSummary(
+                id = "software-development",
+                title = "Qué es el software y cómo se construye",
+                subjectArea = SubjectArea.DevelopmentEnvironments,
+            )
 
-        val uiModel = lesson.toLessonListItemUiModel(
-            index = 1,
-            isUnlocked = true,
-        )
+        val uiModel =
+            lesson.toLessonListItemUiModel(
+                index = 1,
+                isUnlocked = true,
+            )
 
         assertEquals(1, uiModel.index)
         assertEquals("software-development", uiModel.id)

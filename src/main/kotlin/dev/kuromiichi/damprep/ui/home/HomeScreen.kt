@@ -49,17 +49,19 @@ fun HomeScreen(
         color = MaterialTheme.colorScheme.background,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 40.dp, vertical = 32.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 40.dp, vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.weight(1f))
 
             Column(
-                modifier = Modifier
-                    .widthIn(max = HomeContentMaxWidth)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .widthIn(max = HomeContentMaxWidth)
+                        .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
@@ -82,9 +84,10 @@ fun HomeScreen(
                 }
 
                 Column(
-                    modifier = Modifier
-                        .widthIn(max = HomeProgressMaxWidth)
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .widthIn(max = HomeProgressMaxWidth)
+                            .fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
@@ -96,23 +99,26 @@ fun HomeScreen(
                     )
                     LinearProgressIndicator(
                         progress = { uiState.progress },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(8.dp),
                     )
                 }
 
                 Column(
-                    modifier = Modifier
-                        .widthIn(max = HomeControlsMaxWidth)
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .widthIn(max = HomeControlsMaxWidth)
+                            .fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Button(
                         onClick = onContinueLesson,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .hoverScale(),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .hoverScale(),
                     ) {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
@@ -189,9 +195,10 @@ fun HomeScreen(
 
             OutlinedButton(
                 onClick = onShowSettings,
-                modifier = Modifier
-                    .widthIn(min = 220.dp, max = HomeSettingsMaxWidth)
-                    .hoverScale(),
+                modifier =
+                    Modifier
+                        .widthIn(min = 220.dp, max = HomeSettingsMaxWidth)
+                        .hoverScale(),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Settings,

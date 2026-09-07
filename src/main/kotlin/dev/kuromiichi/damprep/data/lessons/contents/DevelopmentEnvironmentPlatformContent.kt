@@ -9,8 +9,9 @@ internal data class DevelopmentEnvironmentPlatformContent(
     val gitInstallation: LessonStepContent,
 )
 
-internal val developmentEnvironmentPlatformContent = mapOf(
-    TargetOperatingSystem.Windows to windowsDevelopmentEnvironmentContent,
-    TargetOperatingSystem.MacOS to macOsDevelopmentEnvironmentContent,
-    TargetOperatingSystem.Linux to linuxDevelopmentEnvironmentContent,
-)
+internal val developmentEnvironmentPlatformContent =
+    mapOf(
+        TargetOperatingSystem.Windows to windowsDevelopmentEnvironmentContent,
+        TargetOperatingSystem.MacOS to macOsDevelopmentEnvironmentContent,
+        TargetOperatingSystem.Linux to linuxDevelopmentEnvironmentContent,
+    )

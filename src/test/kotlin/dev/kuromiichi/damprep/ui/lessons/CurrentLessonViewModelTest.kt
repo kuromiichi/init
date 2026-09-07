@@ -1,7 +1,7 @@
 package dev.kuromiichi.damprep.ui.lessons
 
-import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonCheckpoint
+import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import kotlin.test.Test
@@ -13,10 +13,11 @@ import kotlin.test.assertTrue
 class CurrentLessonViewModelTest {
     @Test
     fun `current lesson state reports missing lessons`() {
-        val viewModel = CurrentLessonViewModel(
-            lessonId = "missing",
-            findLessonById = { null },
-        )
+        val viewModel =
+            CurrentLessonViewModel(
+                lessonId = "missing",
+                findLessonById = { null },
+            )
 
         val state = viewModel.uiState.value
 
@@ -30,10 +31,11 @@ class CurrentLessonViewModelTest {
 
     @Test
     fun `current lesson navigation moves between steps and respects bounds`() {
-        val viewModel = CurrentLessonViewModel(
-            lessonId = "lesson",
-            findLessonById = { id -> if (id == "lesson") sampleLessonContent() else null },
-        )
+        val viewModel =
+            CurrentLessonViewModel(
+                lessonId = "lesson",
+                findLessonById = { id -> if (id == "lesson") sampleLessonContent() else null },
+            )
 
         assertEquals(0, viewModel.uiState.value.currentStepIndex)
         assertFalse(viewModel.uiState.value.canGoBack)
@@ -58,27 +60,30 @@ class CurrentLessonViewModelTest {
 
     @Test
     fun `checkpoint blocks navigation until it is manually confirmed`() {
-        val checkpoint = LessonCheckpoint(
-            id = "hello-world",
-            prompt = "He ejecutado el programa.",
-        )
-        val viewModel = CurrentLessonViewModel(
-            lessonId = "lesson",
-            findLessonById = { id ->
-                if (id == "lesson") {
-                    LessonContent(
-                        lessonId = id,
-                        steps = listOf(
-                            sampleStep("Uno"),
-                            sampleStep("Dos", checkpoint),
-                            sampleStep("Tres"),
-                        ),
-                    )
-                } else {
-                    null
-                }
-            },
-        )
+        val checkpoint =
+            LessonCheckpoint(
+                id = "hello-world",
+                prompt = "He ejecutado el programa.",
+            )
+        val viewModel =
+            CurrentLessonViewModel(
+                lessonId = "lesson",
+                findLessonById = { id ->
+                    if (id == "lesson") {
+                        LessonContent(
+                            lessonId = id,
+                            steps =
+                                listOf(
+                                    sampleStep("Uno"),
+                                    sampleStep("Dos", checkpoint),
+                                    sampleStep("Tres"),
+                                ),
+                        )
+                    } else {
+                        null
+                    }
+                },
+            )
 
         viewModel.goToNextStep()
 
@@ -104,26 +109,29 @@ class CurrentLessonViewModelTest {
 
     @Test
     fun `last checkpoint must be confirmed before finishing the lesson`() {
-        val checkpoint = LessonCheckpoint(
-            id = "final-check",
-            prompt = "He completado la práctica.",
-        )
-        val viewModel = CurrentLessonViewModel(
-            lessonId = "lesson",
-            findLessonById = { id ->
-                if (id == "lesson") {
-                    LessonContent(
-                        lessonId = id,
-                        steps = listOf(
-                            sampleStep("Uno"),
-                            sampleStep("Práctica final", checkpoint),
-                        ),
-                    )
-                } else {
-                    null
-                }
-            },
-        )
+        val checkpoint =
+            LessonCheckpoint(
+                id = "final-check",
+                prompt = "He completado la práctica.",
+            )
+        val viewModel =
+            CurrentLessonViewModel(
+                lessonId = "lesson",
+                findLessonById = { id ->
+                    if (id == "lesson") {
+                        LessonContent(
+                            lessonId = id,
+                            steps =
+                                listOf(
+                                    sampleStep("Uno"),
+                                    sampleStep("Práctica final", checkpoint),
+                                ),
+                        )
+                    } else {
+                        null
+                    }
+                },
+            )
 
         viewModel.goToNextStep()
 
@@ -138,11 +146,12 @@ class CurrentLessonViewModelTest {
     private fun sampleLessonContent(): LessonContent =
         LessonContent(
             lessonId = "lesson",
-            steps = listOf(
-                sampleStep("Uno"),
-                sampleStep("Dos"),
-                sampleStep("Tres"),
-            ),
+            steps =
+                listOf(
+                    sampleStep("Uno"),
+                    sampleStep("Dos"),
+                    sampleStep("Tres"),
+                ),
         )
 
     private fun sampleStep(
@@ -152,10 +161,11 @@ class CurrentLessonViewModelTest {
         LessonStep(
             title = title,
             body = "Contenido",
-            visual = LessonVisualContent.IconText(
-                title = "Visual",
-                body = "Detalle",
-            ),
+            visual =
+                LessonVisualContent.IconText(
+                    title = "Visual",
+                    body = "Detalle",
+                ),
             checkpoint = checkpoint,
         )
 }

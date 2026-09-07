@@ -2,7 +2,7 @@ package dev.kuromiichi.damprep.ui.onboarding
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
+import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -24,13 +24,15 @@ class OnboardingViewModelTest {
 
     @Test
     fun `personalization step requires a non blank student name`() {
-        val viewModel = OnboardingViewModel(
-            initialThemePreference = ThemePreference.System,
-            steps = listOf(
-                step(kind = OnboardingStepKind.Personalization),
-                step(),
-            ),
-        )
+        val viewModel =
+            OnboardingViewModel(
+                initialThemePreference = ThemePreference.System,
+                steps =
+                    listOf(
+                        step(kind = OnboardingStepKind.Personalization),
+                        step(),
+                    ),
+            )
 
         assertFalse(viewModel.uiState.value.canContinue)
         assertNull(viewModel.continueOnboarding())
@@ -45,14 +47,16 @@ class OnboardingViewModelTest {
 
     @Test
     fun `detected operating system is preselected but requires confirmation`() {
-        val viewModel = OnboardingViewModel(
-            initialThemePreference = ThemePreference.System,
-            initialTargetOperatingSystem = TargetOperatingSystem.MacOS,
-            steps = listOf(
-                step(kind = OnboardingStepKind.OperatingSystem),
-                step(),
-            ),
-        )
+        val viewModel =
+            OnboardingViewModel(
+                initialThemePreference = ThemePreference.System,
+                initialTargetOperatingSystem = TargetOperatingSystem.MacOS,
+                steps =
+                    listOf(
+                        step(kind = OnboardingStepKind.OperatingSystem),
+                        step(),
+                    ),
+            )
 
         assertEquals(TargetOperatingSystem.MacOS, viewModel.uiState.value.targetOperatingSystem)
         assertFalse(viewModel.uiState.value.isTargetOperatingSystemConfirmed)
@@ -70,11 +74,12 @@ class OnboardingViewModelTest {
 
     @Test
     fun `user can confirm a different operating system from the detected one`() {
-        val viewModel = OnboardingViewModel(
-            initialThemePreference = ThemePreference.System,
-            initialTargetOperatingSystem = TargetOperatingSystem.MacOS,
-            steps = listOf(step(kind = OnboardingStepKind.OperatingSystem)),
-        )
+        val viewModel =
+            OnboardingViewModel(
+                initialThemePreference = ThemePreference.System,
+                initialTargetOperatingSystem = TargetOperatingSystem.MacOS,
+                steps = listOf(step(kind = OnboardingStepKind.OperatingSystem)),
+            )
 
         viewModel.confirmTargetOperatingSystem(TargetOperatingSystem.Windows)
         val completion = viewModel.continueOnboarding()
@@ -84,11 +89,12 @@ class OnboardingViewModelTest {
 
     @Test
     fun `last onboarding step returns trimmed completion data`() {
-        val viewModel = OnboardingViewModel(
-            initialThemePreference = ThemePreference.System,
-            initialTargetOperatingSystem = TargetOperatingSystem.Linux,
-            steps = listOf(step()),
-        )
+        val viewModel =
+            OnboardingViewModel(
+                initialThemePreference = ThemePreference.System,
+                initialTargetOperatingSystem = TargetOperatingSystem.Linux,
+                steps = listOf(step()),
+            )
 
         viewModel.updateStudentName(" Emma ")
         viewModel.updatePronounPreference(PronounPreference.Feminine)
@@ -104,10 +110,11 @@ class OnboardingViewModelTest {
 
     @Test
     fun `onboarding navigation respects the first step`() {
-        val viewModel = OnboardingViewModel(
-            initialThemePreference = ThemePreference.System,
-            steps = listOf(step(), step(), step()),
-        )
+        val viewModel =
+            OnboardingViewModel(
+                initialThemePreference = ThemePreference.System,
+                steps = listOf(step(), step(), step()),
+            )
 
         viewModel.goToPreviousStep()
         assertEquals(0, viewModel.uiState.value.currentStepIndex)

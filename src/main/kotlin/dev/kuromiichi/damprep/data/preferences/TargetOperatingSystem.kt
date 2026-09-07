@@ -1,6 +1,8 @@
 package dev.kuromiichi.damprep.data.preferences
 
-enum class TargetOperatingSystem(val label: String) {
+enum class TargetOperatingSystem(
+    val label: String,
+) {
     Windows("Windows"),
     MacOS("macOS"),
     Linux("Linux"),

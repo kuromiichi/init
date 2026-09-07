@@ -18,51 +18,56 @@ fun Modifier.verticalFadingEdges(
     scrollState: ScrollState,
     color: Color,
     length: Dp,
-): Modifier = drawWithCache {
-    val fadeLength = length.toPx().coerceIn(0f, size.height / 2f)
-    val revealDistance = fadeLength / 2f
-    val topBrush = Brush.verticalGradient(
-        colors = listOf(color, color.copy(alpha = 0f)),
-        endY = fadeLength.coerceAtLeast(1f),
-    )
-    val bottomBrush = Brush.verticalGradient(
-        colors = listOf(color.copy(alpha = 0f), color),
-        startY = size.height - fadeLength,
-        endY = size.height,
-    )
-
-    onDrawWithContent {
-        drawContent()
-
-        if (fadeLength > 0f && scrollState.maxValue != Int.MAX_VALUE) {
-            val topAlpha = fadingEdgeAlpha(
-                distanceFromEdge = scrollState.value.toFloat(),
-                revealDistance = revealDistance,
+): Modifier =
+    drawWithCache {
+        val fadeLength = length.toPx().coerceIn(0f, size.height / 2f)
+        val revealDistance = fadeLength / 2f
+        val topBrush =
+            Brush.verticalGradient(
+                colors = listOf(color, color.copy(alpha = 0f)),
+                endY = fadeLength.coerceAtLeast(1f),
             )
-            val bottomAlpha = fadingEdgeAlpha(
-                distanceFromEdge = (scrollState.maxValue - scrollState.value).toFloat(),
-                revealDistance = revealDistance,
+        val bottomBrush =
+            Brush.verticalGradient(
+                colors = listOf(color.copy(alpha = 0f), color),
+                startY = size.height - fadeLength,
+                endY = size.height,
             )
 
-            if (topAlpha > 0f) {
-                drawRect(
-                    brush = topBrush,
-                    alpha = topAlpha,
-                    size = Size(size.width, fadeLength),
-                )
-            }
+        onDrawWithContent {
+            drawContent()
 
-            if (bottomAlpha > 0f) {
-                drawRect(
-                    brush = bottomBrush,
-                    alpha = bottomAlpha,
-                    topLeft = Offset(0f, size.height - fadeLength),
-                    size = Size(size.width, fadeLength),
-                )
+            if (fadeLength > 0f && scrollState.maxValue != Int.MAX_VALUE) {
+                val topAlpha =
+                    fadingEdgeAlpha(
+                        distanceFromEdge = scrollState.value.toFloat(),
+                        revealDistance = revealDistance,
+                    )
+                val bottomAlpha =
+                    fadingEdgeAlpha(
+                        distanceFromEdge = (scrollState.maxValue - scrollState.value).toFloat(),
+                        revealDistance = revealDistance,
+                    )
+
+                if (topAlpha > 0f) {
+                    drawRect(
+                        brush = topBrush,
+                        alpha = topAlpha,
+                        size = Size(size.width, fadeLength),
+                    )
+                }
+
+                if (bottomAlpha > 0f) {
+                    drawRect(
+                        brush = bottomBrush,
+                        alpha = bottomAlpha,
+                        topLeft = Offset(0f, size.height - fadeLength),
+                        size = Size(size.width, fadeLength),
+                    )
+                }
             }
         }
     }
-}
 
 internal fun fadingEdgeAlpha(
     distanceFromEdge: Float,

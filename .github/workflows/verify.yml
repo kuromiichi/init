@@ -1,0 +1,28 @@
+name: Verificación
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Formato, pruebas y compilación
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v6
+
+      - name: Configurar Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Verificar el proyecto
+        run: ./gradlew clean build

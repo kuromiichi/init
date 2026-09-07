@@ -21,12 +21,13 @@ import dev.kuromiichi.damprep.ui.window.WindowSizeGuard
 fun App() {
     val navController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
-    val appViewModel = remember {
-        AppViewModel(
-            preferencesRepository = UserPreferencesRepository(createUserPreferencesDataStore()),
-            scope = coroutineScope,
-        )
-    }
+    val appViewModel =
+        remember {
+            AppViewModel(
+                preferencesRepository = UserPreferencesRepository(createUserPreferencesDataStore()),
+                scope = coroutineScope,
+            )
+        }
     val uiState by appViewModel.uiState.collectAsState()
 
     DamPrepTheme(themePreference = uiState.themePreference) {

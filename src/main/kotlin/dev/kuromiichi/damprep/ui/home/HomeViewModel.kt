@@ -22,11 +22,12 @@ class HomeViewModel(
     ): HomeUiState {
         val totalLessons = totalLessonsProvider()
         val clampedCompletedLessons = completedLessons.coerceIn(0, totalLessons)
-        val progress = if (totalLessons == 0) {
-            0f
-        } else {
-            clampedCompletedLessons.toFloat() / totalLessons
-        }
+        val progress =
+            if (totalLessons == 0) {
+                0f
+            } else {
+                clampedCompletedLessons.toFloat() / totalLessons
+            }
 
         return HomeUiState(
             studentName = studentName,

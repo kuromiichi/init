@@ -2,10 +2,10 @@ package dev.kuromiichi.damprep.ui
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
+import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.data.preferences.UserPreferences
 import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
 import dev.kuromiichi.damprep.ui.navigation.AppRoute
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,11 +17,12 @@ data class AppUiState(
 ) {
     val isLoading: Boolean = preferences == null
     val themePreference: ThemePreference = preferences?.themePreference ?: ThemePreference.System
-    val startDestination: AppRoute = if (preferences?.onboardingCompleted == true) {
-        AppRoute.Home
-    } else {
-        AppRoute.Onboarding
-    }
+    val startDestination: AppRoute =
+        if (preferences?.onboardingCompleted == true) {
+            AppRoute.Home
+        } else {
+            AppRoute.Onboarding
+        }
 }
 
 class AppViewModel(

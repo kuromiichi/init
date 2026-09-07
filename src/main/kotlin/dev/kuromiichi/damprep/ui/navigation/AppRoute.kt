@@ -10,7 +10,9 @@ sealed interface AppRoute {
     data object Home : AppRoute
 
     @Serializable
-    data class Lesson(val lessonId: String) : AppRoute
+    data class Lesson(
+        val lessonId: String,
+    ) : AppRoute
 
     @Serializable
     data object Lessons : AppRoute

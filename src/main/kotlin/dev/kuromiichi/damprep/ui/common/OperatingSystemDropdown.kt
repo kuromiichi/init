@@ -58,29 +58,33 @@ fun OperatingSystemDropdown(
     ) {
         OutlinedButton(
             onClick = { expanded = !expanded },
-            modifier = Modifier
-                .height(40.dp)
-                .width(SelectorButtonWidth),
+            modifier =
+                Modifier
+                    .height(40.dp)
+                    .width(SelectorButtonWidth),
             shape = MaterialTheme.shapes.extraLarge,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+            colors =
+                ButtonDefaults.outlinedButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             Text(selectedOperatingSystem?.label ?: "Sistema")
             Spacer(modifier = Modifier.size(4.dp))
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
-                contentDescription = if (expanded) {
-                    "Cerrar selector de sistema operativo"
-                } else {
-                    "Cambiar sistema operativo"
-                },
-                modifier = Modifier
-                    .size(20.dp)
-                    .rotate(arrowRotation),
+                contentDescription =
+                    if (expanded) {
+                        "Cerrar selector de sistema operativo"
+                    } else {
+                        "Cambiar sistema operativo"
+                    },
+                modifier =
+                    Modifier
+                        .size(20.dp)
+                        .rotate(arrowRotation),
             )
         }
 
@@ -109,16 +113,17 @@ fun OperatingSystemDropdown(
                         expanded = false
                         onOperatingSystemSelected(operatingSystem)
                     },
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            if (selected) {
-                                MaterialTheme.colorScheme.primaryContainer
-                            } else {
-                                Color.Transparent
-                            },
-                        ),
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 8.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                if (selected) {
+                                    MaterialTheme.colorScheme.primaryContainer
+                                } else {
+                                    Color.Transparent
+                                },
+                            ),
                     leadingIcon = {
                         Box(
                             modifier = Modifier.size(20.dp),
@@ -133,13 +138,15 @@ fun OperatingSystemDropdown(
                             }
                         }
                     },
-                    colors = MenuDefaults.itemColors(
-                        textColor = if (selected) {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
-                    ),
+                    colors =
+                        MenuDefaults.itemColors(
+                            textColor =
+                                if (selected) {
+                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                },
+                        ),
                 )
             }
         }

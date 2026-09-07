@@ -63,9 +63,10 @@ class LessonContentCatalogTest {
     @Test
     fun `software development lesson introduces the development process`() {
         val softwareLesson = LessonContentCatalog.lessons[1]
-        val combinedText = softwareLesson.steps.joinToString(" ") {
-            "${it.title} ${it.body} ${it.visual.readableText()}"
-        }
+        val combinedText =
+            softwareLesson.steps.joinToString(" ") {
+                "${it.title} ${it.body} ${it.visual.readableText()}"
+            }
 
         assertEquals("software-development", softwareLesson.lessonId)
         assertEquals(7, softwareLesson.steps.size)
@@ -82,9 +83,12 @@ class LessonContentCatalogTest {
     @Test
     fun `lesson steps can provide flow visuals`() {
         val softwareLesson = LessonContentCatalog.findByLessonId("software-development")
-        val flowVisual = softwareLesson?.steps?.map { it.visual }
-            ?.filterIsInstance<LessonVisualContent.Flow>()
-            ?.firstOrNull()
+        val flowVisual =
+            softwareLesson
+                ?.steps
+                ?.map { it.visual }
+                ?.filterIsInstance<LessonVisualContent.Flow>()
+                ?.firstOrNull()
 
         assertNotNull(flowVisual)
         assertEquals(listOf("Problema", "Algoritmo", "Programa"), flowVisual.nodes)
@@ -129,22 +133,28 @@ class LessonContentCatalogTest {
         assertNotNull(errorStep)
         assertTrue(visual is LessonVisualContent.CodeExamples)
         assertEquals(listOf("Error sintáctico", "Error lógico"), visual.examples.map { it.title })
-        val syntaxExampleText = visual.examples.first().lines.joinToString("\n") { line ->
-            line.tokens.joinToString("") { token -> token.text }
-        }
+        val syntaxExampleText =
+            visual.examples.first().lines.joinToString("\n") { line ->
+                line.tokens.joinToString("") { token -> token.text }
+            }
         assertTrue(syntaxExampleText.contains("println"))
         assertFalse(syntaxExampleText.contains("val"))
-        assertTrue(visual.examples.all { example ->
-            example.lines.any { line -> line.tokens.any { token -> token.hasErrorUnderline } }
-        })
+        assertTrue(
+            visual.examples.all { example ->
+                example.lines.any { line -> line.tokens.any { token -> token.hasErrorUnderline } }
+            },
+        )
     }
 
     @Test
     fun `development environment lesson prepares ide and jdk setup`() {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
-        val combinedText = environmentLesson?.steps?.joinToString(" ") {
-            it.allReadableText()
-        }.orEmpty()
+        val combinedText =
+            environmentLesson
+                ?.steps
+                ?.joinToString(" ") {
+                    it.allReadableText()
+                }.orEmpty()
 
         assertNotNull(environmentLesson)
         assertEquals(13, environmentLesson.steps.size)
@@ -184,8 +194,10 @@ class LessonContentCatalogTest {
     @Test
     fun `development environment lesson requires running the generated hello world`() {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
-        val helloWorldStep = environmentLesson?.steps
-            ?.firstOrNull { it.title == "Comprobar el entorno con Hello World" }
+        val helloWorldStep =
+            environmentLesson
+                ?.steps
+                ?.firstOrNull { it.title == "Comprobar el entorno con Hello World" }
 
         assertNotNull(helloWorldStep)
         assertEquals(helloWorldStep, environmentLesson.steps.last())
@@ -197,9 +209,10 @@ class LessonContentCatalogTest {
 
         val visual = helloWorldStep.visual
         assertTrue(visual is LessonVisualContent.CodeExamples)
-        val sourceCode = visual.examples.flatMap(LessonCodeExample::lines).joinToString("\n") { line ->
-            line.tokens.joinToString("") { token -> token.text }
-        }
+        val sourceCode =
+            visual.examples.flatMap(LessonCodeExample::lines).joinToString("\n") { line ->
+                line.tokens.joinToString("") { token -> token.text }
+            }
         assertTrue(sourceCode.contains("fun main()"))
         assertTrue(sourceCode.contains("println(\"Hello World!\")"))
     }
@@ -207,9 +220,11 @@ class LessonContentCatalogTest {
     @Test
     fun `development environment lesson provides official installation links`() {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
-        val installationSteps = environmentLesson?.steps
-            ?.filter { it.title.firstOrNull()?.isDigit() == true }
-            .orEmpty()
+        val installationSteps =
+            environmentLesson
+                ?.steps
+                ?.filter { it.title.firstOrNull()?.isDigit() == true }
+                .orEmpty()
 
         assertEquals(4, installationSteps.size)
         TargetOperatingSystem.entries.forEach { operatingSystem ->
@@ -229,9 +244,11 @@ class LessonContentCatalogTest {
     @Test
     fun `development environment marks operating system sensitive steps`() {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
-        val sensitiveStepTitles = environmentLesson?.steps
-            ?.filter(LessonStep::isOperatingSystemSensitive)
-            ?.map(LessonStep::title)
+        val sensitiveStepTitles =
+            environmentLesson
+                ?.steps
+                ?.filter(LessonStep::isOperatingSystemSensitive)
+                ?.map(LessonStep::title)
 
         assertEquals(
             listOf(
@@ -246,9 +263,11 @@ class LessonContentCatalogTest {
     @Test
     fun `every sensitive environment step provides complete content for every operating system`() {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
-        val sensitiveSteps = environmentLesson?.steps
-            ?.filter(LessonStep::isOperatingSystemSensitive)
-            .orEmpty()
+        val sensitiveSteps =
+            environmentLesson
+                ?.steps
+                ?.filter(LessonStep::isOperatingSystemSensitive)
+                .orEmpty()
 
         assertTrue(sensitiveSteps.isNotEmpty())
         sensitiveSteps.forEach { step ->
@@ -267,10 +286,12 @@ class LessonContentCatalogTest {
     @Test
     fun `platform instructions combine paragraphs steps callouts and inline code blocks`() {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
-        val platformBlocks = environmentLesson?.steps
-            ?.flatMap { step -> step.operatingSystemContent.values }
-            ?.flatMap(LessonStepContent::explanation)
-            .orEmpty()
+        val platformBlocks =
+            environmentLesson
+                ?.steps
+                ?.flatMap { step -> step.operatingSystemContent.values }
+                ?.flatMap(LessonStepContent::explanation)
+                .orEmpty()
 
         assertTrue(platformBlocks.any { block -> block is LessonExplanationBlock.Paragraph })
         assertTrue(platformBlocks.any { block -> block is LessonExplanationBlock.Steps })
@@ -281,16 +302,24 @@ class LessonContentCatalogTest {
     @Test
     fun `platform variants apply the same semantic text styles`() {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
-        val sensitiveSteps = environmentLesson?.steps
-            ?.filter(LessonStep::isOperatingSystemSensitive)
-            .orEmpty()
+        val sensitiveSteps =
+            environmentLesson
+                ?.steps
+                ?.filter(LessonStep::isOperatingSystemSensitive)
+                .orEmpty()
 
         sensitiveSteps.forEach { step ->
             TargetOperatingSystem.entries.forEach { operatingSystem ->
-                val paragraph = step.contentFor(operatingSystem).explanation
-                    .filterIsInstance<LessonExplanationBlock.Paragraph>()
-                    .first()
-                val styles = paragraph.text.spans.map(LessonTextSpan::style).toSet()
+                val paragraph =
+                    step
+                        .contentFor(operatingSystem)
+                        .explanation
+                        .filterIsInstance<LessonExplanationBlock.Paragraph>()
+                        .first()
+                val styles =
+                    paragraph.text.spans
+                        .map(LessonTextSpan::style)
+                        .toSet()
 
                 assertTrue(LessonTextSpanStyle.Highlight in styles)
                 if (step.title.startsWith("1.") || step.title.startsWith("2.")) {
@@ -305,32 +334,39 @@ class LessonContentCatalogTest {
 
     @Test
     fun `long lesson explanations are divided into readable blocks`() {
-        val allContent = LessonContentCatalog.lessons.flatMap { lesson ->
-            lesson.steps.flatMap { step ->
-                listOf(
-                    LessonStepContent(
-                        body = step.body,
-                        visual = step.visual,
-                        links = step.links,
-                        explanation = step.explanation,
-                    ),
-                ) + step.operatingSystemContent.values
+        val allContent =
+            LessonContentCatalog.lessons.flatMap { lesson ->
+                lesson.steps.flatMap { step ->
+                    listOf(
+                        LessonStepContent(
+                            body = step.body,
+                            visual = step.visual,
+                            links = step.links,
+                            explanation = step.explanation,
+                        ),
+                    ) + step.operatingSystemContent.values
+                }
             }
-        }
 
-        assertTrue(allContent.all { content ->
-            content.body.length < 240 || content.explanation.size > 1
-        })
-        assertTrue(allContent.flatMap(LessonStepContent::explanation).all { block ->
-            block.hasReadableContent()
-        })
+        assertTrue(
+            allContent.all { content ->
+                content.body.length < 240 || content.explanation.size > 1
+            },
+        )
+        assertTrue(
+            allContent.flatMap(LessonStepContent::explanation).all { block ->
+                block.hasReadableContent()
+            },
+        )
     }
 
     @Test
     fun `selector resolves distinct installation instructions for each operating system`() {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
-        val jdkStep = environmentLesson?.steps
-            ?.firstOrNull { it.title == "1. Instalar el JDK 25 para DAM Prep" }
+        val jdkStep =
+            environmentLesson
+                ?.steps
+                ?.firstOrNull { it.title == "1. Instalar el JDK 25 para DAM Prep" }
 
         assertNotNull(jdkStep)
         val windowsContent = jdkStep.contentFor(TargetOperatingSystem.Windows)
@@ -351,19 +387,25 @@ class LessonContentCatalogTest {
         val environmentLesson = LessonContentCatalog.findByLessonId("development-environment")
         val visuals = environmentLesson?.steps?.map { it.visual }.orEmpty()
 
-        assertTrue(visuals.any { visual ->
-            visual is LessonVisualContent.ToolCards &&
-                visual.tools.map { it.logo } == listOf(LessonToolLogo.Kotlin, LessonToolLogo.IntellijIdea)
-        })
-        assertTrue(visuals.any { visual ->
-            visual is LessonVisualContent.Flow && visual.nodes == listOf(
-                "New Project",
-                "Kotlin",
-                "Gradle",
-                "JDK 25",
-                "Gradle sync",
-            )
-        })
+        assertTrue(
+            visuals.any { visual ->
+                visual is LessonVisualContent.ToolCards &&
+                    visual.tools.map { it.logo } == listOf(LessonToolLogo.Kotlin, LessonToolLogo.IntellijIdea)
+            },
+        )
+        assertTrue(
+            visuals.any { visual ->
+                visual is LessonVisualContent.Flow &&
+                    visual.nodes ==
+                    listOf(
+                        "New Project",
+                        "Kotlin",
+                        "Gradle",
+                        "JDK 25",
+                        "Gradle sync",
+                    )
+            },
+        )
     }
 
     @Test
@@ -379,39 +421,40 @@ class LessonContentCatalogTest {
         assertTrue(visual.description.contains("IntelliJ IDEA"))
         assertTrue(visual.description.contains("Git"))
     }
-
 }
 
-private fun LessonVisualContent.hasReadableContent(): Boolean =
-    readableText().isNotBlank()
+private fun LessonVisualContent.hasReadableContent(): Boolean = readableText().isNotBlank()
 
-private fun LessonExplanationBlock.hasReadableContent(): Boolean = when (this) {
-    is LessonExplanationBlock.Callout -> title.isNotBlank() && text.plainText.isNotBlank()
-    is LessonExplanationBlock.Code -> title.isNotBlank() && lines.isNotEmpty() && lines.all(String::isNotBlank)
-    is LessonExplanationBlock.Paragraph -> text.plainText.isNotBlank()
-    is LessonExplanationBlock.Steps -> items.isNotEmpty() && items.all { item -> item.plainText.isNotBlank() }
-}
-
-private fun LessonStep.allReadableText(): String = buildString {
-    append(title)
-    append(' ')
-    append(body)
-    append(' ')
-    append(visual.readableText())
-    operatingSystemContent.values.forEach { content ->
-        append(' ')
-        append(content.body)
-        append(' ')
-        append(content.visual.readableText())
+private fun LessonExplanationBlock.hasReadableContent(): Boolean =
+    when (this) {
+        is LessonExplanationBlock.Callout -> title.isNotBlank() && text.plainText.isNotBlank()
+        is LessonExplanationBlock.Code -> title.isNotBlank() && lines.isNotEmpty() && lines.all(String::isNotBlank)
+        is LessonExplanationBlock.Paragraph -> text.plainText.isNotBlank()
+        is LessonExplanationBlock.Steps -> items.isNotEmpty() && items.all { item -> item.plainText.isNotBlank() }
     }
-}
+
+private fun LessonStep.allReadableText(): String =
+    buildString {
+        append(title)
+        append(' ')
+        append(body)
+        append(' ')
+        append(visual.readableText())
+        operatingSystemContent.values.forEach { content ->
+            append(' ')
+            append(content.body)
+            append(' ')
+            append(content.visual.readableText())
+        }
+    }
 
 private fun LessonVisualContent.readableText(): String =
     when (this) {
-        is LessonVisualContent.CodeExamples -> examples.joinToString(" ") { example ->
-            "${example.title} ${example.note} " +
-                example.lines.joinToString(" ") { line -> line.tokens.joinToString("") { token -> token.text } }
-        }
+        is LessonVisualContent.CodeExamples ->
+            examples.joinToString(" ") { example ->
+                "${example.title} ${example.note} " +
+                    example.lines.joinToString(" ") { line -> line.tokens.joinToString("") { token -> token.text } }
+            }
         is LessonVisualContent.Cycle -> steps.joinToString(" ")
         is LessonVisualContent.Flow -> nodes.joinToString(" ")
         is LessonVisualContent.IconText -> "$title $body"

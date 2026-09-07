@@ -2,7 +2,7 @@ package dev.kuromiichi.damprep.ui.onboarding
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
+import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,12 +27,13 @@ data class OnboardingUiState(
     val isLastStep: Boolean = currentStepIndex == steps.lastIndex
     val isFirstStep: Boolean = currentStepIndex == 0
     val normalizedName: String = studentName.trim()
-    val canContinue: Boolean = when (currentStep.kind) {
-        OnboardingStepKind.OperatingSystem ->
-            targetOperatingSystem != null && isTargetOperatingSystemConfirmed
-        OnboardingStepKind.Personalization -> normalizedName.isNotEmpty()
-        else -> true
-    }
+    val canContinue: Boolean =
+        when (currentStep.kind) {
+            OnboardingStepKind.OperatingSystem ->
+                targetOperatingSystem != null && isTargetOperatingSystemConfirmed
+            OnboardingStepKind.Personalization -> normalizedName.isNotEmpty()
+            else -> true
+        }
 }
 
 class OnboardingViewModel(
@@ -40,13 +41,14 @@ class OnboardingViewModel(
     initialTargetOperatingSystem: TargetOperatingSystem? = TargetOperatingSystem.detect(),
     private val steps: List<OnboardingStep> = onboardingSteps,
 ) {
-    private val _uiState = MutableStateFlow(
-        OnboardingUiState(
-            steps = steps,
-            themePreference = initialThemePreference,
-            targetOperatingSystem = initialTargetOperatingSystem,
-        ),
-    )
+    private val _uiState =
+        MutableStateFlow(
+            OnboardingUiState(
+                steps = steps,
+                themePreference = initialThemePreference,
+                targetOperatingSystem = initialTargetOperatingSystem,
+            ),
+        )
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
 
     fun syncThemePreference(themePreference: ThemePreference) {

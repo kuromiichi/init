@@ -171,107 +171,110 @@ data class LessonContent(
 )
 
 object LessonContentCatalog {
-    val lessons = listOf(
-        welcomeRoadmapLessonContent,
-        softwareDevelopmentLessonContent,
-        developmentEnvironmentLessonContent,
-    )
+    val lessons =
+        listOf(
+            welcomeRoadmapLessonContent,
+            softwareDevelopmentLessonContent,
+            developmentEnvironmentLessonContent,
+        )
 
     val currentLesson = lessons.first()
 
-    fun findByLessonId(lessonId: String): LessonContent? =
-        lessons.firstOrNull { it.lessonId == lessonId }
+    fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }
 
-    fun hasContent(lessonId: String): Boolean =
-        findByLessonId(lessonId) != null
+    fun hasContent(lessonId: String): Boolean = findByLessonId(lessonId) != null
 }
 
-internal fun codeLine(vararg tokens: LessonCodeToken): LessonCodeLine =
-    LessonCodeLine(tokens = tokens.toList())
+internal fun codeLine(vararg tokens: LessonCodeToken): LessonCodeLine = LessonCodeLine(tokens = tokens.toList())
 
-internal fun plain(text: String, hasErrorUnderline: Boolean = false): LessonCodeToken =
-    LessonCodeToken(text = text, hasErrorUnderline = hasErrorUnderline)
+internal fun plain(
+    text: String,
+    hasErrorUnderline: Boolean = false,
+): LessonCodeToken = LessonCodeToken(text = text, hasErrorUnderline = hasErrorUnderline)
 
-internal fun keyword(text: String): LessonCodeToken =
-    LessonCodeToken(text = text, kind = LessonCodeTokenKind.Keyword)
+internal fun keyword(text: String): LessonCodeToken = LessonCodeToken(text = text, kind = LessonCodeTokenKind.Keyword)
 
-internal fun function(text: String): LessonCodeToken =
-    LessonCodeToken(text = text, kind = LessonCodeTokenKind.Function)
+internal fun function(text: String): LessonCodeToken = LessonCodeToken(text = text, kind = LessonCodeTokenKind.Function)
 
-internal fun number(text: String, hasErrorUnderline: Boolean = false): LessonCodeToken =
+internal fun number(
+    text: String,
+    hasErrorUnderline: Boolean = false,
+): LessonCodeToken =
     LessonCodeToken(
         text = text,
         kind = LessonCodeTokenKind.Number,
         hasErrorUnderline = hasErrorUnderline,
     )
 
-internal fun operator(text: String, hasErrorUnderline: Boolean = false): LessonCodeToken =
+internal fun operator(
+    text: String,
+    hasErrorUnderline: Boolean = false,
+): LessonCodeToken =
     LessonCodeToken(
         text = text,
         kind = LessonCodeTokenKind.Operator,
         hasErrorUnderline = hasErrorUnderline,
     )
 
-internal fun punctuation(text: String): LessonCodeToken =
-    LessonCodeToken(text = text, kind = LessonCodeTokenKind.Punctuation)
+internal fun punctuation(text: String): LessonCodeToken = LessonCodeToken(text = text, kind = LessonCodeTokenKind.Punctuation)
 
-internal fun string(text: String, hasErrorUnderline: Boolean = false): LessonCodeToken =
+internal fun string(
+    text: String,
+    hasErrorUnderline: Boolean = false,
+): LessonCodeToken =
     LessonCodeToken(
         text = text,
         kind = LessonCodeTokenKind.StringLiteral,
         hasErrorUnderline = hasErrorUnderline,
     )
 
-internal fun paragraph(vararg spans: LessonTextSpan): LessonExplanationBlock.Paragraph =
-    LessonExplanationBlock.Paragraph(LessonRichText(spans.toList()))
+internal fun paragraph(vararg spans: LessonTextSpan): LessonExplanationBlock.Paragraph = LessonExplanationBlock.Paragraph(LessonRichText(spans.toList()))
 
-internal fun paragraph(text: String): LessonExplanationBlock.Paragraph =
-    paragraph(regular(text))
+internal fun paragraph(text: String): LessonExplanationBlock.Paragraph = paragraph(regular(text))
 
-internal fun steps(vararg items: String): LessonExplanationBlock.Steps =
-    LessonExplanationBlock.Steps(items.map { item -> LessonRichText(listOf(regular(item))) })
+internal fun steps(vararg items: String): LessonExplanationBlock.Steps = LessonExplanationBlock.Steps(items.map { item -> LessonRichText(listOf(regular(item))) })
 
 internal fun callout(
     title: String,
     text: String,
     tone: LessonCalloutTone = LessonCalloutTone.Information,
-): LessonExplanationBlock.Callout = LessonExplanationBlock.Callout(
-    title = title,
-    text = LessonRichText(listOf(regular(text))),
-    tone = tone,
-)
+): LessonExplanationBlock.Callout =
+    LessonExplanationBlock.Callout(
+        title = title,
+        text = LessonRichText(listOf(regular(text))),
+        tone = tone,
+    )
 
 internal fun explanationCode(
     title: String,
     note: String,
     vararg lines: String,
-): LessonExplanationBlock.Code = LessonExplanationBlock.Code(
-    title = title,
-    lines = lines.toList(),
-    note = note,
-)
+): LessonExplanationBlock.Code =
+    LessonExplanationBlock.Code(
+        title = title,
+        lines = lines.toList(),
+        note = note,
+    )
 
 internal fun structuredStepContent(
     explanation: List<LessonExplanationBlock>,
     visual: LessonVisualContent,
     links: List<LessonLink> = emptyList(),
-): LessonStepContent = LessonStepContent(
-    body = explanation.joinToString("\n\n", transform = LessonExplanationBlock::plainText),
-    visual = visual,
-    links = links,
-    explanation = explanation,
-)
+): LessonStepContent =
+    LessonStepContent(
+        body = explanation.joinToString("\n\n", transform = LessonExplanationBlock::plainText),
+        visual = visual,
+        links = links,
+        explanation = explanation,
+    )
 
 internal fun regular(text: String): LessonTextSpan = LessonTextSpan(text)
 
-internal fun emphasis(text: String): LessonTextSpan =
-    LessonTextSpan(text, LessonTextSpanStyle.Emphasis)
+internal fun emphasis(text: String): LessonTextSpan = LessonTextSpan(text, LessonTextSpanStyle.Emphasis)
 
-internal fun highlight(text: String): LessonTextSpan =
-    LessonTextSpan(text, LessonTextSpanStyle.Highlight)
+internal fun highlight(text: String): LessonTextSpan = LessonTextSpan(text, LessonTextSpanStyle.Highlight)
 
-internal fun inlineCode(text: String): LessonTextSpan =
-    LessonTextSpan(text, LessonTextSpanStyle.InlineCode)
+internal fun inlineCode(text: String): LessonTextSpan = LessonTextSpan(text, LessonTextSpanStyle.InlineCode)
 
 private fun String.toParagraphBlocks(): List<LessonExplanationBlock> =
     trim()
@@ -279,9 +282,10 @@ private fun String.toParagraphBlocks(): List<LessonExplanationBlock> =
         .filter(String::isNotBlank)
         .map(::paragraph)
 
-private fun LessonExplanationBlock.plainText(): String = when (this) {
-    is LessonExplanationBlock.Callout -> "$title: ${text.plainText}"
-    is LessonExplanationBlock.Code -> listOf(title, lines.joinToString("\n"), note).joinToString("\n")
-    is LessonExplanationBlock.Paragraph -> text.plainText
-    is LessonExplanationBlock.Steps -> items.joinToString("\n") { item -> item.plainText }
-}
+private fun LessonExplanationBlock.plainText(): String =
+    when (this) {
+        is LessonExplanationBlock.Callout -> "$title: ${text.plainText}"
+        is LessonExplanationBlock.Code -> listOf(title, lines.joinToString("\n"), note).joinToString("\n")
+        is LessonExplanationBlock.Paragraph -> text.plainText
+        is LessonExplanationBlock.Steps -> items.joinToString("\n") { item -> item.plainText }
+    }

@@ -2,7 +2,7 @@ package dev.kuromiichi.damprep.ui.settings
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
+import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,15 +23,16 @@ class SettingsViewModel(
     targetOperatingSystem: TargetOperatingSystem?,
     themePreference: ThemePreference,
 ) {
-    private val _uiState = MutableStateFlow(
-        SettingsUiState(
-            savedStudentName = studentName,
-            studentNameDraft = studentName,
-            pronounPreference = pronounPreference,
-            targetOperatingSystem = targetOperatingSystem,
-            themePreference = themePreference,
-        ),
-    )
+    private val _uiState =
+        MutableStateFlow(
+            SettingsUiState(
+                savedStudentName = studentName,
+                studentNameDraft = studentName,
+                pronounPreference = pronounPreference,
+                targetOperatingSystem = targetOperatingSystem,
+                themePreference = themePreference,
+            ),
+        )
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     fun syncPreferences(
@@ -43,11 +44,12 @@ class SettingsViewModel(
         _uiState.update { state ->
             state.copy(
                 savedStudentName = studentName,
-                studentNameDraft = if (state.isStudentNameFocused) {
-                    state.studentNameDraft
-                } else {
-                    studentName
-                },
+                studentNameDraft =
+                    if (state.isStudentNameFocused) {
+                        state.studentNameDraft
+                    } else {
+                        studentName
+                    },
                 pronounPreference = pronounPreference,
                 targetOperatingSystem = targetOperatingSystem,
                 themePreference = themePreference,

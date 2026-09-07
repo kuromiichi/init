@@ -20,10 +20,11 @@ fun PlaceholderScreen(
 ) {
     AppScreen(onBack = onBack) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .widthIn(max = AppScreenContentMaxWidth)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .widthIn(max = AppScreenContentMaxWidth)
+                    .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
         ) {
             Text(

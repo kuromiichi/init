@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -28,12 +28,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
+import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
 import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
 import dev.kuromiichi.damprep.ui.common.SettingControlMaxWidth
 import dev.kuromiichi.damprep.ui.common.SettingRow
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,14 +49,15 @@ fun SettingsScreen(
     onBack: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val viewModel = remember {
-        SettingsViewModel(
-            studentName = studentName,
-            pronounPreference = pronounPreference,
-            targetOperatingSystem = targetOperatingSystem,
-            themePreference = themePreference,
-        )
-    }
+    val viewModel =
+        remember {
+            SettingsViewModel(
+                studentName = studentName,
+                pronounPreference = pronounPreference,
+                targetOperatingSystem = targetOperatingSystem,
+                themePreference = themePreference,
+            )
+        }
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(studentName, pronounPreference, targetOperatingSystem, themePreference) {
@@ -75,11 +76,12 @@ fun SettingsScreen(
         },
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .widthIn(max = AppScreenContentMaxWidth)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .widthIn(max = AppScreenContentMaxWidth)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
@@ -95,9 +97,10 @@ fun SettingsScreen(
             )
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 40.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 40.dp),
                 verticalArrangement = Arrangement.spacedBy(28.dp),
             ) {
                 SettingRow(
@@ -107,21 +110,24 @@ fun SettingsScreen(
                     OutlinedTextField(
                         value = uiState.studentNameDraft,
                         onValueChange = viewModel::updateStudentNameDraft,
-                        modifier = Modifier
-                            .widthIn(max = SettingControlMaxWidth)
-                            .fillMaxWidth()
-                            .onFocusChanged { focusState ->
-                                viewModel.updateStudentNameFocus(focusState.isFocused)
-                                    ?.let(onStudentNameChanged)
-                            },
+                        modifier =
+                            Modifier
+                                .widthIn(max = SettingControlMaxWidth)
+                                .fillMaxWidth()
+                                .onFocusChanged { focusState ->
+                                    viewModel
+                                        .updateStudentNameFocus(focusState.isFocused)
+                                        ?.let(onStudentNameChanged)
+                                },
                         label = { Text("Nombre") },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                focusManager.clearFocus()
-                            },
-                        ),
+                        keyboardActions =
+                            KeyboardActions(
+                                onDone = {
+                                    focusManager.clearFocus()
+                                },
+                            ),
                     )
                 }
 
@@ -130,9 +136,10 @@ fun SettingsScreen(
                     description = "Define el lenguaje del saludo principal.",
                 ) {
                     SingleChoiceSegmentedButtonRow(
-                        modifier = Modifier
-                            .widthIn(max = SettingControlMaxWidth)
-                            .fillMaxWidth(),
+                        modifier =
+                            Modifier
+                                .widthIn(max = SettingControlMaxWidth)
+                                .fillMaxWidth(),
                     ) {
                         PronounPreference.entries.forEachIndexed { index, preference ->
                             SegmentedButton(
@@ -141,10 +148,11 @@ fun SettingsScreen(
                                     viewModel.updatePronounPreference(preference)
                                     onPronounPreferenceChanged(preference)
                                 },
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    index = index,
-                                    count = PronounPreference.entries.size,
-                                ),
+                                shape =
+                                    SegmentedButtonDefaults.itemShape(
+                                        index = index,
+                                        count = PronounPreference.entries.size,
+                                    ),
                             ) {
                                 Text(preference.label)
                             }
@@ -162,9 +170,10 @@ fun SettingsScreen(
                             viewModel.updateTargetOperatingSystem(operatingSystem)
                             onTargetOperatingSystemChanged(operatingSystem)
                         },
-                        modifier = Modifier
-                            .widthIn(max = SettingControlMaxWidth)
-                            .fillMaxWidth(),
+                        modifier =
+                            Modifier
+                                .widthIn(max = SettingControlMaxWidth)
+                                .fillMaxWidth(),
                     )
                 }
 
@@ -173,9 +182,10 @@ fun SettingsScreen(
                     description = "Elige colores claros, oscuros o deja que lo decida el sistema.",
                 ) {
                     SingleChoiceSegmentedButtonRow(
-                        modifier = Modifier
-                            .widthIn(max = SettingControlMaxWidth)
-                            .fillMaxWidth(),
+                        modifier =
+                            Modifier
+                                .widthIn(max = SettingControlMaxWidth)
+                                .fillMaxWidth(),
                     ) {
                         ThemePreference.entries.forEachIndexed { index, preference ->
                             SegmentedButton(
@@ -184,10 +194,11 @@ fun SettingsScreen(
                                     viewModel.updateThemePreference(preference)
                                     onThemePreferenceChanged(preference)
                                 },
-                                shape = SegmentedButtonDefaults.itemShape(
-                                    index = index,
-                                    count = ThemePreference.entries.size,
-                                ),
+                                shape =
+                                    SegmentedButtonDefaults.itemShape(
+                                        index = index,
+                                        count = ThemePreference.entries.size,
+                                    ),
                             ) {
                                 Text(preference.label)
                             }

@@ -30,9 +30,11 @@ Actualmente incluye:
     2. Qué es el software y cómo se construye;
     3. Preparar el entorno de trabajo;
 - componentes visuales para diagramas, ejemplos de código, herramientas y capturas;
-- pruebas automatizadas de los modelos, preferencias y catálogo de contenidos.
+- comprobación práctica final en la lección de preparación del entorno;
+- pruebas automatizadas de los modelos, preferencias y catálogo de contenidos;
+- verificación automática del formato, las pruebas y la compilación.
 
-La pantalla de apuntes, el progreso persistente, las actividades y la finalización de lecciones todavía están pendientes.
+La pantalla de apuntes y el progreso persistente todavía están pendientes. La finalización existe en la lección de preparación del entorno, pero aún no se guarda entre sesiones ni se aplica a todo el catálogo.
 
 ## Enfoque didáctico
 
@@ -43,7 +45,7 @@ Cada lección se divide en pantallas cortas. La intención es presentar una idea
 - ejemplos de código;
 - esquemas y recorridos visuales;
 - uso gradual de herramientas profesionales;
-- futuras actividades prácticas para comprobar lo aprendido.
+- actividades prácticas para comprobar lo aprendido.
 
 El orden de DAM Prep responde a esta progresión didáctica propia. Por ello puede diferir tanto del orden de las fuentes de referencia como de la distribución utilizada por un centro educativo concreto.
 
@@ -112,6 +114,26 @@ Compilar y verificar el proyecto completo:
 ./gradlew build
 ```
 
+La tarea `build` también comprueba el estilo del código. Para aplicar automáticamente el formato acordado:
+
+```bash
+./gradlew ktlintFormat
+```
+
+Para generar el instalador correspondiente al sistema operativo actual:
+
+```bash
+./gradlew packageDistributionForCurrentOS
+```
+
+Compose Desktop no permite generar instaladores para otro sistema operativo: los paquetes de macOS, Windows y Linux deben construirse en cada plataforma respectiva.
+
+Si macOS rechaza la firma porque la carpeta está gestionada por un servicio de sincronización, el código puede mantenerse en su ubicación y dirigir únicamente los archivos de distribución a una carpeta local:
+
+```bash
+./gradlew packageDistributionForCurrentOS -PnativeDistributionOutput=/private/tmp/dam-prep-distribution
+```
+
 ## Estructura principal
 
 ```text
@@ -136,13 +158,12 @@ Los recursos gráficos se encuentran en `src/main/composeResources/drawable` y l
 
 ## Próximos pasos
 
-1. Revisar y cerrar la lección de preparación del entorno.
-2. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
-3. Guardar el progreso y permitir continuar desde la última lección o paso visitado.
-4. Incorporar actividades prácticas y criterios de finalización.
-5. Desarrollar la lección de primeros programas.
-6. Implementar apuntes persistentes.
-7. Preparar integración continua, empaquetado y distribución.
+1. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
+2. Guardar el progreso, el último paso visitado y la finalización de las prácticas.
+3. Desarrollar la lección de primeros programas sin repetir la comprobación del entorno.
+4. Extender las actividades prácticas y los criterios de finalización al resto del catálogo.
+5. Implementar apuntes persistentes.
+6. Completar los metadatos, iconos y pruebas de los instaladores nativos.
 
 ## Contribución
 

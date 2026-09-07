@@ -21,10 +21,11 @@ fun OperatingSystemSelector(
             SegmentedButton(
                 selected = operatingSystem == selectedOperatingSystem,
                 onClick = { onOperatingSystemSelected(operatingSystem) },
-                shape = SegmentedButtonDefaults.itemShape(
-                    index = index,
-                    count = TargetOperatingSystem.entries.size,
-                ),
+                shape =
+                    SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = TargetOperatingSystem.entries.size,
+                    ),
             ) {
                 Text(operatingSystem.label)
             }

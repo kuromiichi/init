@@ -42,15 +42,17 @@ fun AppScreen(
         color = MaterialTheme.colorScheme.background,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 40.dp, vertical = 32.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 40.dp, vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TopAppBar(
-                modifier = Modifier
-                    .widthIn(max = contentMaxWidth)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .widthIn(max = contentMaxWidth)
+                        .fillMaxWidth(),
                 title = {
                     if (topBarTitle != null) {
                         Text(
@@ -76,12 +78,13 @@ fun AppScreen(
                 actions = topBarActions,
                 expandedHeight = 48.dp,
                 windowInsets = WindowInsets(0.dp),
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSurface,
-                ),
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                        actionIconContentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
             )
 
             content()

@@ -10,21 +10,23 @@ import kotlin.test.assertTrue
 class LessonListViewModelTest {
     @Test
     fun `lesson list state marks lessons with content as unlocked`() {
-        val viewModel = LessonListViewModel(
-            lessonCatalog = listOf(
-                LessonSummary(
-                    id = "available",
-                    title = "Disponible",
-                    subjectArea = SubjectArea.Programming,
-                ),
-                LessonSummary(
-                    id = "locked",
-                    title = "Bloqueada",
-                    subjectArea = SubjectArea.DevelopmentEnvironments,
-                ),
-            ),
-            hasContent = { lessonId -> lessonId == "available" },
-        )
+        val viewModel =
+            LessonListViewModel(
+                lessonCatalog =
+                    listOf(
+                        LessonSummary(
+                            id = "available",
+                            title = "Disponible",
+                            subjectArea = SubjectArea.Programming,
+                        ),
+                        LessonSummary(
+                            id = "locked",
+                            title = "Bloqueada",
+                            subjectArea = SubjectArea.DevelopmentEnvironments,
+                        ),
+                    ),
+                hasContent = { lessonId -> lessonId == "available" },
+            )
 
         val lessons = viewModel.uiState.value.lessons
 

@@ -22,8 +22,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun WindowSizeGuard(content: @Composable () -> Unit) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val isTooSmall = maxWidth < WindowMetrics.MinimumUsableWidth ||
-            maxHeight < WindowMetrics.MinimumUsableHeight
+        val isTooSmall =
+            maxWidth < WindowMetrics.MinimumUsableWidth ||
+                maxHeight < WindowMetrics.MinimumUsableHeight
 
         content()
 
@@ -45,16 +46,18 @@ private fun WindowTooSmallScreen() {
         color = MaterialTheme.colorScheme.background,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp, vertical = 28.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp, vertical = 28.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             Column(
-                modifier = Modifier
-                    .widthIn(max = 520.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .widthIn(max = 520.dp)
+                        .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {

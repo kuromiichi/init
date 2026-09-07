@@ -15,15 +15,17 @@ class LessonListViewModel(
     lessonCatalog: List<LessonSummary> = LessonCatalog.lessons,
     hasContent: (String) -> Boolean = LessonContentCatalog::hasContent,
 ) {
-    private val _uiState = MutableStateFlow(
-        LessonListUiState(
-            lessons = lessonCatalog.mapIndexed { index, lesson ->
-                lesson.toLessonListItemUiModel(
-                    index = index,
-                    isUnlocked = hasContent(lesson.id),
-                )
-            },
-        ),
-    )
+    private val _uiState =
+        MutableStateFlow(
+            LessonListUiState(
+                lessons =
+                    lessonCatalog.mapIndexed { index, lesson ->
+                        lesson.toLessonListItemUiModel(
+                            index = index,
+                            isUnlocked = hasContent(lesson.id),
+                        )
+                    },
+            ),
+        )
     val uiState: StateFlow<LessonListUiState> = _uiState.asStateFlow()
 }

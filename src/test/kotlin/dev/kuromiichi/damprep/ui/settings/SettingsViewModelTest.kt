@@ -2,7 +2,7 @@ package dev.kuromiichi.damprep.ui.settings
 
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
+import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -10,12 +10,13 @@ import kotlin.test.assertNull
 class SettingsViewModelTest {
     @Test
     fun `settings sync keeps focused name draft intact`() {
-        val viewModel = SettingsViewModel(
-            studentName = "Emma",
-            pronounPreference = PronounPreference.Feminine,
-            targetOperatingSystem = TargetOperatingSystem.MacOS,
-            themePreference = ThemePreference.Dark,
-        )
+        val viewModel =
+            SettingsViewModel(
+                studentName = "Emma",
+                pronounPreference = PronounPreference.Feminine,
+                targetOperatingSystem = TargetOperatingSystem.MacOS,
+                themePreference = ThemePreference.Dark,
+            )
 
         viewModel.updateStudentNameFocus(isFocused = true)
         viewModel.updateStudentNameDraft("Em")
@@ -37,12 +38,13 @@ class SettingsViewModelTest {
 
     @Test
     fun `settings sync refreshes name draft when it is not focused`() {
-        val viewModel = SettingsViewModel(
-            studentName = "Emma",
-            pronounPreference = PronounPreference.Feminine,
-            targetOperatingSystem = TargetOperatingSystem.MacOS,
-            themePreference = ThemePreference.Dark,
-        )
+        val viewModel =
+            SettingsViewModel(
+                studentName = "Emma",
+                pronounPreference = PronounPreference.Feminine,
+                targetOperatingSystem = TargetOperatingSystem.MacOS,
+                themePreference = ThemePreference.Dark,
+            )
 
         viewModel.syncPreferences(
             studentName = "Ari",
@@ -60,12 +62,13 @@ class SettingsViewModelTest {
 
     @Test
     fun `settings commits changed name once`() {
-        val viewModel = SettingsViewModel(
-            studentName = "Emma",
-            pronounPreference = PronounPreference.Feminine,
-            targetOperatingSystem = TargetOperatingSystem.MacOS,
-            themePreference = ThemePreference.Dark,
-        )
+        val viewModel =
+            SettingsViewModel(
+                studentName = "Emma",
+                pronounPreference = PronounPreference.Feminine,
+                targetOperatingSystem = TargetOperatingSystem.MacOS,
+                themePreference = ThemePreference.Dark,
+            )
 
         viewModel.updateStudentNameDraft("Ari")
 
@@ -76,12 +79,13 @@ class SettingsViewModelTest {
 
     @Test
     fun `settings commits draft when name field loses focus`() {
-        val viewModel = SettingsViewModel(
-            studentName = "Emma",
-            pronounPreference = PronounPreference.Feminine,
-            targetOperatingSystem = TargetOperatingSystem.MacOS,
-            themePreference = ThemePreference.Dark,
-        )
+        val viewModel =
+            SettingsViewModel(
+                studentName = "Emma",
+                pronounPreference = PronounPreference.Feminine,
+                targetOperatingSystem = TargetOperatingSystem.MacOS,
+                themePreference = ThemePreference.Dark,
+            )
 
         viewModel.updateStudentNameFocus(isFocused = true)
         viewModel.updateStudentNameDraft("Ari")
@@ -92,12 +96,13 @@ class SettingsViewModelTest {
 
     @Test
     fun `target operating system can be changed`() {
-        val viewModel = SettingsViewModel(
-            studentName = "Emma",
-            pronounPreference = PronounPreference.Feminine,
-            targetOperatingSystem = TargetOperatingSystem.MacOS,
-            themePreference = ThemePreference.Dark,
-        )
+        val viewModel =
+            SettingsViewModel(
+                studentName = "Emma",
+                pronounPreference = PronounPreference.Feminine,
+                targetOperatingSystem = TargetOperatingSystem.MacOS,
+                themePreference = ThemePreference.Dark,
+            )
 
         viewModel.updateTargetOperatingSystem(TargetOperatingSystem.Linux)
 

@@ -44,10 +44,11 @@ fun LessonListScreen(
 ) {
     AppScreen(onBack = onBack) {
         Column(
-            modifier = Modifier
-                .widthIn(max = AppScreenContentMaxWidth)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .widthIn(max = AppScreenContentMaxWidth)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
         ) {
             Spacer(modifier = Modifier.height(48.dp))
             Text(
@@ -72,16 +73,18 @@ private fun LessonListItem(
     lesson: LessonListItemUiModel,
     onClick: () -> Unit,
 ) {
-    val contentColor = if (lesson.isUnlocked) {
-        MaterialTheme.colorScheme.onSurface
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    val containerColor = if (lesson.isUnlocked) {
-        MaterialTheme.colorScheme.surfaceVariant
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
+    val contentColor =
+        if (lesson.isUnlocked) {
+            MaterialTheme.colorScheme.onSurface
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        }
+    val containerColor =
+        if (lesson.isUnlocked) {
+            MaterialTheme.colorScheme.surfaceVariant
+        } else {
+            MaterialTheme.colorScheme.surface
+        }
 
     val itemContent: @Composable () -> Unit = {
         Row(
@@ -109,11 +112,12 @@ private fun LessonListItem(
             Icon(
                 imageVector = if (lesson.isUnlocked) Icons.Filled.PlayArrow else Icons.Filled.Lock,
                 contentDescription = if (lesson.isUnlocked) "Abrir lección" else "Lección bloqueada",
-                tint = if (lesson.isUnlocked) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.outline
-                },
+                tint =
+                    if (lesson.isUnlocked) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.outline
+                    },
             )
         }
     }
@@ -123,29 +127,32 @@ private fun LessonListItem(
         val isHovered by interactionSource.collectIsHoveredAsState()
         val scale by animateFloatAsState(
             targetValue = if (isHovered) 1.006f else 1f,
-            animationSpec = tween(
-                durationMillis = 140,
-                easing = FastOutSlowInEasing,
-            ),
+            animationSpec =
+                tween(
+                    durationMillis = 140,
+                    easing = FastOutSlowInEasing,
+                ),
             label = "Lesson item hover scale",
         )
         val tonalElevation by animateDpAsState(
             targetValue = if (isHovered) 3.dp else 0.dp,
-            animationSpec = tween(
-                durationMillis = 140,
-                easing = FastOutSlowInEasing,
-            ),
+            animationSpec =
+                tween(
+                    durationMillis = 140,
+                    easing = FastOutSlowInEasing,
+                ),
             label = "Lesson item hover elevation",
         )
 
         Surface(
             onClick = onClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    },
             shape = MaterialTheme.shapes.medium,
             color = containerColor,
             contentColor = contentColor,

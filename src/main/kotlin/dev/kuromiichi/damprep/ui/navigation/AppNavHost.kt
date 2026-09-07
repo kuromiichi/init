@@ -12,6 +12,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonContentCatalog
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
+import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.ui.home.HomeScreen
 import dev.kuromiichi.damprep.ui.home.HomeViewModel
 import dev.kuromiichi.damprep.ui.lessons.CurrentLessonScreen
@@ -20,7 +21,6 @@ import dev.kuromiichi.damprep.ui.lessons.LessonListViewModel
 import dev.kuromiichi.damprep.ui.notes.NotesScreen
 import dev.kuromiichi.damprep.ui.onboarding.OnboardingScreen
 import dev.kuromiichi.damprep.ui.settings.SettingsScreen
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
 
 @Composable
 fun AppNavHost(
@@ -61,11 +61,12 @@ fun AppNavHost(
             val homeViewModel = remember { HomeViewModel() }
 
             HomeScreen(
-                uiState = homeViewModel.createUiState(
-                    studentName = studentName,
-                    pronounPreference = pronounPreference,
-                    completedLessons = 0,
-                ),
+                uiState =
+                    homeViewModel.createUiState(
+                        studentName = studentName,
+                        pronounPreference = pronounPreference,
+                        completedLessons = 0,
+                    ),
                 onContinueLesson = {
                     navController.navigate(AppRoute.Lesson(LessonContentCatalog.currentLesson.lessonId))
                 },
@@ -86,10 +87,11 @@ fun AppNavHost(
 
             CurrentLessonScreen(
                 lessonId = route.lessonId,
-                lessonTitle = LessonCatalog.lessons
-                    .firstOrNull { lesson -> lesson.id == route.lessonId }
-                    ?.title
-                    ?: "Lección",
+                lessonTitle =
+                    LessonCatalog.lessons
+                        .firstOrNull { lesson -> lesson.id == route.lessonId }
+                        ?.title
+                        ?: "Lección",
                 targetOperatingSystem = targetOperatingSystem ?: TargetOperatingSystem.detect(),
                 onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
                 onBack = { navController.popBackStack() },

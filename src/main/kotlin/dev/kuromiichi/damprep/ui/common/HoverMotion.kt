@@ -25,10 +25,11 @@ fun Modifier.hoverScale(
     val isHovered by interactionSource.collectIsHoveredAsState()
     val scale by animateFloatAsState(
         targetValue = if (isHovered) hoveredScale else 1f,
-        animationSpec = tween(
-            durationMillis = 140,
-            easing = FastOutSlowInEasing,
-        ),
+        animationSpec =
+            tween(
+                durationMillis = 140,
+                easing = FastOutSlowInEasing,
+            ),
         label = "Hover scale",
     )
 

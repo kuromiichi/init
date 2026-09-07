@@ -4,23 +4,33 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import java.io.IOException
 
 class UserPreferencesRepository(
     private val dataStore: DataStore<Preferences>,
 ) {
-    val preferences: Flow<UserPreferences> = dataStore.data.map { preferences ->
-        UserPreferences(
-            studentName = preferences[StudentNameKey].orEmpty(),
-            themePreference = preferences[ThemePreferenceKey].toThemePreference(),
-            pronounPreference = preferences[PronounPreferenceKey].toPronounPreference(),
-            targetOperatingSystem = preferences[TargetOperatingSystemKey].toTargetOperatingSystem(),
-            onboardingCompleted = preferences[OnboardingCompletedKey] ?: false,
-        )
-    }
+    val preferences: Flow<UserPreferences> =
+        dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }.map { preferences ->
+                UserPreferences(
+                    studentName = preferences[StudentNameKey].orEmpty(),
+                    themePreference = preferences[ThemePreferenceKey].toThemePreference(),
+                    pronounPreference = preferences[PronounPreferenceKey].toPronounPreference(),
+                    targetOperatingSystem = preferences[TargetOperatingSystemKey].toTargetOperatingSystem(),
+                    onboardingCompleted = preferences[OnboardingCompletedKey] ?: false,
+                )
+            }
 
     suspend fun setThemePreference(themePreference: ThemePreference) {
         dataStore.edit { preferences ->
@@ -59,17 +69,14 @@ class UserPreferencesRepository(
         }
     }
 
-    private fun String?.toThemePreference(): ThemePreference {
-        return ThemePreference.entries.firstOrNull { it.name == this } ?: ThemePreference.System
-    }
+    private fun String?.toThemePreference(): ThemePreference = ThemePreference.entries.firstOrNull { it.name == this } ?: ThemePreference.System
 
-    private fun String?.toPronounPreference(): PronounPreference {
-        return PronounPreference.entries.firstOrNull { it.name == this } ?: PronounPreference.Neutral
-    }
+    private fun String?.toPronounPreference(): PronounPreference =
+        PronounPreference.entries.firstOrNull {
+            it.name == this
+        } ?: PronounPreference.Neutral
 
-    private fun String?.toTargetOperatingSystem(): TargetOperatingSystem? {
-        return TargetOperatingSystem.entries.firstOrNull { it.name == this }
-    }
+    private fun String?.toTargetOperatingSystem(): TargetOperatingSystem? = TargetOperatingSystem.entries.firstOrNull { it.name == this }
 
     private companion object {
         val StudentNameKey = stringPreferencesKey("student_name")

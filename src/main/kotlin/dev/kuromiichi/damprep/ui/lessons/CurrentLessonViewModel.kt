@@ -33,11 +33,12 @@ class CurrentLessonViewModel(
     lessonId: String,
     findLessonById: (String) -> LessonContent? = LessonContentCatalog::findByLessonId,
 ) {
-    private val _uiState = MutableStateFlow(
-        CurrentLessonUiState(
-            lessonContent = findLessonById(lessonId),
-        ),
-    )
+    private val _uiState =
+        MutableStateFlow(
+            CurrentLessonUiState(
+                lessonContent = findLessonById(lessonId),
+            ),
+        )
     val uiState: StateFlow<CurrentLessonUiState> = _uiState.asStateFlow()
 
     fun goToPreviousStep() {
@@ -64,11 +65,12 @@ class CurrentLessonViewModel(
         _uiState.update { state ->
             val checkpointId = state.currentStep?.checkpoint?.id ?: return@update state
             state.copy(
-                confirmedCheckpointIds = if (confirmed) {
-                    state.confirmedCheckpointIds + checkpointId
-                } else {
-                    state.confirmedCheckpointIds - checkpointId
-                },
+                confirmedCheckpointIds =
+                    if (confirmed) {
+                        state.confirmedCheckpointIds + checkpointId
+                    } else {
+                        state.confirmedCheckpointIds - checkpointId
+                    },
             )
         }
     }

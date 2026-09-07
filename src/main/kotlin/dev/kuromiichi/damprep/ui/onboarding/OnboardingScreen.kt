@@ -14,7 +14,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -50,8 +50,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
+import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
-import dev.kuromiichi.damprep.ui.theme.ThemePreference
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,12 +65,13 @@ fun OnboardingScreen(
         targetOperatingSystem: TargetOperatingSystem,
     ) -> Unit,
 ) {
-    val viewModel = remember {
-        OnboardingViewModel(
-            initialThemePreference = themePreference,
-            initialTargetOperatingSystem = detectedOperatingSystem,
-        )
-    }
+    val viewModel =
+        remember {
+            OnboardingViewModel(
+                initialThemePreference = themePreference,
+                initialTargetOperatingSystem = detectedOperatingSystem,
+            )
+        }
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(themePreference) {
@@ -82,22 +83,25 @@ fun OnboardingScreen(
         color = MaterialTheme.colorScheme.background,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 40.dp, vertical = 32.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 40.dp, vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .widthIn(max = 720.dp)
-                    .fillMaxWidth()
-                    .animateContentSize(
-                        animationSpec = tween(
-                            durationMillis = 260,
-                            easing = FastOutSlowInEasing,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .widthIn(max = 720.dp)
+                        .fillMaxWidth()
+                        .animateContentSize(
+                            animationSpec =
+                                tween(
+                                    durationMillis = 260,
+                                    easing = FastOutSlowInEasing,
+                                ),
                         ),
-                    ),
                 verticalArrangement = Arrangement.Center,
             ) {
                 AnimatedContent(
@@ -108,19 +112,21 @@ fun OnboardingScreen(
                         (
                             fadeIn(animationSpec = tween(durationMillis = 220)) +
                                 slideInVertically(
-                                    animationSpec = tween(
-                                        durationMillis = 260,
-                                        easing = FastOutSlowInEasing,
-                                    ),
+                                    animationSpec =
+                                        tween(
+                                            durationMillis = 260,
+                                            easing = FastOutSlowInEasing,
+                                        ),
                                     initialOffsetY = { it / 10 * direction },
                                 )
-                            ).togetherWith(
+                        ).togetherWith(
                             fadeOut(animationSpec = tween(durationMillis = 160)) +
                                 slideOutVertically(
-                                    animationSpec = tween(
-                                        durationMillis = 180,
-                                        easing = FastOutSlowInEasing,
-                                    ),
+                                    animationSpec =
+                                        tween(
+                                            durationMillis = 180,
+                                            easing = FastOutSlowInEasing,
+                                        ),
                                     targetOffsetY = { -it / 10 * direction },
                                 ),
                         ).using(
@@ -159,9 +165,10 @@ fun OnboardingScreen(
             }
 
             Row(
-                modifier = Modifier
-                    .widthIn(max = 720.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .widthIn(max = 720.dp)
+                        .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -240,10 +247,11 @@ private fun OnboardingStepContent(
                             onClick = {
                                 onThemePreferenceChanged(preference)
                             },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = ThemePreference.entries.size,
-                            ),
+                            shape =
+                                SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = ThemePreference.entries.size,
+                                ),
                         ) {
                             Text(preference.label)
                         }
@@ -262,13 +270,14 @@ private fun OnboardingStepContent(
                 )
 
                 Text(
-                    text = when {
-                        targetOperatingSystem == null -> "No hemos podido detectar el sistema actual. Elige una opción."
-                        isTargetOperatingSystemConfirmed ->
-                            "Usaremos instrucciones para ${targetOperatingSystem.label}."
-                        else ->
-                            "Hemos detectado ${targetOperatingSystem.label}. Pulsa una opción para confirmarla."
-                    },
+                    text =
+                        when {
+                            targetOperatingSystem == null -> "No hemos podido detectar el sistema actual. Elige una opción."
+                            isTargetOperatingSystemConfirmed ->
+                                "Usaremos instrucciones para ${targetOperatingSystem.label}."
+                            else ->
+                                "Hemos detectado ${targetOperatingSystem.label}. Pulsa una opción para confirmarla."
+                        },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 12.dp),
@@ -288,10 +297,11 @@ private fun OnboardingStepContent(
                             onClick = {
                                 onPronounPreferenceChanged(preference)
                             },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = PronounPreference.entries.size,
-                            ),
+                            shape =
+                                SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = PronounPreference.entries.size,
+                                ),
                         ) {
                             Text(preference.label)
                         }
@@ -306,11 +316,12 @@ private fun OnboardingStepContent(
                     label = { Text("Nombre") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onDone()
-                        },
-                    ),
+                    keyboardActions =
+                        KeyboardActions(
+                            onDone = {
+                                onDone()
+                            },
+                        ),
                 )
             }
         }
@@ -323,39 +334,43 @@ private fun OnboardingProgressDots(
     stepCount: Int,
 ) {
     Row(
-        modifier = Modifier.progressSemantics(
-            value = (currentStepIndex + 1).toFloat(),
-            valueRange = 0f..stepCount.toFloat(),
-            steps = (stepCount - 1).coerceAtLeast(0),
-        ),
+        modifier =
+            Modifier.progressSemantics(
+                value = (currentStepIndex + 1).toFloat(),
+                valueRange = 0f..stepCount.toFloat(),
+                steps = (stepCount - 1).coerceAtLeast(0),
+            ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         repeat(stepCount) { index ->
             val isCurrent = index == currentStepIndex
             val dotColor by animateColorAsState(
-                targetValue = if (isCurrent) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.outlineVariant
-                },
+                targetValue =
+                    if (isCurrent) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.outlineVariant
+                    },
                 animationSpec = tween(durationMillis = 240),
                 label = "Onboarding dot color",
             )
             val dotWidth by animateDpAsState(
                 targetValue = if (isCurrent) 24.dp else 8.dp,
-                animationSpec = tween(
-                    durationMillis = 260,
-                    easing = FastOutSlowInEasing,
-                ),
+                animationSpec =
+                    tween(
+                        durationMillis = 260,
+                        easing = FastOutSlowInEasing,
+                    ),
                 label = "Onboarding dot width",
             )
 
             Box(
-                modifier = Modifier
-                    .size(height = 8.dp, width = dotWidth)
-                    .clip(MaterialTheme.shapes.extraLarge)
-                    .background(dotColor),
+                modifier =
+                    Modifier
+                        .size(height = 8.dp, width = dotWidth)
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .background(dotColor),
             )
         }
     }

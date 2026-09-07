@@ -12,12 +12,14 @@ fun main() {
     System.setProperty("apple.awt.application.appearance", "system")
 
     application {
-        val windowState = rememberWindowState(
-            size = DpSize(
-                width = WindowMetrics.PreferredWidth,
-                height = WindowMetrics.PreferredHeight,
-            ),
-        )
+        val windowState =
+            rememberWindowState(
+                size =
+                    DpSize(
+                        width = WindowMetrics.PreferredWidth,
+                        height = WindowMetrics.PreferredHeight,
+                    ),
+            )
 
         Window(
             onCloseRequest = ::exitApplication,

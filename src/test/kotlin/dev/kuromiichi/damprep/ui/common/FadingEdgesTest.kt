@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FadingEdgesTest {
-
     @Test
     fun `edge is transparent at the scroll limit`() {
         assertEquals(0f, fadingEdgeAlpha(distanceFromEdge = 0f, revealDistance = 24f))
