@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
 
 class LessonListViewModelTest {
     @Test
-    fun `lesson list state marks lessons with content as unlocked`() {
+    fun `lesson list unlocks only the first lesson initially`() {
         val viewModel =
             LessonListViewModel(
                 lessonCatalog =
@@ -20,20 +20,62 @@ class LessonListViewModelTest {
                             subjectArea = SubjectArea.Programming,
                         ),
                         LessonSummary(
-                            id = "locked",
-                            title = "Bloqueada",
+                            id = "next",
+                            title = "Siguiente",
                             subjectArea = SubjectArea.DevelopmentEnvironments,
                         ),
                     ),
-                hasContent = { lessonId -> lessonId == "available" },
+                hasContent = { true },
             )
 
-        val lessons = viewModel.uiState.value.lessons
+        val lessons = viewModel.createUiState(emptySet()).lessons
 
         assertEquals(2, lessons.size)
         assertTrue(lessons[0].isUnlocked)
         assertFalse(lessons[1].isUnlocked)
+        assertTrue(lessons.all(LessonListItemUiModel::isAvailable))
         assertEquals(0, lessons[0].index)
         assertEquals(1, lessons[1].index)
     }
+
+    @Test
+    fun `completing a lesson unlocks the next available lesson`() {
+        val viewModel =
+            LessonListViewModel(
+                lessonCatalog =
+                    listOf(
+                        lesson("first"),
+                        lesson("second"),
+                        lesson("third"),
+                    ),
+                hasContent = { true },
+            )
+
+        val lessons = viewModel.createUiState(setOf("first")).lessons
+
+        assertTrue(lessons[0].isCompleted)
+        assertTrue(lessons[1].isUnlocked)
+        assertFalse(lessons[2].isUnlocked)
+    }
+
+    @Test
+    fun `unlocked lesson without content remains unavailable`() {
+        val viewModel =
+            LessonListViewModel(
+                lessonCatalog = listOf(lesson("first"), lesson("second")),
+                hasContent = { lessonId -> lessonId == "first" },
+            )
+
+        val lessons = viewModel.createUiState(setOf("first")).lessons
+
+        assertTrue(lessons[1].isUnlocked)
+        assertFalse(lessons[1].isAvailable)
+    }
+
+    private fun lesson(id: String) =
+        LessonSummary(
+            id = id,
+            title = id,
+            subjectArea = SubjectArea.Programming,
+        )
 }

@@ -9,11 +9,15 @@ data class LessonListItemUiModel(
     val title: String,
     val subjectArea: SubjectArea,
     val isUnlocked: Boolean,
+    val isAvailable: Boolean,
+    val isCompleted: Boolean,
 )
 
 fun LessonSummary.toLessonListItemUiModel(
     index: Int,
     isUnlocked: Boolean,
+    isAvailable: Boolean,
+    isCompleted: Boolean,
 ): LessonListItemUiModel =
     LessonListItemUiModel(
         index = index,
@@ -21,4 +25,6 @@ fun LessonSummary.toLessonListItemUiModel(
         title = title,
         subjectArea = subjectArea,
         isUnlocked = isUnlocked,
+        isAvailable = isAvailable,
+        isCompleted = isCompleted,
     )

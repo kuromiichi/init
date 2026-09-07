@@ -29,6 +29,7 @@ class AppViewModelTest {
                         themePreference = ThemePreference.Dark,
                         onboardingCompleted = false,
                     ),
+                completedLessonIds = emptySet(),
             )
 
         assertEquals(ThemePreference.Dark, state.themePreference)
@@ -46,6 +47,7 @@ class AppViewModelTest {
                         themePreference = ThemePreference.Light,
                         onboardingCompleted = true,
                     ),
+                completedLessonIds = emptySet(),
             )
 
         assertEquals(ThemePreference.Light, state.themePreference)

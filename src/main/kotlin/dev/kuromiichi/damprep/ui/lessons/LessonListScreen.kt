@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -73,14 +75,15 @@ private fun LessonListItem(
     lesson: LessonListItemUiModel,
     onClick: () -> Unit,
 ) {
+    val canOpen = lesson.isUnlocked && lesson.isAvailable
     val contentColor =
-        if (lesson.isUnlocked) {
+        if (canOpen) {
             MaterialTheme.colorScheme.onSurface
         } else {
             MaterialTheme.colorScheme.onSurfaceVariant
         }
     val containerColor =
-        if (lesson.isUnlocked) {
+        if (canOpen) {
             MaterialTheme.colorScheme.surfaceVariant
         } else {
             MaterialTheme.colorScheme.surface
@@ -110,10 +113,22 @@ private fun LessonListItem(
             }
             SubjectTag(subjectArea = lesson.subjectArea)
             Icon(
-                imageVector = if (lesson.isUnlocked) Icons.Filled.PlayArrow else Icons.Filled.Lock,
-                contentDescription = if (lesson.isUnlocked) "Abrir lección" else "Lección bloqueada",
+                imageVector =
+                    when {
+                        lesson.isCompleted -> Icons.Filled.CheckCircle
+                        canOpen -> Icons.Filled.PlayArrow
+                        lesson.isUnlocked -> Icons.Filled.Schedule
+                        else -> Icons.Filled.Lock
+                    },
+                contentDescription =
+                    when {
+                        lesson.isCompleted -> "Lección completada"
+                        canOpen -> "Abrir lección"
+                        lesson.isUnlocked -> "Contenido próximamente"
+                        else -> "Lección bloqueada"
+                    },
                 tint =
-                    if (lesson.isUnlocked) {
+                    if (lesson.isCompleted || canOpen) {
                         MaterialTheme.colorScheme.primary
                     } else {
                         MaterialTheme.colorScheme.outline
@@ -122,7 +137,7 @@ private fun LessonListItem(
         }
     }
 
-    if (lesson.isUnlocked) {
+    if (canOpen) {
         val interactionSource = remember { MutableInteractionSource() }
         val isHovered by interactionSource.collectIsHoveredAsState()
         val scale by animateFloatAsState(

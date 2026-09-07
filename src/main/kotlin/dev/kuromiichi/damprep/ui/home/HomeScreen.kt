@@ -99,6 +99,7 @@ fun HomeScreen(
                     )
                     LinearProgressIndicator(
                         progress = { uiState.progress },
+                        drawStopIndicator = {},
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -115,17 +116,24 @@ fun HomeScreen(
                 ) {
                     Button(
                         onClick = onContinueLesson,
+                        enabled = uiState.continueLessonId != null,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .hoverScale(),
+                                .hoverScale(enabled = uiState.continueLessonId != null),
                     ) {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
                             contentDescription = null,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Continuar lección")
+                        Text(
+                            if (uiState.continueLessonId != null) {
+                                "Continuar lección"
+                            } else {
+                                "Siguiente lección próximamente"
+                            },
+                        )
                     }
                     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
                         val useCompactLayout = maxWidth < HomeCompactBreakpoint

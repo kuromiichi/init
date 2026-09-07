@@ -5,17 +5,20 @@ import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.data.preferences.UserPreferences
 import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
+import dev.kuromiichi.damprep.data.progress.LessonProgressRepository
 import dev.kuromiichi.damprep.ui.navigation.AppRoute
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 data class AppUiState(
     val preferences: UserPreferences? = null,
+    val completedLessonIds: Set<String>? = null,
 ) {
-    val isLoading: Boolean = preferences == null
+    val isLoading: Boolean = preferences == null || completedLessonIds == null
     val themePreference: ThemePreference = preferences?.themePreference ?: ThemePreference.System
     val startDestination: AppRoute =
         if (preferences?.onboardingCompleted == true) {
@@ -27,6 +30,7 @@ data class AppUiState(
 
 class AppViewModel(
     private val preferencesRepository: UserPreferencesRepository,
+    private val lessonProgressRepository: LessonProgressRepository,
     private val scope: CoroutineScope,
 ) {
     private val _uiState = MutableStateFlow(AppUiState())
@@ -34,9 +38,11 @@ class AppViewModel(
 
     init {
         scope.launch {
-            preferencesRepository.preferences.collect { preferences ->
-                _uiState.value = AppUiState(preferences = preferences)
-            }
+            combine(
+                preferencesRepository.preferences,
+                lessonProgressRepository.completedLessonIds,
+                ::AppUiState,
+            ).collect(_uiState)
         }
     }
 
@@ -75,6 +81,12 @@ class AppViewModel(
                 pronounPreference = pronounPreference,
                 targetOperatingSystem = targetOperatingSystem,
             )
+        }
+    }
+
+    fun completeLesson(lessonId: String) {
+        scope.launch {
+            lessonProgressRepository.completeLesson(lessonId)
         }
     }
 }

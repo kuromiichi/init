@@ -24,6 +24,8 @@ Actualmente incluye:
 - temas claro, oscuro y según el sistema;
 - navegación entre portada, listado y lecciones;
 - navegación por botones y teclado dentro de las lecciones;
+- finalización explícita y progreso persistente de las lecciones;
+- desbloqueo secuencial, continuación desde la primera lección pendiente y barra de progreso reactiva;
 - catálogo provisional de 24 lecciones;
 - tres lecciones con contenido:
     1. Bienvenida y mapa del camino;
@@ -31,10 +33,10 @@ Actualmente incluye:
     3. Preparar el entorno de trabajo;
 - componentes visuales para diagramas, ejemplos de código, herramientas y capturas;
 - comprobación práctica final en la lección de preparación del entorno;
-- pruebas automatizadas de los modelos, preferencias y catálogo de contenidos;
+- pruebas automatizadas de los modelos, preferencias, progreso, base de datos y catálogo de contenidos;
 - verificación automática del formato, las pruebas y la compilación.
 
-La pantalla de apuntes y el progreso persistente todavía están pendientes. La finalización existe en la lección de preparación del entorno, pero aún no se guarda entre sesiones ni se aplica a todo el catálogo.
+La pantalla de apuntes y la recuperación del último paso visitado todavía están pendientes. Las lecciones futuras permanecen bloqueadas o marcadas como próximas hasta que se complete la anterior y exista contenido disponible.
 
 ## Enfoque didáctico
 
@@ -77,6 +79,9 @@ El código fuente de DAM Prep no tiene todavía una licencia publicada. Esta dis
 - Material 3
 - Navigation Compose
 - DataStore Preferences
+- Room sobre SQLite para los datos de progreso
+- Koin para la inyección de dependencias
+- KSP para la generación de código de Room
 - Gradle con Kotlin DSL
 - Kotlin Test y JUnit Platform
 
@@ -111,7 +116,7 @@ Ejecutar las pruebas:
 Compilar y verificar el proyecto completo:
 
 ```bash
-./gradlew build
+./gradlew clean build
 ```
 
 La tarea `build` también comprueba el estilo del código. Para aplicar automáticamente el formato acordado:
@@ -140,7 +145,10 @@ Si macOS rechaza la firma porque la carpeta está gestionada por un servicio de 
 src/main/kotlin/dev/kuromiichi/damprep/
 ├── data/
 │   ├── lessons/       Catálogo, modelos y contenidos de las lecciones
-│   └── preferences/   Preferencias persistentes del usuario
+│   ├── local/         Resolución del directorio de datos de la aplicación
+│   ├── preferences/   Preferencias persistentes del usuario
+│   └── progress/      Base Room y repositorio de progreso
+├── di/                Dependencias compartidas configuradas con Koin
 ├── ui/
 │   ├── common/        Componentes compartidos y visuales didácticos
 │   ├── home/          Portada y resumen de progreso
@@ -159,10 +167,10 @@ Los recursos gráficos se encuentran en `src/main/composeResources/drawable` y l
 ## Próximos pasos
 
 1. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
-2. Guardar el progreso, el último paso visitado y la finalización de las prácticas.
+2. Guardar el último paso visitado y recuperar una lección en el punto donde se dejó.
 3. Desarrollar la lección de primeros programas sin repetir la comprobación del entorno.
 4. Extender las actividades prácticas y los criterios de finalización al resto del catálogo.
-5. Implementar apuntes persistentes.
+5. Implementar apuntes persistentes sobre la base de datos local.
 6. Completar los metadatos, iconos y pruebas de los instaladores nativos.
 
 ## Contribución

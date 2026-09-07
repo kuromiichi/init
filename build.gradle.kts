@@ -6,6 +6,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.4.0"
     id("org.jetbrains.compose") version "1.11.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
+    id("com.google.devtools.ksp") version "2.3.10"
+    id("androidx.room") version "2.8.4"
 }
 
 group = "dev.kuromiichi"
@@ -25,6 +27,10 @@ dependencies {
     implementation("org.jetbrains.compose.components:components-resources:1.11.1")
     implementation("androidx.datastore:datastore-preferences:1.2.1")
     implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.sqlite:sqlite-bundled:2.6.2")
+    implementation("io.insert-koin:koin-core:4.2.2")
+    ksp("androidx.room:room-compiler:2.8.4")
     testImplementation(kotlin("test"))
 }
 
@@ -38,13 +44,19 @@ ktlint {
     }
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
 }
 
 compose.desktop {
     application {
         mainClass = "dev.kuromiichi.damprep.MainKt"
+        jvmArgs("--enable-native-access=ALL-UNNAMED")
 
         nativeDistributions {
             nativeDistributionOutput.orNull?.let { outputDirectory ->

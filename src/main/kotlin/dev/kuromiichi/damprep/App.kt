@@ -11,20 +11,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
-import dev.kuromiichi.damprep.data.preferences.createUserPreferencesDataStore
+import dev.kuromiichi.damprep.data.progress.LessonProgressRepository
 import dev.kuromiichi.damprep.ui.AppViewModel
 import dev.kuromiichi.damprep.ui.navigation.AppNavHost
 import dev.kuromiichi.damprep.ui.theme.DamPrepTheme
 import dev.kuromiichi.damprep.ui.window.WindowSizeGuard
 
 @Composable
-fun App() {
+fun App(
+    preferencesRepository: UserPreferencesRepository,
+    lessonProgressRepository: LessonProgressRepository,
+) {
     val navController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
     val appViewModel =
         remember {
             AppViewModel(
-                preferencesRepository = UserPreferencesRepository(createUserPreferencesDataStore()),
+                preferencesRepository = preferencesRepository,
+                lessonProgressRepository = lessonProgressRepository,
                 scope = coroutineScope,
             )
         }
@@ -47,11 +51,13 @@ fun App() {
                     pronounPreference = preferences.pronounPreference,
                     targetOperatingSystem = preferences.targetOperatingSystem,
                     themePreference = preferences.themePreference,
+                    completedLessonIds = uiState.completedLessonIds.orEmpty(),
                     onThemePreferenceChanged = appViewModel::setThemePreference,
                     onStudentNameChanged = appViewModel::setStudentName,
                     onPronounPreferenceChanged = appViewModel::setPronounPreference,
                     onTargetOperatingSystemChanged = appViewModel::setTargetOperatingSystem,
                     onOnboardingFinished = appViewModel::completeOnboarding,
+                    onLessonFinished = appViewModel::completeLesson,
                 )
             }
         }

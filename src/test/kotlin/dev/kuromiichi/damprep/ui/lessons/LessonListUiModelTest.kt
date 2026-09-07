@@ -20,6 +20,8 @@ class LessonListUiModelTest {
             lesson.toLessonListItemUiModel(
                 index = 1,
                 isUnlocked = true,
+                isAvailable = true,
+                isCompleted = false,
             )
 
         assertEquals(1, uiModel.index)
@@ -27,5 +29,6 @@ class LessonListUiModelTest {
         assertEquals("Qué es el software y cómo se construye", uiModel.title)
         assertEquals(SubjectArea.DevelopmentEnvironments, uiModel.subjectArea)
         assertTrue(uiModel.isUnlocked)
+        assertTrue(uiModel.isAvailable)
     }
 }

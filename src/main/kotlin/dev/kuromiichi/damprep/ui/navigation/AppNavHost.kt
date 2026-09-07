@@ -1,15 +1,12 @@
 package dev.kuromiichi.damprep.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import dev.kuromiichi.damprep.data.lessons.LessonCatalog
-import dev.kuromiichi.damprep.data.lessons.LessonContentCatalog
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
@@ -30,11 +27,13 @@ fun AppNavHost(
     pronounPreference: PronounPreference,
     targetOperatingSystem: TargetOperatingSystem?,
     themePreference: ThemePreference,
+    completedLessonIds: Set<String>,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
     onStudentNameChanged: (String) -> Unit,
     onPronounPreferenceChanged: (PronounPreference) -> Unit,
     onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
     onOnboardingFinished: (String, PronounPreference, TargetOperatingSystem) -> Unit,
+    onLessonFinished: (String) -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -59,16 +58,18 @@ fun AppNavHost(
 
         composable<AppRoute.Home> {
             val homeViewModel = remember { HomeViewModel() }
+            val homeUiState =
+                homeViewModel.createUiState(
+                    studentName = studentName,
+                    pronounPreference = pronounPreference,
+                    completedLessonIds = completedLessonIds,
+                )
 
             HomeScreen(
-                uiState =
-                    homeViewModel.createUiState(
-                        studentName = studentName,
-                        pronounPreference = pronounPreference,
-                        completedLessons = 0,
-                    ),
+                uiState = homeUiState,
                 onContinueLesson = {
-                    navController.navigate(AppRoute.Lesson(LessonContentCatalog.currentLesson.lessonId))
+                    homeUiState.continueLessonId
+                        ?.let { lessonId -> navController.navigate(AppRoute.Lesson(lessonId)) }
                 },
                 onShowLessons = {
                     navController.navigate(AppRoute.Lessons)
@@ -95,16 +96,18 @@ fun AppNavHost(
                 targetOperatingSystem = targetOperatingSystem ?: TargetOperatingSystem.detect(),
                 onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
                 onBack = { navController.popBackStack() },
-                onLessonFinished = { navController.popBackStack() },
+                onLessonFinished = {
+                    onLessonFinished(route.lessonId)
+                    navController.popBackStack()
+                },
             )
         }
 
         composable<AppRoute.Lessons> {
             val lessonListViewModel = remember { LessonListViewModel() }
-            val lessonListUiState by lessonListViewModel.uiState.collectAsState()
 
             LessonListScreen(
-                uiState = lessonListUiState,
+                uiState = lessonListViewModel.createUiState(completedLessonIds),
                 onBack = { navController.popBackStack() },
                 onLessonSelected = { lessonId ->
                     navController.navigate(AppRoute.Lesson(lessonId))
