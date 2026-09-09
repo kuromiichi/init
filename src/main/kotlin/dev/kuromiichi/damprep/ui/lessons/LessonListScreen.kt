@@ -30,11 +30,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.kuromiichi.damprep.data.lessons.SubjectArea
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
 
@@ -111,7 +109,7 @@ private fun LessonListItem(
                     color = contentColor,
                 )
             }
-            SubjectTag(subjectArea = lesson.subjectArea)
+            SubjectAreaTag(subjectArea = lesson.subjectArea)
             Icon(
                 imageVector =
                     when {
@@ -187,29 +185,3 @@ private fun LessonListItem(
         }
     }
 }
-
-@Composable
-private fun SubjectTag(subjectArea: SubjectArea) {
-    val color = subjectArea.accentColor()
-
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        color = color.copy(alpha = 0.22f),
-        contentColor = MaterialTheme.colorScheme.onSurface,
-    ) {
-        Text(
-            text = subjectArea.label,
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-        )
-    }
-}
-
-@Composable
-private fun SubjectArea.accentColor(): Color =
-    when (this) {
-        SubjectArea.Mixed -> MaterialTheme.colorScheme.secondary
-        SubjectArea.Programming -> MaterialTheme.colorScheme.tertiary
-        SubjectArea.DevelopmentEnvironments -> MaterialTheme.colorScheme.primary
-    }
