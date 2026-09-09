@@ -25,7 +25,7 @@ Actualmente incluye:
 - navegación entre portada, listado y lecciones;
 - navegación por botones y teclado dentro de las lecciones;
 - finalización explícita y progreso persistente de las lecciones;
-- desbloqueo secuencial, continuación desde la primera lección pendiente y barra de progreso reactiva;
+- desbloqueo secuencial, recuperación del último paso visitado y barra de progreso reactiva;
 - catálogo provisional de 24 lecciones;
 - tres lecciones con contenido:
     1. Bienvenida y mapa del camino;
@@ -36,7 +36,7 @@ Actualmente incluye:
 - pruebas automatizadas de los modelos, preferencias, progreso, base de datos y catálogo de contenidos;
 - verificación automática del formato, las pruebas y la compilación.
 
-La pantalla de apuntes y la recuperación del último paso visitado todavía están pendientes. Las lecciones futuras permanecen bloqueadas o marcadas como próximas hasta que se complete la anterior y exista contenido disponible.
+La pantalla de apuntes todavía está pendiente. Las lecciones futuras permanecen bloqueadas o marcadas como próximas hasta que se complete la anterior y exista contenido disponible.
 
 ## Enfoque didáctico
 
@@ -167,11 +167,10 @@ Los recursos gráficos se encuentran en `src/main/composeResources/drawable` y l
 ## Próximos pasos
 
 1. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
-2. Guardar el último paso visitado y recuperar una lección en el punto donde se dejó.
-3. Desarrollar la lección de primeros programas sin repetir la comprobación del entorno.
-4. Extender las actividades prácticas y los criterios de finalización al resto del catálogo.
-5. Implementar apuntes persistentes sobre la base de datos local.
-6. Completar los metadatos, iconos y pruebas de los instaladores nativos.
+2. Desarrollar la lección de primeros programas sin repetir la comprobación del entorno.
+3. Extender las actividades prácticas y los criterios de finalización al resto del catálogo.
+4. Implementar apuntes persistentes sobre la base de datos local.
+5. Completar los metadatos, iconos y pruebas de los instaladores nativos.
 
 ## Contribución
 
