@@ -1,5 +1,6 @@
 package dev.kuromiichi.damprep.data.progress
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,8 +12,9 @@ import java.io.File
 private const val DATABASE_FILE_NAME = "dam-prep.db"
 
 @Database(
-    entities = [CompletedLessonEntity::class],
-    version = 1,
+    entities = [CompletedLessonEntity::class, LessonStepProgressEntity::class],
+    version = 2,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
     exportSchema = true,
 )
 abstract class DamPrepDatabase : RoomDatabase() {

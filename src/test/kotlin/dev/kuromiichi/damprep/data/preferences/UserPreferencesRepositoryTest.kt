@@ -28,6 +28,7 @@ class UserPreferencesRepositoryTest {
             assertEquals(PronounPreference.Neutral, preferences.pronounPreference)
             assertEquals(null, preferences.targetOperatingSystem)
             assertFalse(preferences.onboardingCompleted)
+            assertFalse(preferences.unlockAllLessons)
         }
 
     @Test
@@ -121,6 +122,16 @@ class UserPreferencesRepositoryTest {
             repository.setTargetOperatingSystem(TargetOperatingSystem.MacOS)
 
             assertEquals(TargetOperatingSystem.MacOS, repository.preferences.first().targetOperatingSystem)
+        }
+
+    @Test
+    fun `unlock all lessons preference is persisted`() =
+        runBlocking {
+            val repository = createRepository()
+
+            repository.setUnlockAllLessons(true)
+
+            assertTrue(repository.preferences.first().unlockAllLessons)
         }
 
     @Test

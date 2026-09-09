@@ -29,6 +29,7 @@ class UserPreferencesRepository(
                     pronounPreference = preferences[PronounPreferenceKey].toPronounPreference(),
                     targetOperatingSystem = preferences[TargetOperatingSystemKey].toTargetOperatingSystem(),
                     onboardingCompleted = preferences[OnboardingCompletedKey] ?: false,
+                    unlockAllLessons = preferences[UnlockAllLessonsKey] ?: false,
                 )
             }
 
@@ -53,6 +54,12 @@ class UserPreferencesRepository(
     suspend fun setTargetOperatingSystem(targetOperatingSystem: TargetOperatingSystem) {
         dataStore.edit { preferences ->
             preferences[TargetOperatingSystemKey] = targetOperatingSystem.name
+        }
+    }
+
+    suspend fun setUnlockAllLessons(unlockAllLessons: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[UnlockAllLessonsKey] = unlockAllLessons
         }
     }
 
@@ -84,5 +91,6 @@ class UserPreferencesRepository(
         val PronounPreferenceKey = stringPreferencesKey("pronoun_preference")
         val TargetOperatingSystemKey = stringPreferencesKey("target_operating_system")
         val OnboardingCompletedKey = booleanPreferencesKey("onboarding_completed")
+        val UnlockAllLessonsKey = booleanPreferencesKey("unlock_all_lessons")
     }
 }

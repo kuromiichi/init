@@ -42,10 +42,14 @@ fun SettingsScreen(
     pronounPreference: PronounPreference,
     targetOperatingSystem: TargetOperatingSystem?,
     themePreference: ThemePreference,
+    unlockAllLessons: Boolean,
+    hasLessonProgress: Boolean,
     onStudentNameChanged: (String) -> Unit,
     onPronounPreferenceChanged: (PronounPreference) -> Unit,
     onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
+    onUnlockAllLessonsChanged: (Boolean) -> Unit,
+    onResetLessonProgress: () -> Unit,
     onBack: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
@@ -205,6 +209,13 @@ fun SettingsScreen(
                         }
                     }
                 }
+
+                AdvancedSettingsSection(
+                    unlockAllLessons = unlockAllLessons,
+                    hasLessonProgress = hasLessonProgress,
+                    onUnlockAllLessonsChanged = onUnlockAllLessonsChanged,
+                    onResetLessonProgress = onResetLessonProgress,
+                )
             }
         }
     }

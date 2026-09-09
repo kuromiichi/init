@@ -51,13 +51,18 @@ fun App(
                     pronounPreference = preferences.pronounPreference,
                     targetOperatingSystem = preferences.targetOperatingSystem,
                     themePreference = preferences.themePreference,
+                    unlockAllLessons = preferences.unlockAllLessons,
                     completedLessonIds = uiState.completedLessonIds.orEmpty(),
+                    lessonStepIndices = uiState.lessonStepIndices.orEmpty(),
                     onThemePreferenceChanged = appViewModel::setThemePreference,
                     onStudentNameChanged = appViewModel::setStudentName,
                     onPronounPreferenceChanged = appViewModel::setPronounPreference,
                     onTargetOperatingSystemChanged = appViewModel::setTargetOperatingSystem,
+                    onUnlockAllLessonsChanged = appViewModel::setUnlockAllLessons,
                     onOnboardingFinished = appViewModel::completeOnboarding,
                     onLessonFinished = appViewModel::completeLesson,
+                    onLessonStepChanged = appViewModel::saveLessonStep,
+                    onResetLessonProgress = appViewModel::resetLessonProgress,
                 )
             }
         }

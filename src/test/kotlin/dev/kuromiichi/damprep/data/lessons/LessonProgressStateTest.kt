@@ -43,6 +43,23 @@ class LessonProgressStateTest {
         assertEquals(null, progress.nextAvailableLessonId { lessonId -> lessonId == "first" })
     }
 
+    @Test
+    fun `debug override unlocks all lessons without changing progress`() {
+        val progress =
+            LessonProgressState(
+                lessons = lessons,
+                completedLessonIds = emptySet(),
+                unlockAllLessons = true,
+            )
+
+        assertTrue(progress.isUnlocked(0))
+        assertTrue(progress.isUnlocked(1))
+        assertTrue(progress.isUnlocked(2))
+        assertEquals(0, progress.completedLessonCount)
+        assertEquals(0f, progress.progress)
+        assertEquals("first", progress.nextAvailableLessonId { true })
+    }
+
     private fun lesson(id: String) =
         LessonSummary(
             id = id,

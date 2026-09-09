@@ -1,0 +1,61 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "5f4d5868ceb10fb6d6a149f23726ce0f",
+    "entities": [
+      {
+        "tableName": "lesson_progress",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` TEXT NOT NULL, `completed_at` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
+        "fields": [
+          {
+            "fieldPath": "lessonId",
+            "columnName": "lesson_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "completedAt",
+            "columnName": "completed_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "lesson_id"
+          ]
+        }
+      },
+      {
+        "tableName": "lesson_step_progress",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lesson_id` TEXT NOT NULL, `step_index` INTEGER NOT NULL, PRIMARY KEY(`lesson_id`))",
+        "fields": [
+          {
+            "fieldPath": "lessonId",
+            "columnName": "lesson_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stepIndex",
+            "columnName": "step_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "lesson_id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5f4d5868ceb10fb6d6a149f23726ce0f')"
+    ]
+  }
+}

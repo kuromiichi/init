@@ -6,4 +6,5 @@ data class UserPreferences(
     val pronounPreference: PronounPreference = PronounPreference.Neutral,
     val targetOperatingSystem: TargetOperatingSystem? = null,
     val onboardingCompleted: Boolean = false,
+    val unlockAllLessons: Boolean = false,
 )

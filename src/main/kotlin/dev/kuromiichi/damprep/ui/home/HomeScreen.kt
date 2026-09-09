@@ -127,13 +127,26 @@ fun HomeScreen(
                             contentDescription = null,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
+                        Column(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            horizontalAlignment = Alignment.Start,
+                        ) {
+                            Text(
+                                if (uiState.continueLessonId == null) {
+                                    "Siguiente lección próximamente"
+                                } else if (uiState.isContinueLessonStarted) {
+                                    "Continuar lección"
+                                } else {
+                                    "Comenzar siguiente lección"
+                                },
+                            )
                             if (uiState.continueLessonId != null) {
-                                "Continuar lección"
-                            } else {
-                                "Siguiente lección próximamente"
-                            },
-                        )
+                                Text(
+                                    text = "${uiState.continueLessonSubject} · ${uiState.continueLessonTitle}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                )
+                            }
+                        }
                     }
                     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
                         val useCompactLayout = maxWidth < HomeCompactBreakpoint

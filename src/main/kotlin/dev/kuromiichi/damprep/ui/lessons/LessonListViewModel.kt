@@ -13,8 +13,16 @@ class LessonListViewModel(
     private val lessonCatalog: List<LessonSummary> = LessonCatalog.lessons,
     private val hasContent: (String) -> Boolean = LessonContentCatalog::hasContent,
 ) {
-    fun createUiState(completedLessonIds: Set<String>): LessonListUiState {
-        val lessonProgress = LessonProgressState(lessonCatalog, completedLessonIds)
+    fun createUiState(
+        completedLessonIds: Set<String>,
+        unlockAllLessons: Boolean = false,
+    ): LessonListUiState {
+        val lessonProgress =
+            LessonProgressState(
+                lessons = lessonCatalog,
+                completedLessonIds = completedLessonIds,
+                unlockAllLessons = unlockAllLessons,
+            )
 
         return LessonListUiState(
             lessons =

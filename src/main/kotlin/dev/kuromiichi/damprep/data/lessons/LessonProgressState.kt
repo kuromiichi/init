@@ -3,6 +3,7 @@ package dev.kuromiichi.damprep.data.lessons
 class LessonProgressState(
     private val lessons: List<LessonSummary>,
     completedLessonIds: Set<String>,
+    private val unlockAllLessons: Boolean = false,
 ) {
     private val knownLessonIds = lessons.mapTo(hashSetOf(), LessonSummary::id)
 
@@ -21,7 +22,7 @@ class LessonProgressState(
     fun isUnlocked(index: Int): Boolean {
         val lesson = lessons.getOrNull(index) ?: return false
 
-        return isCompleted(lesson.id) || index == 0 || isCompleted(lessons[index - 1].id)
+        return unlockAllLessons || isCompleted(lesson.id) || index == 0 || isCompleted(lessons[index - 1].id)
     }
 
     fun nextAvailableLessonId(hasContent: (String) -> Boolean): String? =

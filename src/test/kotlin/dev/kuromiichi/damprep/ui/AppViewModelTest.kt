@@ -30,6 +30,7 @@ class AppViewModelTest {
                         onboardingCompleted = false,
                     ),
                 completedLessonIds = emptySet(),
+                lessonStepIndices = emptyMap(),
             )
 
         assertEquals(ThemePreference.Dark, state.themePreference)
@@ -48,6 +49,7 @@ class AppViewModelTest {
                         onboardingCompleted = true,
                     ),
                 completedLessonIds = emptySet(),
+                lessonStepIndices = emptyMap(),
             )
 
         assertEquals(ThemePreference.Light, state.themePreference)

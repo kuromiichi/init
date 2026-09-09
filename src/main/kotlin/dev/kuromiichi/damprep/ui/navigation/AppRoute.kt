@@ -12,6 +12,7 @@ sealed interface AppRoute {
     @Serializable
     data class Lesson(
         val lessonId: String,
+        val resumeFromSavedStep: Boolean = false,
     ) : AppRoute
 
     @Serializable

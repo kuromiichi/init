@@ -17,8 +17,9 @@ import kotlinx.coroutines.launch
 data class AppUiState(
     val preferences: UserPreferences? = null,
     val completedLessonIds: Set<String>? = null,
+    val lessonStepIndices: Map<String, Int>? = null,
 ) {
-    val isLoading: Boolean = preferences == null || completedLessonIds == null
+    val isLoading: Boolean = preferences == null || completedLessonIds == null || lessonStepIndices == null
     val themePreference: ThemePreference = preferences?.themePreference ?: ThemePreference.System
     val startDestination: AppRoute =
         if (preferences?.onboardingCompleted == true) {
@@ -41,8 +42,14 @@ class AppViewModel(
             combine(
                 preferencesRepository.preferences,
                 lessonProgressRepository.completedLessonIds,
-                ::AppUiState,
-            ).collect(_uiState)
+                lessonProgressRepository.lessonStepIndices,
+            ) { preferences, completedLessonIds, lessonStepIndices ->
+                AppUiState(
+                    preferences = preferences,
+                    completedLessonIds = completedLessonIds,
+                    lessonStepIndices = lessonStepIndices,
+                )
+            }.collect(_uiState)
         }
     }
 
@@ -70,6 +77,12 @@ class AppViewModel(
         }
     }
 
+    fun setUnlockAllLessons(unlockAllLessons: Boolean) {
+        scope.launch {
+            preferencesRepository.setUnlockAllLessons(unlockAllLessons)
+        }
+    }
+
     fun completeOnboarding(
         studentName: String,
         pronounPreference: PronounPreference,
@@ -87,6 +100,21 @@ class AppViewModel(
     fun completeLesson(lessonId: String) {
         scope.launch {
             lessonProgressRepository.completeLesson(lessonId)
+        }
+    }
+
+    fun saveLessonStep(
+        lessonId: String,
+        stepIndex: Int,
+    ) {
+        scope.launch {
+            lessonProgressRepository.saveLessonStep(lessonId, stepIndex)
+        }
+    }
+
+    fun resetLessonProgress() {
+        scope.launch {
+            lessonProgressRepository.resetProgress()
         }
     }
 }

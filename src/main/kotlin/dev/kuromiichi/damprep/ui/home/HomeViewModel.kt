@@ -14,6 +14,9 @@ data class HomeUiState(
     val progress: Float,
     val progressLabel: String,
     val continueLessonId: String?,
+    val continueLessonTitle: String?,
+    val continueLessonSubject: String?,
+    val isContinueLessonStarted: Boolean,
 )
 
 class HomeViewModel(
@@ -24,8 +27,18 @@ class HomeViewModel(
         studentName: String,
         pronounPreference: PronounPreference,
         completedLessonIds: Set<String>,
+        lessonStepIndices: Map<String, Int> = emptyMap(),
+        unlockAllLessons: Boolean = false,
     ): HomeUiState {
-        val lessonProgress = LessonProgressState(lessonCatalog, completedLessonIds)
+        val lessonProgress =
+            LessonProgressState(
+                lessons = lessonCatalog,
+                completedLessonIds = completedLessonIds,
+                unlockAllLessons = unlockAllLessons,
+            )
+
+        val continueLessonId = lessonProgress.nextAvailableLessonId(hasContent)
+        val continueLesson = lessonCatalog.firstOrNull { it.id == continueLessonId }
 
         return HomeUiState(
             studentName = studentName,
@@ -35,7 +48,10 @@ class HomeViewModel(
             progress = lessonProgress.progress,
             progressLabel =
                 "${lessonProgress.completedLessonCount} de ${lessonProgress.totalLessonCount} temas completados",
-            continueLessonId = lessonProgress.nextAvailableLessonId(hasContent),
+            continueLessonId = continueLessonId,
+            continueLessonTitle = continueLesson?.title,
+            continueLessonSubject = continueLesson?.subjectArea?.label,
+            isContinueLessonStarted = continueLessonId in lessonStepIndices,
         )
     }
 }

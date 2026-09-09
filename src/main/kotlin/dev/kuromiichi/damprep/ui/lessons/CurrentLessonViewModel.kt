@@ -33,17 +33,20 @@ data class CurrentLessonUiState(
 
 class CurrentLessonViewModel(
     lessonId: String,
+    initialStepIndex: Int = 0,
     findLessonById: (String) -> LessonContent? = LessonContentCatalog::findByLessonId,
 ) {
+    private val lessonContent = findLessonById(lessonId)
     private val _uiState =
         MutableStateFlow(
             CurrentLessonUiState(
-                lessonContent = findLessonById(lessonId),
+                lessonContent = lessonContent,
+                currentStepIndex = initialStepIndex.coerceIn(0, lessonContent?.steps?.lastIndex ?: 0),
             ),
         )
     val uiState: StateFlow<CurrentLessonUiState> = _uiState.asStateFlow()
 
-    fun goToPreviousStep() {
+    fun goToPreviousStep(): Int {
         _uiState.update { state ->
             when {
                 state.isCompletionVisible -> state.copy(isCompletionVisible = false)
@@ -51,9 +54,10 @@ class CurrentLessonViewModel(
                 else -> state
             }
         }
+        return _uiState.value.currentStepIndex
     }
 
-    fun goToNextStep() {
+    fun goToNextStep(): Int {
         _uiState.update { state ->
             when {
                 state.canGoForward -> state.copy(currentStepIndex = state.currentStepIndex + 1)
@@ -61,6 +65,7 @@ class CurrentLessonViewModel(
                 else -> state
             }
         }
+        return _uiState.value.currentStepIndex
     }
 
     fun setCurrentCheckpointConfirmed(confirmed: Boolean) {

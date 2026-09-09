@@ -27,13 +27,18 @@ fun AppNavHost(
     pronounPreference: PronounPreference,
     targetOperatingSystem: TargetOperatingSystem?,
     themePreference: ThemePreference,
+    unlockAllLessons: Boolean,
     completedLessonIds: Set<String>,
+    lessonStepIndices: Map<String, Int>,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
     onStudentNameChanged: (String) -> Unit,
     onPronounPreferenceChanged: (PronounPreference) -> Unit,
     onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
+    onUnlockAllLessonsChanged: (Boolean) -> Unit,
     onOnboardingFinished: (String, PronounPreference, TargetOperatingSystem) -> Unit,
     onLessonFinished: (String) -> Unit,
+    onLessonStepChanged: (String, Int) -> Unit,
+    onResetLessonProgress: () -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -63,13 +68,22 @@ fun AppNavHost(
                     studentName = studentName,
                     pronounPreference = pronounPreference,
                     completedLessonIds = completedLessonIds,
+                    lessonStepIndices = lessonStepIndices,
+                    unlockAllLessons = unlockAllLessons,
                 )
 
             HomeScreen(
                 uiState = homeUiState,
                 onContinueLesson = {
                     homeUiState.continueLessonId
-                        ?.let { lessonId -> navController.navigate(AppRoute.Lesson(lessonId)) }
+                        ?.let { lessonId ->
+                            navController.navigate(
+                                AppRoute.Lesson(
+                                    lessonId = lessonId,
+                                    resumeFromSavedStep = true,
+                                ),
+                            )
+                        }
                 },
                 onShowLessons = {
                     navController.navigate(AppRoute.Lessons)
@@ -88,11 +102,13 @@ fun AppNavHost(
 
             CurrentLessonScreen(
                 lessonId = route.lessonId,
-                lessonTitle =
-                    LessonCatalog.lessons
-                        .firstOrNull { lesson -> lesson.id == route.lessonId }
-                        ?.title
-                        ?: "Lección",
+                lessonSummary = LessonCatalog.lessons.firstOrNull { lesson -> lesson.id == route.lessonId },
+                initialStepIndex =
+                    if (route.resumeFromSavedStep) {
+                        lessonStepIndices[route.lessonId] ?: 0
+                    } else {
+                        0
+                    },
                 targetOperatingSystem = targetOperatingSystem ?: TargetOperatingSystem.detect(),
                 onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
                 onBack = { navController.popBackStack() },
@@ -100,6 +116,7 @@ fun AppNavHost(
                     onLessonFinished(route.lessonId)
                     navController.popBackStack()
                 },
+                onStepChanged = { stepIndex -> onLessonStepChanged(route.lessonId, stepIndex) },
             )
         }
 
@@ -107,7 +124,11 @@ fun AppNavHost(
             val lessonListViewModel = remember { LessonListViewModel() }
 
             LessonListScreen(
-                uiState = lessonListViewModel.createUiState(completedLessonIds),
+                uiState =
+                    lessonListViewModel.createUiState(
+                        completedLessonIds = completedLessonIds,
+                        unlockAllLessons = unlockAllLessons,
+                    ),
                 onBack = { navController.popBackStack() },
                 onLessonSelected = { lessonId ->
                     navController.navigate(AppRoute.Lesson(lessonId))
@@ -125,10 +146,14 @@ fun AppNavHost(
                 pronounPreference = pronounPreference,
                 targetOperatingSystem = targetOperatingSystem,
                 themePreference = themePreference,
+                unlockAllLessons = unlockAllLessons,
+                hasLessonProgress = completedLessonIds.isNotEmpty() || lessonStepIndices.isNotEmpty(),
                 onStudentNameChanged = onStudentNameChanged,
                 onPronounPreferenceChanged = onPronounPreferenceChanged,
                 onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
                 onThemePreferenceChanged = onThemePreferenceChanged,
+                onUnlockAllLessonsChanged = onUnlockAllLessonsChanged,
+                onResetLessonProgress = onResetLessonProgress,
                 onBack = { navController.popBackStack() },
             )
         }

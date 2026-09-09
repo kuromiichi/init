@@ -64,6 +64,25 @@ class CurrentLessonViewModelTest {
     }
 
     @Test
+    fun `saved step is restored and clamped to lesson bounds`() {
+        val restored =
+            CurrentLessonViewModel(
+                lessonId = "lesson",
+                initialStepIndex = 1,
+                findLessonById = { sampleLessonContent() },
+            )
+        val outOfBounds =
+            CurrentLessonViewModel(
+                lessonId = "lesson",
+                initialStepIndex = 99,
+                findLessonById = { sampleLessonContent() },
+            )
+
+        assertEquals(1, restored.uiState.value.currentStepIndex)
+        assertEquals(2, outOfBounds.uiState.value.currentStepIndex)
+    }
+
+    @Test
     fun `checkpoint blocks navigation until it is manually confirmed`() {
         val checkpoint =
             LessonCheckpoint(

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -41,6 +42,7 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.kuromiichi.damprep.data.lessons.LessonSummary
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.OperatingSystemDropdown
@@ -59,18 +61,35 @@ private val LessonScrollFadeHeight = 48.dp
 @Composable
 fun CurrentLessonScreen(
     lessonId: String,
-    lessonTitle: String,
+    lessonSummary: LessonSummary?,
+    initialStepIndex: Int,
     targetOperatingSystem: TargetOperatingSystem?,
     onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
     onBack: () -> Unit,
     onLessonFinished: () -> Unit,
+    onStepChanged: (Int) -> Unit,
 ) {
+    val lessonTitle = lessonSummary?.title ?: "Lección"
     val viewModel =
         remember(lessonId) {
-            CurrentLessonViewModel(lessonId = lessonId)
+            CurrentLessonViewModel(
+                lessonId = lessonId,
+                initialStepIndex = initialStepIndex,
+            )
         }
     val uiState by viewModel.uiState.collectAsState()
     val lessonContent = uiState.lessonContent
+
+    val goToPreviousStep = {
+        val previousIndex = uiState.currentStepIndex
+        val currentIndex = viewModel.goToPreviousStep()
+        if (currentIndex != previousIndex) onStepChanged(currentIndex)
+    }
+    val goToNextStep = {
+        val previousIndex = uiState.currentStepIndex
+        val currentIndex = viewModel.goToNextStep()
+        if (currentIndex != previousIndex) onStepChanged(currentIndex)
+    }
 
     if (uiState.isMissing || lessonContent == null) {
         MissingLessonScreen(onBack = onBack)
@@ -89,6 +108,7 @@ fun CurrentLessonScreen(
         }
 
     LaunchedEffect(lessonContent.lessonId) {
+        onStepChanged(uiState.currentStepIndex)
         focusRequester.requestFocus()
     }
 
@@ -104,7 +124,7 @@ fun CurrentLessonScreen(
                     when (event.key) {
                         Key.DirectionLeft -> {
                             if (uiState.canGoBack) {
-                                viewModel.goToPreviousStep()
+                                goToPreviousStep()
                                 true
                             } else {
                                 false
@@ -113,7 +133,7 @@ fun CurrentLessonScreen(
 
                         Key.DirectionRight -> {
                             if (uiState.canGoForward || uiState.canShowCompletion) {
-                                viewModel.goToNextStep()
+                                goToNextStep()
                                 true
                             } else {
                                 false
@@ -125,7 +145,7 @@ fun CurrentLessonScreen(
                 }.focusable(),
         onBack =
             if (uiState.isCompletionVisible) {
-                viewModel::goToPreviousStep
+                goToPreviousStep
             } else {
                 onBack
             },
@@ -137,6 +157,10 @@ fun CurrentLessonScreen(
                     selectedOperatingSystem = targetOperatingSystem,
                     onOperatingSystemSelected = onTargetOperatingSystemChanged,
                 )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            lessonSummary?.subjectArea?.let { subjectArea ->
+                SubjectAreaTag(subjectArea)
             }
         },
     ) {
@@ -238,8 +262,8 @@ fun CurrentLessonScreen(
                     stepCount = uiState.stepCount,
                     canGoBack = uiState.canGoBack,
                     canContinue = uiState.canGoForward || uiState.canShowCompletion,
-                    onPrevious = viewModel::goToPreviousStep,
-                    onNext = viewModel::goToNextStep,
+                    onPrevious = goToPreviousStep,
+                    onNext = goToNextStep,
                 )
             }
         }

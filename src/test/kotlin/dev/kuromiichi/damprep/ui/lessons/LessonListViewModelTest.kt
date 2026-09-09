@@ -72,6 +72,26 @@ class LessonListViewModelTest {
         assertFalse(lessons[1].isAvailable)
     }
 
+    @Test
+    fun `debug override unlocks every lesson but keeps missing content unavailable`() {
+        val viewModel =
+            LessonListViewModel(
+                lessonCatalog = listOf(lesson("first"), lesson("second"), lesson("third")),
+                hasContent = { lessonId -> lessonId != "third" },
+            )
+
+        val lessons =
+            viewModel
+                .createUiState(
+                    completedLessonIds = emptySet(),
+                    unlockAllLessons = true,
+                ).lessons
+
+        assertTrue(lessons.all(LessonListItemUiModel::isUnlocked))
+        assertFalse(lessons[2].isAvailable)
+        assertTrue(lessons.none(LessonListItemUiModel::isCompleted))
+    }
+
     private fun lesson(id: String) =
         LessonSummary(
             id = id,

@@ -5,6 +5,7 @@ import dev.kuromiichi.damprep.data.lessons.SubjectArea
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class HomeViewModelTest {
     @Test
@@ -79,6 +80,45 @@ class HomeViewModelTest {
             )
 
         assertEquals(null, state.continueLessonId)
+    }
+
+    @Test
+    fun `debug override can continue into later available content`() {
+        val lessons = lessons(3)
+        val viewModel =
+            HomeViewModel(
+                lessonCatalog = lessons,
+                hasContent = { lessonId -> lessonId == "lesson-2" },
+            )
+
+        val state =
+            viewModel.createUiState(
+                studentName = "Ari",
+                pronounPreference = PronounPreference.Neutral,
+                completedLessonIds = emptySet(),
+                unlockAllLessons = true,
+            )
+
+        assertEquals("lesson-2", state.continueLessonId)
+        assertEquals(0, state.completedLessons)
+    }
+
+    @Test
+    fun `home distinguishes a started lesson and exposes its subject`() {
+        val lessons = lessons(2)
+        val viewModel = HomeViewModel(lessonCatalog = lessons, hasContent = { true })
+
+        val state =
+            viewModel.createUiState(
+                studentName = "Ari",
+                pronounPreference = PronounPreference.Neutral,
+                completedLessonIds = emptySet(),
+                lessonStepIndices = mapOf("lesson-0" to 2),
+            )
+
+        assertTrue(state.isContinueLessonStarted)
+        assertEquals("Lección 0", state.continueLessonTitle)
+        assertEquals("Programación", state.continueLessonSubject)
     }
 
     private fun lessons(count: Int): List<LessonSummary> =
