@@ -6,6 +6,9 @@ enum class SubjectArea(
     Mixed("Mixto"),
     Programming("Programación"),
     DevelopmentEnvironments("Entornos de desarrollo"),
+    ComputerSystems("Sistemas informáticos"),
+    MarkupLanguages("Lenguajes de marcas"),
+    Databases("Bases de datos"),
 }
 
 data class LessonSummary(
@@ -44,7 +47,7 @@ object LessonCatalog {
             ),
             LessonSummary(
                 id = "loops",
-                title = "Repetir acciones",
+                title = "Repetir acciones y construir algoritmos",
                 subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
@@ -63,19 +66,24 @@ object LessonCatalog {
                 subjectArea = SubjectArea.DevelopmentEnvironments,
             ),
             LessonSummary(
+                id = "basic-testing",
+                title = "Pruebas básicas de software",
+                subjectArea = SubjectArea.DevelopmentEnvironments,
+            ),
+            LessonSummary(
+                id = "nullability-exceptions",
+                title = "Valores nulos, errores y excepciones",
+                subjectArea = SubjectArea.Programming,
+            ),
+            LessonSummary(
                 id = "arrays-lists",
                 title = "Estructuras de almacenamiento I: arrays y listas",
                 subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
-                id = "maps-simple-models",
-                title = "Estructuras de almacenamiento II: mapas y modelos simples",
+                id = "sets-maps",
+                title = "Estructuras de almacenamiento II: conjuntos y mapas",
                 subjectArea = SubjectArea.Programming,
-            ),
-            LessonSummary(
-                id = "basic-testing",
-                title = "Pruebas básicas de software",
-                subjectArea = SubjectArea.DevelopmentEnvironments,
             ),
             LessonSummary(
                 id = "oop-classes-objects",
@@ -89,13 +97,13 @@ object LessonCatalog {
             ),
             LessonSummary(
                 id = "oop-relationships",
-                title = "Programación orientada a objetos II: relaciones",
+                title = "Programación orientada a objetos II: relaciones y composición",
                 subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
-                id = "clean-code-refactoring",
-                title = "Clean code y refactorización",
-                subjectArea = SubjectArea.DevelopmentEnvironments,
+                id = "oop-inheritance-interfaces",
+                title = "Programación orientada a objetos III: herencia e interfaces",
+                subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
                 id = "functional-programming",
@@ -108,14 +116,29 @@ object LessonCatalog {
                 subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
-                id = "files-formats",
-                title = "Ficheros y formatos de intercambio",
-                subjectArea = SubjectArea.Programming,
+                id = "files-directories",
+                title = "Ficheros, directorios y rutas",
+                subjectArea = SubjectArea.ComputerSystems,
             ),
             LessonSummary(
-                id = "databases",
-                title = "Bases de datos",
-                subjectArea = SubjectArea.Programming,
+                id = "data-formats",
+                title = "JSON, XML y formatos de intercambio",
+                subjectArea = SubjectArea.MarkupLanguages,
+            ),
+            LessonSummary(
+                id = "relational-data-modeling",
+                title = "Diseñar datos: tablas, claves y relaciones",
+                subjectArea = SubjectArea.Databases,
+            ),
+            LessonSummary(
+                id = "sql",
+                title = "Consultar y modificar datos con SQL",
+                subjectArea = SubjectArea.Databases,
+            ),
+            LessonSummary(
+                id = "database-access",
+                title = "Usar una base de datos desde Kotlin",
+                subjectArea = SubjectArea.Databases,
             ),
             LessonSummary(
                 id = "graphical-interfaces",
@@ -123,13 +146,18 @@ object LessonCatalog {
                 subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
-                id = "solid-patterns-architecture",
-                title = "SOLID, patrones y arquitectura ligera",
+                id = "clean-code-refactoring",
+                title = "Código limpio y refactorización",
                 subjectArea = SubjectArea.DevelopmentEnvironments,
             ),
             LessonSummary(
-                id = "agile-methodologies",
-                title = "Metodologías ágiles y trabajo por iteraciones",
+                id = "solid-patterns-architecture",
+                title = "SOLID, patrones y arquitectura básica",
+                subjectArea = SubjectArea.DevelopmentEnvironments,
+            ),
+            LessonSummary(
+                id = "iterative-development",
+                title = "Desarrollo iterativo y organización del proyecto",
                 subjectArea = SubjectArea.DevelopmentEnvironments,
             ),
             LessonSummary(

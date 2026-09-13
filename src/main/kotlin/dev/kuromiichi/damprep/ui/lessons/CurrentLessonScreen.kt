@@ -243,13 +243,13 @@ fun CurrentLessonScreen(
                                 step = step,
                                 targetOperatingSystem = targetOperatingSystem,
                                 isLastStep = animatedStepIndex == lessonContent.steps.lastIndex,
-                                isCheckpointConfirmed =
-                                    step.checkpoint
+                                isPracticeConfirmed =
+                                    step.practice
                                         ?.id
-                                        ?.let(uiState.confirmedCheckpointIds::contains)
+                                        ?.let(uiState.confirmedPracticeIds::contains)
                                         ?: true,
-                                onCheckpointConfirmationChanged =
-                                    viewModel::setCurrentCheckpointConfirmed,
+                                onPracticeConfirmationChanged =
+                                    viewModel::setCurrentPracticeConfirmed,
                             )
                         }
                     }

@@ -1,9 +1,10 @@
 package dev.kuromiichi.damprep.ui.lessons
 
-import dev.kuromiichi.damprep.data.lessons.LessonCheckpoint
 import dev.kuromiichi.damprep.data.lessons.LessonContent
+import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
+import dev.kuromiichi.damprep.data.lessons.richText
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -83,11 +84,14 @@ class CurrentLessonViewModelTest {
     }
 
     @Test
-    fun `checkpoint blocks navigation until it is manually confirmed`() {
-        val checkpoint =
-            LessonCheckpoint(
+    fun `practice blocks navigation until it is manually confirmed`() {
+        val practice =
+            LessonPractice(
                 id = "hello-world",
-                prompt = "He ejecutado el programa.",
+                objective = richText("Ejecutar un programa."),
+                statement = richText("Ejecuta el ejemplo."),
+                requirements = listOf(richText("El programa termina sin errores.")),
+                confirmation = richText("He ejecutado el programa."),
             )
         val viewModel =
             CurrentLessonViewModel(
@@ -99,7 +103,7 @@ class CurrentLessonViewModelTest {
                             steps =
                                 listOf(
                                     sampleStep("Uno"),
-                                    sampleStep("Dos", checkpoint),
+                                    sampleStep("Dos", practice),
                                     sampleStep("Tres"),
                                 ),
                         )
@@ -112,31 +116,34 @@ class CurrentLessonViewModelTest {
         viewModel.goToNextStep()
 
         assertEquals(1, viewModel.uiState.value.currentStepIndex)
-        assertFalse(viewModel.uiState.value.isCurrentCheckpointConfirmed)
+        assertFalse(viewModel.uiState.value.isCurrentPracticeConfirmed)
         assertFalse(viewModel.uiState.value.canGoForward)
 
         viewModel.goToNextStep()
         assertEquals(1, viewModel.uiState.value.currentStepIndex)
 
-        viewModel.setCurrentCheckpointConfirmed(true)
-        assertTrue(viewModel.uiState.value.isCurrentCheckpointConfirmed)
+        viewModel.setCurrentPracticeConfirmed(true)
+        assertTrue(viewModel.uiState.value.isCurrentPracticeConfirmed)
         assertTrue(viewModel.uiState.value.canGoForward)
 
         viewModel.goToNextStep()
         viewModel.goToPreviousStep()
         assertEquals(1, viewModel.uiState.value.currentStepIndex)
-        assertTrue(viewModel.uiState.value.isCurrentCheckpointConfirmed)
+        assertTrue(viewModel.uiState.value.isCurrentPracticeConfirmed)
 
-        viewModel.setCurrentCheckpointConfirmed(false)
+        viewModel.setCurrentPracticeConfirmed(false)
         assertFalse(viewModel.uiState.value.canGoForward)
     }
 
     @Test
-    fun `last checkpoint must be confirmed before finishing the lesson`() {
-        val checkpoint =
-            LessonCheckpoint(
+    fun `last practice must be confirmed before finishing the lesson`() {
+        val practice =
+            LessonPractice(
                 id = "final-check",
-                prompt = "He completado la práctica.",
+                objective = richText("Aplicar la lección."),
+                statement = richText("Completa la práctica."),
+                requirements = listOf(richText("Cumple el enunciado.")),
+                confirmation = richText("He completado la práctica."),
             )
         val viewModel =
             CurrentLessonViewModel(
@@ -148,7 +155,7 @@ class CurrentLessonViewModelTest {
                             steps =
                                 listOf(
                                     sampleStep("Uno"),
-                                    sampleStep("Práctica final", checkpoint),
+                                    sampleStep("Práctica final", practice),
                                 ),
                         )
                     } else {
@@ -162,7 +169,7 @@ class CurrentLessonViewModelTest {
         assertTrue(viewModel.uiState.value.isLastStep)
         assertFalse(viewModel.uiState.value.canShowCompletion)
 
-        viewModel.setCurrentCheckpointConfirmed(true)
+        viewModel.setCurrentPracticeConfirmed(true)
 
         assertTrue(viewModel.uiState.value.canShowCompletion)
 
@@ -185,7 +192,7 @@ class CurrentLessonViewModelTest {
 
     private fun sampleStep(
         title: String,
-        checkpoint: LessonCheckpoint? = null,
+        practice: LessonPractice? = null,
     ): LessonStep =
         LessonStep(
             title = title,
@@ -195,6 +202,6 @@ class CurrentLessonViewModelTest {
                     title = "Visual",
                     body = "Detalle",
                 ),
-            checkpoint = checkpoint,
+            practice = practice,
         )
 }

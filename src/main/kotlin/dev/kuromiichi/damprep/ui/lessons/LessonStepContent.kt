@@ -1,25 +1,41 @@
 package dev.kuromiichi.damprep.ui.lessons
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.kuromiichi.damprep.data.lessons.LessonCheckpoint
+import androidx.compose.ui.unit.sp
+import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
@@ -29,8 +45,8 @@ internal fun LessonStepContent(
     step: LessonStep,
     targetOperatingSystem: TargetOperatingSystem?,
     isLastStep: Boolean,
-    isCheckpointConfirmed: Boolean,
-    onCheckpointConfirmationChanged: (Boolean) -> Unit,
+    isPracticeConfirmed: Boolean,
+    onPracticeConfirmationChanged: (Boolean) -> Unit,
 ) {
     val content = step.contentFor(targetOperatingSystem)
 
@@ -119,30 +135,181 @@ internal fun LessonStepContent(
             }
         }
 
-        step.checkpoint?.let { checkpoint ->
-            LessonCheckpointCard(
-                checkpoint = checkpoint,
-                checked = isCheckpointConfirmed,
+        step.practice?.let { practice ->
+            LessonPracticeCard(
+                practice = practice,
+                checked = isPracticeConfirmed,
                 isLessonCompletion = isLastStep,
-                onCheckedChange = onCheckpointConfirmationChanged,
+                onCheckedChange = onPracticeConfirmationChanged,
             )
         }
     }
 }
 
 @Composable
-private fun LessonCheckpointCard(
-    checkpoint: LessonCheckpoint,
+private fun LessonPracticeCard(
+    practice: LessonPractice,
     checked: Boolean,
     isLessonCompletion: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    Card(
-        onClick = { onCheckedChange(!checked) },
+    var hintsVisible by remember(practice.id) { mutableStateOf(false) }
+
+    OutlinedCard(
         modifier = Modifier.fillMaxWidth(),
-        colors =
-            CardDefaults.cardColors(
-                containerColor =
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.EditNote,
+                        contentDescription = null,
+                        modifier = Modifier.padding(10.dp).size(22.dp),
+                    )
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = "Práctica guiada",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        text = "Comprueba lo aprendido antes de terminar.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            Text(
+                text = practice.objective.toAnnotatedString(),
+                style = MaterialTheme.typography.bodyLarge.copy(lineHeight = 26.sp),
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+            Text(
+                text = practice.statement.toAnnotatedString(),
+                style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            if (practice.requirements.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    PracticeSectionTitle("Qué debes comprobar")
+                    practice.requirements.forEach { requirement ->
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.Top,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(top = 2.dp).size(18.dp),
+                            )
+                            Text(
+                                text = requirement.toAnnotatedString(),
+                                style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                }
+            }
+
+            practice.expectedResult?.let { expectedResult ->
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Text(
+                            text = "Resultado esperado",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            text = expectedResult.toAnnotatedString(),
+                            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
+                        )
+                    }
+                }
+            }
+
+            if (practice.hints.isNotEmpty()) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    TextButton(onClick = { hintsVisible = !hintsVisible }) {
+                        Icon(
+                            imageVector = Icons.Filled.Lightbulb,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(if (hintsVisible) "Ocultar pistas" else "Necesito una pista")
+                    }
+                    AnimatedVisibility(visible = hintsVisible) {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            practice.hints.forEach { hint ->
+                                Text(
+                                    text = hint.toAnnotatedString(),
+                                    style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            practice.extension?.let { extension ->
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Text(
+                            text = "Si quieres ir un paso más allá",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            text = extension.toAnnotatedString(),
+                            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
+                        )
+                    }
+                }
+            }
+
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                color =
                     if (checked) {
                         MaterialTheme.colorScheme.secondaryContainer
                     } else {
@@ -154,36 +321,50 @@ private fun LessonCheckpointCard(
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     },
-            ),
-    ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Checkbox(
-                checked = checked,
-                onCheckedChange = null,
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text =
-                        if (isLessonCompletion) {
-                            "Para terminar la lección"
-                        } else {
-                            "Antes de continuar"
-                        },
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Text(
-                    text = checkpoint.prompt,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+            ) {
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .toggleable(
+                                value = checked,
+                                role = Role.Checkbox,
+                                onValueChange = onCheckedChange,
+                            ).padding(14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Checkbox(
+                        checked = checked,
+                        onCheckedChange = null,
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text =
+                                if (isLessonCompletion) {
+                                    "Listo para terminar"
+                                } else {
+                                    "Listo para continuar"
+                                },
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            text = practice.confirmation.toAnnotatedString(),
+                            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
+                        )
+                    }
+                }
             }
         }
     }
+}
+
+@Composable
+private fun PracticeSectionTitle(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.SemiBold,
+    )
 }

@@ -12,7 +12,7 @@ data class LessonStep(
     val links: List<LessonLink> = emptyList(),
     val explanation: List<LessonExplanationBlock> = body.toParagraphBlocks(),
     val operatingSystemContent: Map<TargetOperatingSystem, LessonStepContent> = emptyMap(),
-    val checkpoint: LessonCheckpoint? = null,
+    val practice: LessonPractice? = null,
 ) {
     val isOperatingSystemSensitive: Boolean
         get() = operatingSystemContent.isNotEmpty()
@@ -28,9 +28,15 @@ data class LessonStep(
             )
 }
 
-data class LessonCheckpoint(
+data class LessonPractice(
     val id: String,
-    val prompt: String,
+    val objective: LessonRichText,
+    val statement: LessonRichText,
+    val requirements: List<LessonRichText>,
+    val expectedResult: LessonRichText? = null,
+    val hints: List<LessonRichText> = emptyList(),
+    val extension: LessonRichText? = null,
+    val confirmation: LessonRichText,
 )
 
 data class LessonStepContent(
@@ -231,6 +237,10 @@ internal fun string(
 internal fun paragraph(vararg spans: LessonTextSpan): LessonExplanationBlock.Paragraph = LessonExplanationBlock.Paragraph(LessonRichText(spans.toList()))
 
 internal fun paragraph(text: String): LessonExplanationBlock.Paragraph = paragraph(regular(text))
+
+internal fun richText(vararg spans: LessonTextSpan): LessonRichText = LessonRichText(spans.toList())
+
+internal fun richText(text: String): LessonRichText = richText(regular(text))
 
 internal fun steps(vararg items: String): LessonExplanationBlock.Steps = LessonExplanationBlock.Steps(items.map { item -> LessonRichText(listOf(regular(item))) })
 

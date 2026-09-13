@@ -197,7 +197,7 @@ private fun LessonExplanationCode(code: LessonExplanationBlock.Code) {
 }
 
 @Composable
-private fun LessonRichText.toAnnotatedString() =
+internal fun LessonRichText.toAnnotatedString() =
     buildAnnotatedString {
         spans.forEach { span ->
             val style =

@@ -205,7 +205,15 @@ class LessonContentCatalogTest {
         assertTrue(helloWorldStep.body.contains("Main.kt"))
         assertTrue(helloWorldStep.body.contains("MainKt"))
         assertTrue(helloWorldStep.body.contains("Hello World!"))
-        assertTrue(helloWorldStep.checkpoint?.prompt?.contains("Hello World!") == true)
+        val practice = assertNotNull(helloWorldStep.practice)
+        assertTrue(practice.confirmation.plainText.contains("Hello World!"))
+        assertTrue(practice.requirements.isNotEmpty())
+        assertTrue(practice.hints.isNotEmpty())
+        assertTrue(practice.objective.hasStyle(LessonTextSpanStyle.Highlight))
+        assertTrue(practice.statement.hasStyle(LessonTextSpanStyle.InlineCode))
+        assertTrue(practice.requirements.any { it.hasStyle(LessonTextSpanStyle.Emphasis) })
+        assertTrue(practice.expectedResult?.hasStyle(LessonTextSpanStyle.InlineCode) == true)
+        assertTrue(practice.confirmation.hasStyle(LessonTextSpanStyle.InlineCode))
 
         val visual = helloWorldStep.visual
         assertTrue(visual is LessonVisualContent.CodeExamples)
@@ -422,6 +430,8 @@ class LessonContentCatalogTest {
         assertTrue(visual.description.contains("Git"))
     }
 }
+
+private fun LessonRichText.hasStyle(style: LessonTextSpanStyle): Boolean = spans.any { it.style == style }
 
 private fun LessonVisualContent.hasReadableContent(): Boolean = readableText().isNotBlank()
 

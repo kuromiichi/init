@@ -1,10 +1,10 @@
 package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCatalog
-import dev.kuromiichi.damprep.data.lessons.LessonCheckpoint
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
+import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonScreenshot
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonStepContent
@@ -12,10 +12,16 @@ import dev.kuromiichi.damprep.data.lessons.LessonTool
 import dev.kuromiichi.damprep.data.lessons.LessonToolLogo
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.codeLine
+import dev.kuromiichi.damprep.data.lessons.emphasis
 import dev.kuromiichi.damprep.data.lessons.function
+import dev.kuromiichi.damprep.data.lessons.highlight
+import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.keyword
+import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.plain
 import dev.kuromiichi.damprep.data.lessons.punctuation
+import dev.kuromiichi.damprep.data.lessons.regular
+import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.string
 
 val developmentEnvironmentLessonContent =
@@ -227,6 +233,28 @@ val developmentEnvironmentLessonContent =
                 LessonStep(
                     title = "Comprobar el entorno con Hello World",
                     body = "IntelliJ IDEA habrá creado un pequeño programa de ejemplo. No necesitas entender todavía cómo está escrito.\n\nAbre Main.kt, pulsa el icono verde situado junto a main y ejecuta MainKt.\n\nCuando termine, comprueba que la consola muestra Hello World!.",
+                    explanation =
+                        listOf(
+                            paragraph(
+                                highlight("IntelliJ IDEA"),
+                                regular(" habrá creado un pequeño programa de ejemplo. "),
+                                emphasis("No necesitas entender todavía cómo está escrito."),
+                            ),
+                            paragraph(
+                                regular("Abre "),
+                                inlineCode("Main.kt"),
+                                regular(", pulsa el icono verde situado junto a "),
+                                inlineCode("main"),
+                                regular(" y ejecuta "),
+                                inlineCode("MainKt"),
+                                regular("."),
+                            ),
+                            paragraph(
+                                regular("Cuando termine, comprueba que la consola muestra "),
+                                inlineCode("Hello World!"),
+                                regular("."),
+                            ),
+                        ),
                     visual =
                         LessonVisualContent.CodeExamples(
                             examples =
@@ -253,10 +281,81 @@ val developmentEnvironmentLessonContent =
                                     ),
                                 ),
                         ),
-                    checkpoint =
-                        LessonCheckpoint(
+                    practice =
+                        LessonPractice(
                             id = "development-environment-hello-world",
-                            prompt = "He ejecutado MainKt y he visto “Hello World!” en la consola.",
+                            objective =
+                                richText(
+                                    regular("Verificar que tu primer proyecto está bien configurado y puede ejecutar "),
+                                    highlight("código Kotlin"),
+                                    regular("."),
+                                ),
+                            statement =
+                                richText(
+                                    regular("Abre "),
+                                    inlineCode("Main.kt"),
+                                    regular(" y ejecuta la función "),
+                                    inlineCode("main"),
+                                    regular(". Todavía no necesitas modificar el código generado."),
+                                ),
+                            requirements =
+                                listOf(
+                                    richText(
+                                        regular("El proyecto utiliza el "),
+                                        inlineCode("JDK 25"),
+                                        regular(" seleccionado en la configuración."),
+                                    ),
+                                    richText(
+                                        inlineCode("Main.kt"),
+                                        regular(" contiene una función "),
+                                        inlineCode("main"),
+                                        regular(" que llama a "),
+                                        inlineCode("println"),
+                                        regular("."),
+                                    ),
+                                    richText(
+                                        regular("La ejecución finaliza "),
+                                        emphasis("sin errores"),
+                                        regular("."),
+                                    ),
+                                ),
+                            expectedResult =
+                                richText(
+                                    regular("La consola muestra "),
+                                    inlineCode("Hello World!"),
+                                    regular("."),
+                                ),
+                            hints =
+                                listOf(
+                                    richText(
+                                        regular("Pulsa el icono verde junto a "),
+                                        inlineCode("fun main()"),
+                                        regular(" y elige "),
+                                        inlineCode("Run 'MainKt'"),
+                                        regular("."),
+                                    ),
+                                    richText(
+                                        regular("Si no aparece la salida, abre la ventana "),
+                                        inlineCode("Run"),
+                                        regular(" y comprueba que se ejecutó "),
+                                        inlineCode("MainKt"),
+                                        regular("."),
+                                    ),
+                                ),
+                            extension =
+                                richText(
+                                    regular("Sustituye "),
+                                    inlineCode("Hello World!"),
+                                    regular(" por una presentación breve y vuelve a ejecutar el programa."),
+                                ),
+                            confirmation =
+                                richText(
+                                    regular("He ejecutado "),
+                                    inlineCode("MainKt"),
+                                    regular(" y la consola muestra "),
+                                    inlineCode("Hello World!"),
+                                    regular("."),
+                                ),
                         ),
                 ),
             ),

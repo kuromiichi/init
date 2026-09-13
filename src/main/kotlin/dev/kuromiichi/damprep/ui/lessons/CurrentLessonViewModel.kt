@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 data class CurrentLessonUiState(
     val lessonContent: LessonContent?,
     val currentStepIndex: Int = 0,
-    val confirmedCheckpointIds: Set<String> = emptySet(),
+    val confirmedPracticeIds: Set<String> = emptySet(),
     val isCompletionVisible: Boolean = false,
 ) {
     val currentStep: LessonStep? = lessonContent?.steps?.getOrNull(currentStepIndex)
@@ -19,16 +19,16 @@ data class CurrentLessonUiState(
     val isMissing: Boolean = lessonContent == null
     val canGoBack: Boolean = isCompletionVisible || currentStepIndex > 0
     val isLastStep: Boolean = lessonContent != null && currentStepIndex == stepCount - 1
-    val isCurrentCheckpointConfirmed: Boolean
-        get() = currentStep?.checkpoint?.id?.let(confirmedCheckpointIds::contains) ?: true
+    val isCurrentPracticeConfirmed: Boolean
+        get() = currentStep?.practice?.id?.let(confirmedPracticeIds::contains) ?: true
     val canGoForward: Boolean
         get() =
             lessonContent != null &&
                 currentStepIndex < stepCount - 1 &&
-                isCurrentCheckpointConfirmed &&
+                isCurrentPracticeConfirmed &&
                 !isCompletionVisible
     val canShowCompletion: Boolean
-        get() = isLastStep && isCurrentCheckpointConfirmed && !isCompletionVisible
+        get() = isLastStep && isCurrentPracticeConfirmed && !isCompletionVisible
 }
 
 class CurrentLessonViewModel(
@@ -68,15 +68,15 @@ class CurrentLessonViewModel(
         return _uiState.value.currentStepIndex
     }
 
-    fun setCurrentCheckpointConfirmed(confirmed: Boolean) {
+    fun setCurrentPracticeConfirmed(confirmed: Boolean) {
         _uiState.update { state ->
-            val checkpointId = state.currentStep?.checkpoint?.id ?: return@update state
+            val practiceId = state.currentStep?.practice?.id ?: return@update state
             state.copy(
-                confirmedCheckpointIds =
+                confirmedPracticeIds =
                     if (confirmed) {
-                        state.confirmedCheckpointIds + checkpointId
+                        state.confirmedPracticeIds + practiceId
                     } else {
-                        state.confirmedCheckpointIds - checkpointId
+                        state.confirmedPracticeIds - practiceId
                     },
             )
         }

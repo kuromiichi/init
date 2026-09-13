@@ -35,4 +35,7 @@ private fun SubjectArea.accentColor(): Color =
         SubjectArea.Mixed -> MaterialTheme.colorScheme.secondary
         SubjectArea.Programming -> MaterialTheme.colorScheme.tertiary
         SubjectArea.DevelopmentEnvironments -> MaterialTheme.colorScheme.primary
+        SubjectArea.ComputerSystems -> MaterialTheme.colorScheme.secondary
+        SubjectArea.MarkupLanguages -> MaterialTheme.colorScheme.tertiary
+        SubjectArea.Databases -> MaterialTheme.colorScheme.primary
     }

@@ -2,7 +2,7 @@
 
 DAM Prep es una aplicación de escritorio de aprendizaje guiado para preparar contenidos de **Desarrollo de Aplicaciones Multiplataforma (DAM)** desde cero.
 
-El proyecto se centra inicialmente en los módulos de **Programación** y **Entornos de Desarrollo**. Las explicaciones se presentan en pasos breves, con ejemplos y apoyos visuales, para construir una base sólida antes de avanzar hacia ejercicios y proyectos más completos.
+El proyecto se centra en **Programación** y se apoya, cuando resulta necesario, en contenidos técnicos de Entornos de Desarrollo, Sistemas Informáticos, Bases de Datos y Lenguajes de Marcas. Las explicaciones se presentan en pasos breves, con ejemplos y apoyos visuales, para construir una base sólida antes de avanzar hacia ejercicios y proyectos más completos.
 
 ## Objetivos
 
@@ -26,7 +26,7 @@ Actualmente incluye:
 - navegación por botones y teclado dentro de las lecciones;
 - finalización explícita y progreso persistente de las lecciones;
 - desbloqueo secuencial, recuperación del último paso visitado y barra de progreso reactiva;
-- catálogo provisional de 24 lecciones;
+- itinerario lineal provisional de 29 lecciones;
 - tres lecciones con contenido:
     1. Bienvenida y mapa del camino;
     2. Qué es el software y cómo se construye;
@@ -49,6 +49,8 @@ Cada lección se divide en pantallas cortas. La intención es presentar una idea
 - uso gradual de herramientas profesionales;
 - actividades prácticas para comprobar lo aprendido.
 
+Cuando el contenido lo permite, la lección termina con una práctica estructurada que presenta su objetivo, enunciado, requisitos mínimos, resultado esperado, pistas y una ampliación opcional. Las materias de apoyo se integran en un único recorrido: clasifican y contextualizan las lecciones, pero no crean caminos alternativos para el usuario.
+
 El orden de DAM Prep responde a esta progresión didáctica propia. Por ello puede diferir tanto del orden de las fuentes de referencia como de la distribución utilizada por un centro educativo concreto.
 
 ## Fuentes y marco curricular
@@ -62,7 +64,9 @@ Este material organiza contenidos de programación para primero de DAM y relacio
 Como marco curricular oficial se consultan:
 
 - [Real Decreto 450/2010, de 16 de abril](https://www.boe.es/buscar/doc.php?id=BOE-A-2010-8067), por el que se establece el título de Técnico Superior en Desarrollo de Aplicaciones Multiplataforma y sus enseñanzas mínimas.
+- [Real Decreto 405/2023, de 29 de mayo](https://www.boe.es/buscar/doc.php?id=BOE-A-2023-13221), que actualiza los módulos profesionales y las enseñanzas mínimas de DAM.
 - [Orden EDU/2000/2010, de 13 de julio](https://www.boe.es/buscar/doc.php?id=BOE-A-2010-11888), por la que se establece el currículo del ciclo formativo en el ámbito de gestión del Ministerio de Educación.
+- [Orden EFD/659/2024, de 25 de junio](https://www.boe.es/eli/es/o/2024/06/25/efd659), que actualiza la organización y distribución curricular en el ámbito de gestión del Ministerio.
 
 Para los detalles técnicos se prioriza, cuando corresponde, la documentación oficial de las herramientas utilizadas, como [Kotlin](https://kotlinlang.org/docs/home.html), [IntelliJ IDEA](https://www.jetbrains.com/help/idea/getting-started.html), [Gradle](https://docs.gradle.org/current/userguide/userguide.html) y [Git](https://git-scm.com/doc).
 
@@ -168,7 +172,7 @@ Los recursos gráficos se encuentran en `src/main/composeResources/drawable` y l
 
 1. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
 2. Desarrollar la lección de primeros programas sin repetir la comprobación del entorno.
-3. Extender las actividades prácticas y los criterios de finalización al resto del catálogo.
+3. Incorporar prácticas estructuradas en las lecciones donde exista una aplicación significativa.
 4. Implementar apuntes persistentes sobre la base de datos local.
 5. Completar los metadatos, iconos y pruebas de los instaladores nativos.
 
