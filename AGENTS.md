@@ -17,7 +17,7 @@ Clarify the objective, expected user experience, acceptance criteria, and scope.
 
 ## 2. Research
 
-Use `researcher` for bounded repository investigation and authoritative external documentation. Review official Kotlin, Compose Desktop or Compose Multiplatform, Material 3, Room, Koin, Gradle, and other relevant sources. Contrast educational content with the reference repository and the BOE or other authoritative curriculum sources when applicable. Do not repeat sound research without a concrete gap or contradiction.
+Use `researcher` for bounded repository investigation and authoritative external documentation. Review official Kotlin, Compose Desktop or Compose Multiplatform, Material 3, Room, Koin, Gradle, and other relevant sources. Contrast educational content with the [Programación 1DAM](https://github.com/joseluisgs/Programacion-00-2022-2023) and [Entornos de Desarrollo 1DAM](https://github.com/joseluisgs/EntornosDesarrollo-00-2022-2023) reference repositories, and with the BOE or other authoritative curriculum sources when applicable. State which references were relevant to the feature; do not force content from an unrelated module or copy source wording. Use curriculum and learning outcomes to guide scope internally, but do not expose curricular connections, RA labels, BOE links, or similar traceability in the learner-facing lesson unless the user explicitly requests it. Do not repeat sound research without a concrete gap or contradiction.
 
 ## 3. Design the solution
 
@@ -38,9 +38,15 @@ Use `tester` for focused tests, compilation, Ktlint, and diff inspection while i
 
 Confirm compilation, tests, Ktlint, and KSP from that invocation. The clean build is particularly important because stale Compose resources can produce duplicate `Res` declarations. Never edit individual generated files under `build/`.
 
+Do not run Gradle invocations concurrently. An interrupted or overlapping `run`, test, format, or build can leave compiler processes waiting after KSP and make a healthy build look stuck. Before retrying an unexplained wait, stop or terminate the previous invocation, run `./gradlew --stop`, and then use one bounded Gradle command. Report the last completed task instead of assuming a compiler failure.
+
 ## 6. Test the experience
 
-Use `experience_qa` for visual and content QA when the required app and computer-use tools are available. Open the application and manually exercise affected flows, alternate states, navigation, keyboard and focus behavior, resizing, relevant platforms, legibility, visual consistency, Material 3 consistency, accessibility, and educational content. A successful build is not evidence that visual QA passed. The coordinator must state any coverage that could not be verified.
+Use `experience_qa` for visual and content QA when the required app and computer-use tools are available. On macOS, do not rely on `./gradlew run` for computer-use QA: it exposes a generic `net.java.openjdk.java` process that the automation surface may not recognize as DAM Prep. After the clean build passes, run `./gradlew createDistributable`, open the generated `.app` under `build/compose/binaries/main/app/`, and attach computer use to that native application identity. Packaging is a QA prerequisite, not a substitute for the mandatory clean build, and generated packages remain disposable outputs.
+
+Because this checkout lives in a File Provider-backed Desktop folder, packaging can recreate numbered duplicates such as `Res 2.kt` or `git 2.svg` even after a successful clean build. If that happens, stop Gradle and package from a disposable copy under a local temporary directory, excluding `.git`, `.gradle`, and `build`; never delete or edit individual generated files. Run the mandatory clean build again in the real checkout after the packaging attempt so its final verification state is authoritative.
+
+Manually exercise affected flows, alternate states, navigation, keyboard and focus behavior, resizing, relevant platforms, legibility, visual consistency, Material 3 consistency, accessibility, and educational content. A successful build or package is not evidence that visual QA passed. The coordinator must state any coverage that could not be verified.
 
 ## 7. Iterate
 

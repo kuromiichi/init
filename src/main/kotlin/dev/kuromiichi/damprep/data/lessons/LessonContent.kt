@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.data.lessons
 
 import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.firstProgramsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.softwareDevelopmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.welcomeRoadmapLessonContent
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
@@ -182,6 +183,7 @@ object LessonContentCatalog {
             welcomeRoadmapLessonContent,
             softwareDevelopmentLessonContent,
             developmentEnvironmentLessonContent,
+            firstProgramsLessonContent,
         )
 
     val currentLesson = lessons.first()

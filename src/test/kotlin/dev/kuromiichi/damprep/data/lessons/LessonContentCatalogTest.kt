@@ -20,7 +20,7 @@ class LessonContentCatalogTest {
     fun `initial catalog lessons have content`() {
         val lessonIdsWithContent = LessonContentCatalog.lessons.map { it.lessonId }
 
-        assertEquals(LessonCatalog.lessons.take(3).map { it.id }, lessonIdsWithContent)
+        assertEquals(LessonCatalog.lessons.take(4).map { it.id }, lessonIdsWithContent)
     }
 
     @Test
@@ -32,7 +32,74 @@ class LessonContentCatalogTest {
         assertTrue(LessonContentCatalog.hasContent("welcome-roadmap"))
         assertTrue(LessonContentCatalog.hasContent("software-development"))
         assertTrue(LessonContentCatalog.hasContent("development-environment"))
-        assertFalse(LessonContentCatalog.hasContent("first-programs"))
+        assertTrue(LessonContentCatalog.hasContent("first-programs"))
+        assertFalse(LessonContentCatalog.hasContent("input-decisions"))
+    }
+
+    @Test
+    fun `first programs lesson introduces a complete kotlin program progressively`() {
+        val lesson = LessonContentCatalog.findByLessonId("first-programs")
+        val combinedText = lesson?.steps?.joinToString(" ", transform = LessonStep::allReadableText).orEmpty()
+
+        assertNotNull(lesson)
+        assertEquals(LessonCatalog.lessons[3].id, lesson.lessonId)
+        assertEquals(6, lesson.steps.size)
+        assertTrue(lesson.steps.all { it.title.isNotBlank() && it.body.isNotBlank() })
+        assertTrue(lesson.steps.all { it.visual.hasReadableContent() })
+        assertTrue(combinedText.contains("fun main()"))
+        assertTrue(combinedText.contains("println"))
+        assertTrue(combinedText.contains("//"))
+        assertTrue(combinedText.contains("/*"))
+        assertTrue(combinedText.contains("val "))
+        assertTrue(combinedText.contains("var "))
+        assertTrue(combinedText.contains("\$nombre"))
+        assertTrue(
+            lesson.steps.any { step ->
+                step.explanation
+                    .filterIsInstance<LessonExplanationBlock.Paragraph>()
+                    .any { paragraph -> paragraph.text.hasStyle(LessonTextSpanStyle.InlineCode) }
+            },
+        )
+    }
+
+    @Test
+    fun `first programs lesson stays before input and control flow`() {
+        val lesson = assertNotNull(LessonContentCatalog.findByLessonId("first-programs"))
+        val sourceCode = lesson.sourceCode()
+
+        listOf("readln", "readLine", "if (", "when (", "for (", "while (").forEach { excluded ->
+            assertFalse(sourceCode.contains(excluded), "Unexpected advanced construct: $excluded")
+        }
+        assertFalse(sourceCode.contains("Hello World"))
+        assertFalse(sourceCode.contains("fun main(" + "args"))
+        assertFalse(lesson.steps.any(LessonStep::isOperatingSystemSensitive))
+    }
+
+    @Test
+    fun `first programs lesson ends with a verifiable guided practice`() {
+        val lesson = assertNotNull(LessonContentCatalog.findByLessonId("first-programs"))
+        val stepsWithPractice = lesson.steps.filter { it.practice != null }
+        val finalStep = lesson.steps.last()
+        val practice = assertNotNull(finalStep.practice)
+        val visibleText = lesson.allVisibleText()
+
+        assertEquals(listOf(finalStep), stepsWithPractice)
+        assertEquals("first-programs-study-summary", practice.id)
+        assertTrue(practice.objective.hasStyle(LessonTextSpanStyle.Highlight))
+        assertTrue(practice.statement.hasStyle(LessonTextSpanStyle.InlineCode))
+        assertTrue(practice.requirements.size >= 4)
+        assertTrue(practice.requirements.any { it.hasStyle(LessonTextSpanStyle.Emphasis) })
+        assertTrue(practice.expectedResult?.plainText == "Luna: 10")
+        assertTrue(practice.hints.isNotEmpty())
+        assertNotNull(practice.extension)
+        assertTrue(practice.confirmation.hasStyle(LessonTextSpanStyle.InlineCode))
+        assertFalse(visibleText.contains("RA1"))
+        assertFalse(visibleText.contains("RA2"))
+        assertFalse(visibleText.contains("Conexión curricular"))
+        assertFalse(visibleText.contains("boe.es", ignoreCase = true))
+        assertEquals(1, finalStep.links.size)
+        assertTrue(finalStep.links.all { it.url.startsWith("https://") })
+        assertTrue(finalStep.links.any { it.url.contains("kotlinlang.org") })
     }
 
     @Test
@@ -456,6 +523,40 @@ private fun LessonStep.allReadableText(): String =
             append(' ')
             append(content.visual.readableText())
         }
+    }
+
+private fun LessonContent.sourceCode(): String =
+    steps
+        .map(LessonStep::visual)
+        .filterIsInstance<LessonVisualContent.CodeExamples>()
+        .flatMap(LessonVisualContent.CodeExamples::examples)
+        .flatMap(LessonCodeExample::lines)
+        .joinToString("\n") { line -> line.tokens.joinToString("", transform = LessonCodeToken::text) }
+
+private fun LessonContent.allVisibleText(): String =
+    steps.joinToString(" ") { step ->
+        buildList {
+            add(step.allReadableText())
+            addAll(step.explanation.map(LessonExplanationBlock::readableText))
+            addAll(step.links.flatMap { link -> listOf(link.label, link.url) })
+            step.practice?.let { practice ->
+                add(practice.objective.plainText)
+                add(practice.statement.plainText)
+                addAll(practice.requirements.map(LessonRichText::plainText))
+                practice.expectedResult?.plainText?.let(::add)
+                addAll(practice.hints.map(LessonRichText::plainText))
+                practice.extension?.plainText?.let(::add)
+                add(practice.confirmation.plainText)
+            }
+        }.joinToString(" ")
+    }
+
+private fun LessonExplanationBlock.readableText(): String =
+    when (this) {
+        is LessonExplanationBlock.Callout -> "$title ${text.plainText}"
+        is LessonExplanationBlock.Code -> "$title ${lines.joinToString(" ")} $note"
+        is LessonExplanationBlock.Paragraph -> text.plainText
+        is LessonExplanationBlock.Steps -> items.joinToString(" ", transform = LessonRichText::plainText)
     }
 
 private fun LessonVisualContent.readableText(): String =

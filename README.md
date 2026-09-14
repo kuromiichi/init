@@ -27,12 +27,13 @@ Actualmente incluye:
 - finalización explícita y progreso persistente de las lecciones;
 - desbloqueo secuencial, recuperación del último paso visitado y barra de progreso reactiva;
 - itinerario lineal provisional de 29 lecciones;
-- tres lecciones con contenido:
+- cuatro lecciones con contenido:
     1. Bienvenida y mapa del camino;
     2. Qué es el software y cómo se construye;
     3. Preparar el entorno de trabajo;
+    4. Primeros programas;
 - componentes visuales para diagramas, ejemplos de código, herramientas y capturas;
-- comprobación práctica final en la lección de preparación del entorno;
+- prácticas finales estructuradas para comprobar el entorno y construir los primeros programas;
 - pruebas automatizadas de los modelos, preferencias, progreso, base de datos y catálogo de contenidos;
 - verificación automática del formato, las pruebas y la compilación.
 
@@ -55,11 +56,12 @@ El orden de DAM Prep responde a esta progresión didáctica propia. Por ello pue
 
 ## Fuentes y marco curricular
 
-La principal referencia didáctica del proyecto es:
+Las referencias didácticas principales del proyecto son:
 
 - [Programación 1DAM, curso 2022/2023, de José Luis González Sánchez](https://github.com/joseluisgs/Programacion-00-2022-2023).
+- [Entornos de Desarrollo 1DAM, curso 2022/2023, de José Luis González Sánchez](https://github.com/joseluisgs/EntornosDesarrollo-00-2022-2023).
 
-Este material organiza contenidos de programación para primero de DAM y relaciona el temario con sus resultados de aprendizaje. DAM Prep lo utiliza como orientación, pero adapta la selección, la redacción, el orden y la presentación a su propio formato.
+Estos materiales organizan contenidos de Programación y Entornos de Desarrollo para primero de DAM y relacionan el temario con sus resultados de aprendizaje. DAM Prep los utiliza como orientación, pero adapta la selección, la redacción, el orden y la presentación a su propio formato.
 
 Como marco curricular oficial se consultan:
 
@@ -170,8 +172,8 @@ Los recursos gráficos se encuentran en `src/main/composeResources/drawable` y l
 
 ## Próximos pasos
 
-1. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
-2. Desarrollar la lección de primeros programas sin repetir la comprobación del entorno.
+1. Desarrollar la lección de lectura de datos y toma de decisiones, manteniendo la progresión lineal.
+2. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
 3. Incorporar prácticas estructuradas en las lecciones donde exista una aplicación significativa.
 4. Implementar apuntes persistentes sobre la base de datos local.
 5. Completar los metadatos, iconos y pruebas de los instaladores nativos.
