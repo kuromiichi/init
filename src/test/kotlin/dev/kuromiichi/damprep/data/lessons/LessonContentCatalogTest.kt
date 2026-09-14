@@ -39,19 +39,31 @@ class LessonContentCatalogTest {
     @Test
     fun `first programs lesson introduces a complete kotlin program progressively`() {
         val lesson = LessonContentCatalog.findByLessonId("first-programs")
-        val combinedText = lesson?.steps?.joinToString(" ", transform = LessonStep::allReadableText).orEmpty()
+        val combinedText = lesson?.allVisibleText().orEmpty()
 
         assertNotNull(lesson)
         assertEquals(LessonCatalog.lessons[3].id, lesson.lessonId)
         assertEquals(6, lesson.steps.size)
         assertTrue(lesson.steps.all { it.title.isNotBlank() && it.body.isNotBlank() })
         assertTrue(lesson.steps.all { it.visual.hasReadableContent() })
+        assertTrue(lesson.steps.all { it.explanation.filterIsInstance<LessonExplanationBlock.Paragraph>().size >= 3 })
         assertTrue(combinedText.contains("fun main()"))
+        assertTrue(combinedText.contains("Main.kt"))
+        assertTrue(combinedText.contains("paréntesis", ignoreCase = true))
+        assertTrue(combinedText.contains("llaves", ignoreCase = true))
+        assertTrue(combinedText.contains("sangría", ignoreCase = true))
         assertTrue(combinedText.contains("println"))
+        assertTrue(combinedText.contains("argumento", ignoreCase = true))
+        assertTrue(combinedText.contains("salto de línea", ignoreCase = true))
         assertTrue(combinedText.contains("//"))
         assertTrue(combinedText.contains("/*"))
+        assertTrue(combinedText.contains("ignora", ignoreCase = true))
+        assertTrue(combinedText.contains("literal", ignoreCase = true))
+        assertTrue(combinedText.contains("\"4\""))
         assertTrue(combinedText.contains("val "))
         assertTrue(combinedText.contains("var "))
+        assertTrue(combinedText.contains("inicializar", ignoreCase = true))
+        assertTrue(combinedText.contains("reasign", ignoreCase = true))
         assertTrue(combinedText.contains("\$nombre"))
         assertTrue(
             lesson.steps.any { step ->
@@ -66,12 +78,19 @@ class LessonContentCatalogTest {
     fun `first programs lesson stays before input and control flow`() {
         val lesson = assertNotNull(LessonContentCatalog.findByLessonId("first-programs"))
         val sourceCode = lesson.sourceCode()
+        val visibleText = lesson.allVisibleText()
 
         listOf("readln", "readLine", "if (", "when (", "for (", "while (").forEach { excluded ->
             assertFalse(sourceCode.contains(excluded), "Unexpected advanced construct: $excluded")
+            assertFalse(visibleText.contains(excluded), "Unexpected advanced explanation: $excluded")
         }
         assertFalse(sourceCode.contains("Hello World"))
         assertFalse(sourceCode.contains("fun main(" + "args"))
+        assertFalse(sourceCode.contains("val tarea"))
+        assertFalse(sourceCode.contains("\"pendiente\""))
+        assertFalse(sourceCode.contains("\"completada\""))
+        assertFalse(sourceCode.contains("Repasar Kotlin: pendiente"))
+        assertFalse(sourceCode.contains("Repasar Kotlin: completada"))
         assertFalse(lesson.steps.any(LessonStep::isOperatingSystemSensitive))
     }
 
@@ -82,24 +101,66 @@ class LessonContentCatalogTest {
         val finalStep = lesson.steps.last()
         val practice = assertNotNull(finalStep.practice)
         val visibleText = lesson.allVisibleText()
+        val practiceVisibleText =
+            buildList {
+                add(practice.objective.plainText)
+                add(practice.statement.plainText)
+                addAll(practice.requirements.map(LessonRichText::plainText))
+                practice.expectedResult?.plainText?.let(::add)
+                addAll(practice.hints.map(LessonRichText::plainText))
+                practice.extension?.plainText?.let(::add)
+                add(practice.confirmation.plainText)
+            }.joinToString(" ")
 
         assertEquals(listOf(finalStep), stepsWithPractice)
-        assertEquals("first-programs-study-summary", practice.id)
+        assertEquals("first-programs-task-status", practice.id)
         assertTrue(practice.objective.hasStyle(LessonTextSpanStyle.Highlight))
-        assertTrue(practice.statement.hasStyle(LessonTextSpanStyle.InlineCode))
-        assertTrue(practice.requirements.size >= 4)
+        assertTrue(practice.statement.plainText.isNotBlank())
+        assertTrue(practice.requirements.size >= 5)
         assertTrue(practice.requirements.any { it.hasStyle(LessonTextSpanStyle.Emphasis) })
-        assertTrue(practice.expectedResult?.plainText == "Luna: 10")
-        assertTrue(practice.hints.isNotEmpty())
+        assertTrue(practice.expectedResult?.plainText == "Repasar Kotlin: pendiente\nRepasar Kotlin: completada")
+        assertFalse(practiceVisibleText.contains("val tarea ="))
+        assertFalse(practiceVisibleText.contains("var estado ="))
+        assertFalse(practiceVisibleText.contains("estado ="))
+        assertFalse(practiceVisibleText.contains("fun main()"))
+        assertFalse(practiceVisibleText.contains("println(\"\$tarea: \$estado\")"))
+        listOf("val", "var", "println").forEach { keyword ->
+            assertFalse(
+                Regex("\\b$keyword\\b").containsMatchIn(practiceVisibleText),
+                "Unexpected solution keyword in practice: $keyword",
+            )
+        }
+        assertTrue(practice.hints.size >= 3)
         assertNotNull(practice.extension)
         assertTrue(practice.confirmation.hasStyle(LessonTextSpanStyle.InlineCode))
         assertFalse(visibleText.contains("RA1"))
         assertFalse(visibleText.contains("RA2"))
         assertFalse(visibleText.contains("Conexión curricular"))
+        assertFalse(visibleText.contains("currícul", ignoreCase = true))
+        assertFalse(visibleText.contains("resultado de aprendizaje", ignoreCase = true))
+        assertFalse(visibleText.contains("BOE", ignoreCase = true))
         assertFalse(visibleText.contains("boe.es", ignoreCase = true))
         assertEquals(1, finalStep.links.size)
         assertTrue(finalStep.links.all { it.url.startsWith("https://") })
         assertTrue(finalStep.links.any { it.url.contains("kotlinlang.org") })
+    }
+
+    @Test
+    fun `final interpolation example stays smaller than the synthesis practice`() {
+        val lesson = assertNotNull(LessonContentCatalog.findByLessonId("first-programs"))
+        val finalVisual = lesson.steps.last().visual
+
+        assertTrue(finalVisual is LessonVisualContent.CodeExamples)
+        val sourceCode =
+            finalVisual.examples.single().lines.joinToString("\n") { line ->
+                line.tokens.joinToString("", transform = LessonCodeToken::text)
+            }
+
+        assertTrue(sourceCode.contains("val nombre"))
+        assertTrue(sourceCode.contains("\$nombre"))
+        assertEquals(1, Regex("\\bprintln\\b").findAll(sourceCode).count())
+        assertFalse(sourceCode.contains("var "))
+        assertEquals(1, sourceCode.lineSequence().count { it.contains("=") })
     }
 
     @Test

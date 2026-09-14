@@ -30,19 +30,27 @@ val firstProgramsLessonContent =
             listOf(
                 LessonStep(
                     title = "Un programa empieza en main",
-                    body = "El archivo Main.kt que ya creaste contiene el punto de partida del programa. Kotlin comienza por main y ejecuta lo que encuentre entre sus llaves.",
+                    body = "Un programa Kotlin se organiza en un archivo y empieza a ejecutar desde main. Dentro de su bloque escribimos las instrucciones, con sangría para leerlas mejor.",
                     explanation =
                         listOf(
                             paragraph(
-                                regular("El archivo "),
                                 inlineCode("Main.kt"),
-                                regular(" que ya creaste contiene el punto de partida del programa."),
+                                regular(" es un nombre habitual para el archivo que contiene este primer programa. Es solo el archivo donde guardas el código: Kotlin no exige ese nombre para encontrar "),
+                                inlineCode("main"),
+                                regular("."),
                             ),
                             paragraph(
                                 inlineCode("fun"),
-                                regular(" declara una función y "),
+                                regular(" indica que declaramos una función. "),
                                 inlineCode("main"),
-                                regular(" le da el nombre especial que Kotlin reconoce como punto de entrada. Las llaves agrupan sus instrucciones."),
+                                regular(" es la función especial desde la que Kotlin inicia este programa."),
+                            ),
+                            paragraph(
+                                regular("Los paréntesis "),
+                                inlineCode("()"),
+                                regular(" indican que esta versión de "),
+                                inlineCode("main"),
+                                regular(" no recibe ningún dato. Las llaves delimitan su bloque; la sangría de las líneas interiores no cambia el resultado, pero muestra claramente qué pertenece al bloque."),
                             ),
                         ),
                     visual =
@@ -63,17 +71,22 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Instrucciones en orden",
-                    body = "Las instrucciones se leen de arriba abajo. println muestra un texto en la consola y después el programa continúa con la siguiente línea.",
+                    body = "Una instrucción ordena al programa hacer una acción. Kotlin las ejecuta de arriba abajo; println muestra información en la consola.",
                     explanation =
                         listOf(
                             paragraph(
-                                regular("Las instrucciones se leen "),
+                                regular("Una instrucción es una línea de código que pide una acción. Las instrucciones se leen "),
                                 emphasis("de arriba abajo"),
                                 regular(". Ese orden es parte del significado del programa."),
                             ),
                             paragraph(
                                 inlineCode("println"),
-                                regular(" muestra un texto en la consola y después el programa continúa con la siguiente línea."),
+                                regular(" es una instrucción preparada por Kotlin para mostrar algo. Sus paréntesis contienen el argumento: el valor que queremos mostrar."),
+                            ),
+                            paragraph(
+                                regular("El texto que escribes entre comillas es código; lo que aparece al ejecutar es la salida. Cada "),
+                                inlineCode("println"),
+                                regular(" termina su salida con un salto de línea antes de continuar."),
                             ),
                         ),
                     visual =
@@ -96,17 +109,22 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Comentarios para explicar una decisión",
-                    body = "Los comentarios sirven para dejar una aclaración a quien lea el código. Kotlin ofrece // para una línea y /* */ para varias líneas; el programa los ignora.",
+                    body = "Los comentarios aclaran el código para las personas. Kotlin los ignora al ejecutar: puedes usar // en una línea o /* */ en varias.",
                     explanation =
                         listOf(
                             paragraph(
-                                regular("Un comentario deja una aclaración a quien lea el código. El programa lo ignora, por eso conviene que explique una decisión útil."),
+                                regular("Un comentario deja una aclaración para quien lee el código. Kotlin lo ignora al ejecutar, así que nunca aparece en la consola."),
                             ),
                             paragraph(
                                 inlineCode("//"),
                                 regular(" comenta una línea y "),
                                 inlineCode("/* */"),
                                 regular(" permite abarcar varias líneas."),
+                            ),
+                            paragraph(
+                                regular("Úsalos para explicar una intención que el código no cuenta por sí solo, como el motivo de un mensaje. Evita comentar lo obvio, por ejemplo que "),
+                                inlineCode("println"),
+                                regular(" imprime."),
                             ),
                         ),
                     visual =
@@ -131,16 +149,22 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Valores escritos en el programa",
-                    body = "Un literal es un valor escrito directamente en el código. Entre comillas hay texto; sin comillas, un número. Podemos mostrar ambos con println.",
+                    body = "Un literal es un valor escrito directamente en el programa. Las comillas delimitan texto; un número como 4 se escribe sin ellas.",
                     explanation =
                         listOf(
                             paragraph(
                                 regular("Un "),
                                 highlight("literal"),
-                                regular(" es un valor escrito directamente en el código."),
+                                regular(" es un valor escrito directamente en el código, sin guardarlo antes en un nombre."),
                             ),
                             paragraph(
-                                regular("Entre comillas hay texto; sin comillas, un número. Podemos mostrar ambos con "),
+                                inlineCode("4"),
+                                regular(" y "),
+                                inlineCode("\"4\""),
+                                regular(" no son el mismo literal: el primero representa un número y el segundo representa texto con el carácter 4."),
+                            ),
+                            paragraph(
+                                regular("Las comillas delimitan el texto en el código, pero no se muestran en la consola. Puedes pasar cualquiera de estos valores como argumento a "),
                                 inlineCode("println"),
                                 regular("."),
                             ),
@@ -165,16 +189,25 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Guardar valores con val y var",
-                    body = "val guarda un valor local que no cambia y es la opción recomendada. var se usa cuando ese valor necesita recibir otro durante el programa.",
+                    body = "Una variable guarda un valor bajo un nombre. Empieza con val si no debe cambiar; usa var cuando necesites reasignar el valor.",
                     explanation =
                         listOf(
                             paragraph(
+                                regular("Una variable tiene un nombre para poder usar un valor más de una vez. Declararla es crear ese nombre; inicializarla es darle su primer valor."),
+                            ),
+                            paragraph(
+                                inlineCode("="),
+                                regular(" asigna el valor de la derecha al nombre de la izquierda. "),
                                 inlineCode("val"),
-                                regular(" guarda un valor local de solo lectura. Es la opción recomendada cuando no necesitas cambiarlo."),
+                                regular(" es la opción preferida cuando el valor no cambia."),
                             ),
                             paragraph(
                                 inlineCode("var"),
-                                regular(" se usa cuando el valor necesita recibir otro durante el programa."),
+                                regular(" permite reasignar: después escribes el nombre, "),
+                                inlineCode("="),
+                                regular(" y el valor nuevo, sin repetir "),
+                                inlineCode("var"),
+                                regular(". La reasignación sustituye el valor anterior."),
                             ),
                         ),
                     visual =
@@ -199,13 +232,23 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Une las piezas: marcador de práctica",
-                    body = "Ahora combina main, una nota útil, valores y una salida. Este programa pequeño te prepara para escribir instrucciones claras antes de trabajar con datos o decisiones.",
+                    body = "La interpolación inserta variables dentro de un texto. Al ejecutar, \$nombre se sustituye por su valor actual, para comprobarlo en la consola.",
                     explanation =
                         listOf(
                             paragraph(
-                                regular("Ahora combina "),
-                                inlineCode("main"),
-                                regular(", una nota útil, valores y una salida. El objetivo es que cada línea tenga una responsabilidad clara."),
+                                regular("Dentro de un texto entre comillas, escribe "),
+                                inlineCode("\$nombre"),
+                                regular(" para interpolar la variable llamada nombre. El signo "),
+                                inlineCode("\$"),
+                                regular(" avisa a Kotlin de que debe insertar su valor."),
+                            ),
+                            paragraph(
+                                regular("La interpolación usa el valor que tenga el nombre cuando se ejecuta esa línea. En este ejemplo, Kotlin sustituye "),
+                                inlineCode("\$nombre"),
+                                regular(" por el texto guardado."),
+                            ),
+                            paragraph(
+                                regular("Mira la consola después de ejecutar y compara el texto mostrado con las variables. Esa comprobación rápida confirma que el orden, los valores y la interpolación funcionan juntos."),
                             ),
                         ),
                     visual =
@@ -213,9 +256,9 @@ val firstProgramsLessonContent =
                             examples =
                                 listOf(
                                     LessonCodeExample(
-                                        title = "Resumen completo",
-                                        lines = studySummaryProgram(),
-                                        note = "La salida exacta es: Luna: 10",
+                                        title = "Un saludo con interpolación",
+                                        lines = interpolatedGreetingProgram(),
+                                        note = "La consola muestra Hola, Luna al sustituir el nombre dentro del texto.",
                                     ),
                                 ),
                         ),
@@ -228,42 +271,44 @@ val firstProgramsLessonContent =
                         ),
                     practice =
                         LessonPractice(
-                            id = "first-programs-study-summary",
-                            objective = richText(highlight("Construir un programa breve que muestre un marcador de práctica.")),
+                            id = "first-programs-task-status",
+                            objective = richText(highlight("Construir un programa breve que muestre el cambio de estado de una tarea.")),
                             statement =
                                 richText(
-                                    regular("En "),
-                                    inlineCode("Main.kt"),
-                                    regular(", escribe un único programa que muestre el resumen indicado."),
+                                    regular("Crea un programa que registre el estado de una tarea antes y después de terminarla. Construye las líneas tú y vuelve a las pantallas anteriores si necesitas recordar cada pieza."),
                                 ),
                             requirements =
                                 listOf(
-                                    richText(emphasis("Una sola main"), regular(" con un comentario útil.")),
-                                    richText(regular("Un "), inlineCode("val"), regular(" para el nombre y un "), inlineCode("var"), regular(" para los puntos.")),
-                                    richText(regular("Inicializa los puntos en "), inlineCode("0"), regular(" y asígnales después "), inlineCode("10"), regular(".")),
-                                    richText(regular("Muestra el nombre y los puntos con "), inlineCode("println"), regular(" e interpolación.")),
+                                    richText(emphasis("Un único punto de entrada"), regular(" y un comentario que explique el cambio de estado.")),
+                                    richText(regular("Guarda el texto fijo de la tarea "), inlineCode("Repasar Kotlin"), regular(" en un nombre que no necesite cambiar.")),
+                                    richText(regular("Guarda el estado inicial "), inlineCode("pendiente"), regular(" en un nombre que sí pueda actualizarse.")),
+                                    richText(regular("Muestra una primera línea con la tarea y su estado mediante interpolación.")),
+                                    richText(regular("Actualiza el estado a "), inlineCode("completada"), regular(" y muestra una segunda línea con el mismo formato.")),
                                 ),
-                            expectedResult = richText(inlineCode("Luna: 10")),
+                            expectedResult = richText(inlineCode("Repasar Kotlin: pendiente\nRepasar Kotlin: completada")),
                             hints =
                                 listOf(
-                                    richText(regular("Coloca las instrucciones dentro de las llaves de "), inlineCode("main"), regular(".")),
-                                    richText(regular("En el texto de salida usa "), inlineCode("\$nombre"), regular(" y "), inlineCode("\$puntos"), regular(".")),
+                                    richText(regular("Empieza por decidir qué dato se mantiene y cuál debe poder cambiar durante el programa.")),
+                                    richText(regular("La primera salida observa el estado inicial; el cambio va entre las dos salidas.")),
+                                    richText(regular("Revisa la pantalla sobre interpolación para recordar cómo insertar los dos nombres en el mismo texto.")),
                                 ),
-                            extension = richText(regular("Cambia el nombre y el valor final de los puntos, manteniendo el mismo formato de salida.")),
-                            confirmation = richText(regular("Confirma que la consola muestra exactamente "), inlineCode("Luna: 10"), regular(" antes de continuar.")),
+                            extension = richText(regular("Cambia solo el texto de la tarea y conserva el mismo cambio de estado y el formato de las dos líneas.")),
+                            confirmation =
+                                richText(
+                                    regular("Confirma que la consola muestra las dos líneas indicadas, primero con el estado inicial y después con el "),
+                                    inlineCode("estado"),
+                                    regular(" actualizado."),
+                                ),
                         ),
                 ),
             ),
     )
 
-private fun studySummaryProgram() =
+private fun interpolatedGreetingProgram() =
     listOf(
         codeLine(keyword("fun "), function("main"), punctuation("() {")),
-        codeLine(plain("    "), comment("// Los puntos cambiarán durante la práctica")),
         codeLine(plain("    "), keyword("val "), plain("nombre "), operator("="), plain(" "), string("\"Luna\"")),
-        codeLine(plain("    "), keyword("var "), plain("puntos "), operator("="), plain(" "), number("0")),
-        codeLine(plain("    "), plain("puntos "), operator("="), plain(" "), number("10")),
-        codeLine(plain("    "), function("println"), punctuation("("), string("\""), interpolation("\$nombre"), string(": "), interpolation("\$puntos"), string("\""), punctuation(")")),
+        codeLine(plain("    "), function("println"), punctuation("("), string("\"Hola, "), interpolation("\$nombre"), string("\""), punctuation(")")),
         codeLine(punctuation("}")),
     )
 
