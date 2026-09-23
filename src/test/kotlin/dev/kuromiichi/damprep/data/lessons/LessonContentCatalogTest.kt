@@ -21,7 +21,7 @@ class LessonContentCatalogTest {
     fun `initial catalog lessons have content`() {
         val lessonIdsWithContent = LessonContentCatalog.lessons.map { it.lessonId }
 
-        assertEquals(LessonCatalog.lessons.take(4).map { it.id }, lessonIdsWithContent)
+        assertEquals(LessonCatalog.lessons.take(5).map { it.id }, lessonIdsWithContent)
     }
 
     @Test
@@ -34,7 +34,45 @@ class LessonContentCatalogTest {
         assertTrue(LessonContentCatalog.hasContent("software-development"))
         assertTrue(LessonContentCatalog.hasContent("development-environment"))
         assertTrue(LessonContentCatalog.hasContent("first-programs"))
-        assertFalse(LessonContentCatalog.hasContent("input-decisions"))
+        assertTrue(LessonContentCatalog.hasContent("input-decisions"))
+        assertFalse(LessonContentCatalog.hasContent("loops"))
+    }
+
+    @Test
+    fun `input and decisions lesson progresses from reading to a verifiable decision`() {
+        val lesson = assertNotNull(LessonContentCatalog.findByLessonId("input-decisions"))
+        val titles = lesson.steps.map { it.title }
+        val text = lesson.allVisibleText()
+        val source = lesson.sourceCode()
+        val practice = assertNotNull(lesson.steps.last().practice)
+
+        assertEquals(LessonCatalog.lessons[4].id, lesson.lessonId)
+        assertEquals(9, lesson.steps.size)
+        assertTrue(lesson.steps.all { it.title.isNotBlank() && it.body.isNotBlank() && it.visual.hasReadableContent() })
+        assertTrue(titles.indexOf("Operar con números") < titles.indexOf("Preguntas con respuesta verdadera o falsa"))
+        assertTrue(titles.indexOf("Preguntas con respuesta verdadera o falsa") < titles.indexOf("Elegir entre dos caminos"))
+        listOf("print", "readln", "String", "Int", "Double", "Boolean", "==", "!=", "&&", "||", "!", "else if", "when", "toIntOrNull", "null").forEach {
+            assertTrue(text.contains(it), "Missing introductory concept: $it")
+        }
+        assertTrue(source.contains("readln()"))
+        assertTrue(source.contains("when (opcion)"))
+        assertTrue(source.contains("texto.toIntOrNull()"))
+        assertFalse(source.contains("for ("))
+        assertFalse(source.contains("while ("))
+        assertEquals(listOf(lesson.steps.last()), lesson.steps.filter { it.practice != null })
+        assertEquals("input-decisions-break", practice.id)
+        listOf("24", "25", "hola").forEach {
+            assertTrue(
+                practice.expectedResult
+                    ?.plainText
+                    .orEmpty()
+                    .contains(it),
+            )
+        }
+        assertTrue(practice.confirmation.plainText.contains("sin que el programa falle"))
+        assertTrue(lesson.steps.last().visual is LessonVisualContent.Flow)
+        assertFalse(text.contains("resultado de aprendizaje", ignoreCase = true))
+        assertFalse(text.contains("BOE", ignoreCase = true))
     }
 
     @Test
