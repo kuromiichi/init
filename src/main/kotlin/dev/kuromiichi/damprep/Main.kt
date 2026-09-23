@@ -38,15 +38,16 @@ fun main() {
             ) {
                 DisposableEffect(window) {
                     val previousMinimumSize = window.minimumSize
-                    window.minimumSize = WindowMetrics.minimumAwtSize
+                    val minimumSize = WindowMetrics.minimumAwtSize(window.insets)
+                    window.minimumSize = minimumSize
 
                     if (
-                        window.width < WindowMetrics.minimumAwtSize.width ||
-                        window.height < WindowMetrics.minimumAwtSize.height
+                        window.width < minimumSize.width ||
+                        window.height < minimumSize.height
                     ) {
                         window.setSize(
-                            window.width.coerceAtLeast(WindowMetrics.minimumAwtSize.width),
-                            window.height.coerceAtLeast(WindowMetrics.minimumAwtSize.height),
+                            window.width.coerceAtLeast(minimumSize.width),
+                            window.height.coerceAtLeast(minimumSize.height),
                         )
                     }
 
