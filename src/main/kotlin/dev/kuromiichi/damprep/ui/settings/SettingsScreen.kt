@@ -17,65 +17,39 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
-import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
+import dev.kuromiichi.damprep.ui.common.LoadingScreen
 import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
 import dev.kuromiichi.damprep.ui.common.SettingControlMaxWidth
 import dev.kuromiichi.damprep.ui.common.SettingRow
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    studentName: String,
-    pronounPreference: PronounPreference,
-    targetOperatingSystem: TargetOperatingSystem?,
-    themePreference: ThemePreference,
-    unlockAllLessons: Boolean,
-    hasLessonProgress: Boolean,
-    onStudentNameChanged: (String) -> Unit,
-    onPronounPreferenceChanged: (PronounPreference) -> Unit,
-    onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
-    onThemePreferenceChanged: (ThemePreference) -> Unit,
-    onUnlockAllLessonsChanged: (Boolean) -> Unit,
-    onResetLessonProgress: () -> Unit,
     onBack: () -> Unit,
+    viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val focusManager = LocalFocusManager.current
-    val viewModel =
-        remember {
-            SettingsViewModel(
-                studentName = studentName,
-                pronounPreference = pronounPreference,
-                targetOperatingSystem = targetOperatingSystem,
-                themePreference = themePreference,
-            )
-        }
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(studentName, pronounPreference, targetOperatingSystem, themePreference) {
-        viewModel.syncPreferences(
-            studentName = studentName,
-            pronounPreference = pronounPreference,
-            targetOperatingSystem = targetOperatingSystem,
-            themePreference = themePreference,
-        )
+    if (uiState == null) {
+        LoadingScreen()
+        return
     }
 
     AppScreen(
         onBack = {
-            viewModel.commitStudentName()?.let(onStudentNameChanged)
+            viewModel.commitStudentName()
             onBack()
         },
     ) {
@@ -119,9 +93,7 @@ fun SettingsScreen(
                                 .widthIn(max = SettingControlMaxWidth)
                                 .fillMaxWidth()
                                 .onFocusChanged { focusState ->
-                                    viewModel
-                                        .updateStudentNameFocus(focusState.isFocused)
-                                        ?.let(onStudentNameChanged)
+                                    if (!focusState.isFocused) viewModel.commitStudentName()
                                 },
                         label = { Text("Nombre") },
                         singleLine = true,
@@ -148,10 +120,7 @@ fun SettingsScreen(
                         PronounPreference.entries.forEachIndexed { index, preference ->
                             SegmentedButton(
                                 selected = preference == uiState.pronounPreference,
-                                onClick = {
-                                    viewModel.updatePronounPreference(preference)
-                                    onPronounPreferenceChanged(preference)
-                                },
+                                onClick = { viewModel.setPronounPreference(preference) },
                                 shape =
                                     SegmentedButtonDefaults.itemShape(
                                         index = index,
@@ -170,10 +139,7 @@ fun SettingsScreen(
                 ) {
                     OperatingSystemSelector(
                         selectedOperatingSystem = uiState.targetOperatingSystem,
-                        onOperatingSystemSelected = { operatingSystem ->
-                            viewModel.updateTargetOperatingSystem(operatingSystem)
-                            onTargetOperatingSystemChanged(operatingSystem)
-                        },
+                        onOperatingSystemSelected = viewModel::setTargetOperatingSystem,
                         modifier =
                             Modifier
                                 .widthIn(max = SettingControlMaxWidth)
@@ -194,10 +160,7 @@ fun SettingsScreen(
                         ThemePreference.entries.forEachIndexed { index, preference ->
                             SegmentedButton(
                                 selected = preference == uiState.themePreference,
-                                onClick = {
-                                    viewModel.updateThemePreference(preference)
-                                    onThemePreferenceChanged(preference)
-                                },
+                                onClick = { viewModel.setThemePreference(preference) },
                                 shape =
                                     SegmentedButtonDefaults.itemShape(
                                         index = index,
@@ -211,10 +174,10 @@ fun SettingsScreen(
                 }
 
                 AdvancedSettingsSection(
-                    unlockAllLessons = unlockAllLessons,
-                    hasLessonProgress = hasLessonProgress,
-                    onUnlockAllLessonsChanged = onUnlockAllLessonsChanged,
-                    onResetLessonProgress = onResetLessonProgress,
+                    unlockAllLessons = uiState.unlockAllLessons,
+                    hasLessonProgress = uiState.hasLessonProgress,
+                    onUnlockAllLessonsChanged = viewModel::setUnlockAllLessons,
+                    onResetLessonProgress = viewModel::resetLessonProgress,
                 )
             }
         }

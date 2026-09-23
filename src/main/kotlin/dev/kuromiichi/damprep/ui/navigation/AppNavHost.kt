@@ -1,15 +1,12 @@
 package dev.kuromiichi.damprep.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import dev.kuromiichi.damprep.data.lessons.LessonCatalog
-import dev.kuromiichi.damprep.data.preferences.PronounPreference
-import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
-import dev.kuromiichi.damprep.data.preferences.ThemePreference
+import dev.kuromiichi.damprep.ui.common.LoadingScreen
 import dev.kuromiichi.damprep.ui.home.HomeScreen
 import dev.kuromiichi.damprep.ui.home.HomeViewModel
 import dev.kuromiichi.damprep.ui.lessons.CurrentLessonScreen
@@ -18,27 +15,12 @@ import dev.kuromiichi.damprep.ui.lessons.LessonListViewModel
 import dev.kuromiichi.damprep.ui.notes.NotesScreen
 import dev.kuromiichi.damprep.ui.onboarding.OnboardingScreen
 import dev.kuromiichi.damprep.ui.settings.SettingsScreen
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppNavHost(
     navController: NavHostController,
     startDestination: AppRoute,
-    studentName: String,
-    pronounPreference: PronounPreference,
-    targetOperatingSystem: TargetOperatingSystem?,
-    themePreference: ThemePreference,
-    unlockAllLessons: Boolean,
-    completedLessonIds: Set<String>,
-    lessonStepIndices: Map<String, Int>,
-    onThemePreferenceChanged: (ThemePreference) -> Unit,
-    onStudentNameChanged: (String) -> Unit,
-    onPronounPreferenceChanged: (PronounPreference) -> Unit,
-    onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
-    onUnlockAllLessonsChanged: (Boolean) -> Unit,
-    onOnboardingFinished: (String, PronounPreference, TargetOperatingSystem) -> Unit,
-    onLessonFinished: (String) -> Unit,
-    onLessonStepChanged: (String, Int) -> Unit,
-    onResetLessonProgress: () -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -46,11 +28,7 @@ fun AppNavHost(
     ) {
         composable<AppRoute.Onboarding> {
             OnboardingScreen(
-                themePreference = themePreference,
-                detectedOperatingSystem = targetOperatingSystem ?: TargetOperatingSystem.detect(),
-                onThemePreferenceChanged = onThemePreferenceChanged,
-                onFinished = { name, selectedPronounPreference, selectedOperatingSystem ->
-                    onOnboardingFinished(name, selectedPronounPreference, selectedOperatingSystem)
+                onFinished = {
                     navController.navigate(AppRoute.Home) {
                         popUpTo<AppRoute.Onboarding> {
                             inclusive = true
@@ -62,78 +40,50 @@ fun AppNavHost(
         }
 
         composable<AppRoute.Home> {
-            val homeViewModel = remember { HomeViewModel() }
-            val homeUiState =
-                homeViewModel.createUiState(
-                    studentName = studentName,
-                    pronounPreference = pronounPreference,
-                    completedLessonIds = completedLessonIds,
-                    lessonStepIndices = lessonStepIndices,
-                    unlockAllLessons = unlockAllLessons,
-                )
+            val homeViewModel = koinViewModel<HomeViewModel>()
+            val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+            val uiState = homeUiState
 
-            HomeScreen(
-                uiState = homeUiState,
-                onContinueLesson = {
-                    homeUiState.continueLessonId
-                        ?.let { lessonId ->
-                            navController.navigate(
-                                AppRoute.Lesson(
-                                    lessonId = lessonId,
-                                    resumeFromSavedStep = true,
-                                ),
-                            )
+            if (uiState == null) {
+                LoadingScreen()
+            } else {
+                HomeScreen(
+                    uiState = uiState,
+                    onContinueLesson = {
+                        uiState.continueLessonId?.let { lessonId ->
+                            navController.navigate(AppRoute.Lesson(lessonId))
                         }
-                },
-                onShowLessons = {
-                    navController.navigate(AppRoute.Lessons)
-                },
-                onShowNotes = {
-                    navController.navigate(AppRoute.Notes)
-                },
-                onShowSettings = {
-                    navController.navigate(AppRoute.Settings)
-                },
-            )
+                    },
+                    onShowLessons = { navController.navigate(AppRoute.Lessons) },
+                    onShowNotes = { navController.navigate(AppRoute.Notes) },
+                    onShowSettings = { navController.navigate(AppRoute.Settings) },
+                )
+            }
         }
 
-        composable<AppRoute.Lesson> { backStackEntry ->
-            val route = backStackEntry.toRoute<AppRoute.Lesson>()
-
+        composable<AppRoute.Lesson> {
             CurrentLessonScreen(
-                lessonId = route.lessonId,
-                lessonSummary = LessonCatalog.lessons.firstOrNull { lesson -> lesson.id == route.lessonId },
-                initialStepIndex =
-                    if (route.resumeFromSavedStep) {
-                        lessonStepIndices[route.lessonId] ?: 0
-                    } else {
-                        0
-                    },
-                targetOperatingSystem = targetOperatingSystem ?: TargetOperatingSystem.detect(),
-                onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
                 onBack = { navController.popBackStack() },
-                onLessonFinished = {
-                    onLessonFinished(route.lessonId)
-                    navController.popBackStack()
-                },
-                onStepChanged = { stepIndex -> onLessonStepChanged(route.lessonId, stepIndex) },
+                onLessonFinished = { navController.popBackStack() },
             )
         }
 
         composable<AppRoute.Lessons> {
-            val lessonListViewModel = remember { LessonListViewModel() }
+            val lessonListViewModel = koinViewModel<LessonListViewModel>()
+            val lessonListUiState by lessonListViewModel.uiState.collectAsStateWithLifecycle()
+            val uiState = lessonListUiState
 
-            LessonListScreen(
-                uiState =
-                    lessonListViewModel.createUiState(
-                        completedLessonIds = completedLessonIds,
-                        unlockAllLessons = unlockAllLessons,
-                    ),
-                onBack = { navController.popBackStack() },
-                onLessonSelected = { lessonId ->
-                    navController.navigate(AppRoute.Lesson(lessonId))
-                },
-            )
+            if (uiState == null) {
+                LoadingScreen()
+            } else {
+                LessonListScreen(
+                    uiState = uiState,
+                    onBack = { navController.popBackStack() },
+                    onLessonSelected = { lessonId ->
+                        navController.navigate(AppRoute.Lesson(lessonId))
+                    },
+                )
+            }
         }
 
         composable<AppRoute.Notes> {
@@ -141,21 +91,7 @@ fun AppNavHost(
         }
 
         composable<AppRoute.Settings> {
-            SettingsScreen(
-                studentName = studentName,
-                pronounPreference = pronounPreference,
-                targetOperatingSystem = targetOperatingSystem,
-                themePreference = themePreference,
-                unlockAllLessons = unlockAllLessons,
-                hasLessonProgress = completedLessonIds.isNotEmpty() || lessonStepIndices.isNotEmpty(),
-                onStudentNameChanged = onStudentNameChanged,
-                onPronounPreferenceChanged = onPronounPreferenceChanged,
-                onTargetOperatingSystemChanged = onTargetOperatingSystemChanged,
-                onThemePreferenceChanged = onThemePreferenceChanged,
-                onUnlockAllLessonsChanged = onUnlockAllLessonsChanged,
-                onResetLessonProgress = onResetLessonProgress,
-                onBack = { navController.popBackStack() },
-            )
+            SettingsScreen(onBack = { navController.popBackStack() })
         }
     }
 }

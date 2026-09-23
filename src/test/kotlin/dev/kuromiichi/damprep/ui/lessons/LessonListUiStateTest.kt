@@ -7,11 +7,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class LessonListViewModelTest {
+class LessonListUiStateTest {
     @Test
     fun `lesson list unlocks only the first lesson initially`() {
-        val viewModel =
-            LessonListViewModel(
+        val lessons =
+            createLessonListUiState(
+                completedLessonIds = emptySet(),
                 lessonCatalog =
                     listOf(
                         LessonSummary(
@@ -26,9 +27,7 @@ class LessonListViewModelTest {
                         ),
                     ),
                 hasContent = { true },
-            )
-
-        val lessons = viewModel.createUiState(emptySet()).lessons
+            ).lessons
 
         assertEquals(2, lessons.size)
         assertTrue(lessons[0].isUnlocked)
@@ -40,8 +39,9 @@ class LessonListViewModelTest {
 
     @Test
     fun `completing a lesson unlocks the next available lesson`() {
-        val viewModel =
-            LessonListViewModel(
+        val lessons =
+            createLessonListUiState(
+                completedLessonIds = setOf("first"),
                 lessonCatalog =
                     listOf(
                         lesson("first"),
@@ -49,9 +49,7 @@ class LessonListViewModelTest {
                         lesson("third"),
                     ),
                 hasContent = { true },
-            )
-
-        val lessons = viewModel.createUiState(setOf("first")).lessons
+            ).lessons
 
         assertTrue(lessons[0].isCompleted)
         assertTrue(lessons[1].isUnlocked)
@@ -60,13 +58,12 @@ class LessonListViewModelTest {
 
     @Test
     fun `unlocked lesson without content remains unavailable`() {
-        val viewModel =
-            LessonListViewModel(
+        val lessons =
+            createLessonListUiState(
+                completedLessonIds = setOf("first"),
                 lessonCatalog = listOf(lesson("first"), lesson("second")),
                 hasContent = { lessonId -> lessonId == "first" },
-            )
-
-        val lessons = viewModel.createUiState(setOf("first")).lessons
+            ).lessons
 
         assertTrue(lessons[1].isUnlocked)
         assertFalse(lessons[1].isAvailable)
@@ -74,18 +71,13 @@ class LessonListViewModelTest {
 
     @Test
     fun `debug override unlocks every lesson but keeps missing content unavailable`() {
-        val viewModel =
-            LessonListViewModel(
+        val lessons =
+            createLessonListUiState(
+                completedLessonIds = emptySet(),
+                unlockAllLessons = true,
                 lessonCatalog = listOf(lesson("first"), lesson("second"), lesson("third")),
                 hasContent = { lessonId -> lessonId != "third" },
-            )
-
-        val lessons =
-            viewModel
-                .createUiState(
-                    completedLessonIds = emptySet(),
-                    unlockAllLessons = true,
-                ).lessons
+            ).lessons
 
         assertTrue(lessons.all(LessonListItemUiModel::isUnlocked))
         assertFalse(lessons[2].isAvailable)

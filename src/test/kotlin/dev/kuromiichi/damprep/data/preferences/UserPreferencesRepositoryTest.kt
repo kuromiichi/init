@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -19,7 +20,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `empty store exposes default preferences`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             val preferences = repository.preferences.first()
 
@@ -34,7 +35,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `theme preference is persisted`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             repository.setThemePreference(ThemePreference.Dark)
 
@@ -44,7 +45,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `student name is persisted`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             repository.setStudentName("Emma")
 
@@ -54,7 +55,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `pronoun preference is persisted`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             repository.setPronounPreference(PronounPreference.Masculine)
 
@@ -64,7 +65,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `completed onboarding stores student name and completion flag`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             repository.completeOnboarding(
                 studentName = "Ada",
@@ -82,7 +83,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `completing onboarding keeps existing theme preference`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             repository.setThemePreference(ThemePreference.Dark)
             repository.completeOnboarding(
@@ -97,7 +98,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `changing theme keeps existing onboarding data`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             repository.completeOnboarding(
                 studentName = "Ada",
@@ -117,7 +118,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `target operating system is persisted`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             repository.setTargetOperatingSystem(TargetOperatingSystem.MacOS)
 
@@ -127,7 +128,7 @@ class UserPreferencesRepositoryTest {
     @Test
     fun `unlock all lessons preference is persisted`() =
         runBlocking {
-            val repository = createRepository()
+            val repository = createRepository(this)
 
             repository.setUnlockAllLessons(true)
 
@@ -141,7 +142,7 @@ class UserPreferencesRepositoryTest {
             dataStore.edit { preferences ->
                 preferences[stringPreferencesKey("theme_preference")] = "Solarized"
             }
-            val repository = UserPreferencesRepository(dataStore)
+            val repository = UserPreferencesRepository(dataStore, externalScope = this)
 
             assertEquals(ThemePreference.System, repository.preferences.first().themePreference)
         }
@@ -153,7 +154,7 @@ class UserPreferencesRepositoryTest {
             dataStore.edit { preferences ->
                 preferences[stringPreferencesKey("pronoun_preference")] = "Royal"
             }
-            val repository = UserPreferencesRepository(dataStore)
+            val repository = UserPreferencesRepository(dataStore, externalScope = this)
 
             assertEquals(PronounPreference.Neutral, repository.preferences.first().pronounPreference)
         }
@@ -165,7 +166,7 @@ class UserPreferencesRepositoryTest {
             dataStore.edit { preferences ->
                 preferences[stringPreferencesKey("target_operating_system")] = "Solaris"
             }
-            val repository = UserPreferencesRepository(dataStore)
+            val repository = UserPreferencesRepository(dataStore, externalScope = this)
 
             assertEquals(null, repository.preferences.first().targetOperatingSystem)
         }
@@ -181,12 +182,12 @@ class UserPreferencesRepositoryTest {
                         transform: suspend (Preferences) -> Preferences,
                     ): Preferences = error("Updates are not expected in this test")
                 }
-            val repository = UserPreferencesRepository(failingDataStore)
+            val repository = UserPreferencesRepository(failingDataStore, externalScope = this)
 
             assertEquals(UserPreferences(), repository.preferences.first())
         }
 
-    private fun createRepository(): UserPreferencesRepository = UserPreferencesRepository(createDataStore())
+    private fun createRepository(externalScope: CoroutineScope): UserPreferencesRepository = UserPreferencesRepository(createDataStore(), externalScope)
 
     private fun createDataStore() =
         PreferenceDataStoreFactory.create(

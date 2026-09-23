@@ -40,42 +40,29 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen(
-    themePreference: ThemePreference,
-    detectedOperatingSystem: TargetOperatingSystem?,
-    onThemePreferenceChanged: (ThemePreference) -> Unit,
-    onFinished: (
-        studentName: String,
-        pronounPreference: PronounPreference,
-        targetOperatingSystem: TargetOperatingSystem,
-    ) -> Unit,
+    onFinished: () -> Unit,
+    viewModel: OnboardingViewModel = koinViewModel(),
 ) {
-    val viewModel =
-        remember {
-            OnboardingViewModel(
-                initialThemePreference = themePreference,
-                initialTargetOperatingSystem = detectedOperatingSystem,
-            )
-        }
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(themePreference) {
-        viewModel.syncThemePreference(themePreference)
+    LaunchedEffect(uiState.isFinished) {
+        if (uiState.isFinished) onFinished()
     }
 
     Surface(
@@ -144,22 +131,11 @@ fun OnboardingScreen(
                         targetOperatingSystem = uiState.targetOperatingSystem,
                         isTargetOperatingSystemConfirmed = uiState.isTargetOperatingSystemConfirmed,
                         studentName = uiState.studentName,
-                        onThemePreferenceChanged = { preference ->
-                            viewModel.updateThemePreference(preference)
-                            onThemePreferenceChanged(preference)
-                        },
+                        onThemePreferenceChanged = viewModel::updateThemePreference,
                         onPronounPreferenceChanged = viewModel::updatePronounPreference,
                         onTargetOperatingSystemConfirmed = viewModel::confirmTargetOperatingSystem,
                         onStudentNameChanged = viewModel::updateStudentName,
-                        onDone = {
-                            viewModel.continueOnboarding()?.let { completion ->
-                                onFinished(
-                                    completion.studentName,
-                                    completion.pronounPreference,
-                                    completion.targetOperatingSystem,
-                                )
-                            }
-                        },
+                        onDone = viewModel::continueOnboarding,
                     )
                 }
             }
@@ -183,15 +159,7 @@ fun OnboardingScreen(
                 }
 
                 Button(
-                    onClick = {
-                        viewModel.continueOnboarding()?.let { completion ->
-                            onFinished(
-                                completion.studentName,
-                                completion.pronounPreference,
-                                completion.targetOperatingSystem,
-                            )
-                        }
-                    },
+                    onClick = viewModel::continueOnboarding,
                     enabled = uiState.canContinue,
                 ) {
                     Text(if (uiState.isLastStep) "Entrar" else "Siguiente")

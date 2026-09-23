@@ -7,17 +7,17 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class HomeViewModelTest {
+class HomeUiStateTest {
     @Test
     fun `home state adapts welcome message to pronoun preference`() {
         val lessons = lessons(10)
-        val viewModel = HomeViewModel(lessonCatalog = lessons, hasContent = { true })
-
         val state =
-            viewModel.createUiState(
+            createHomeUiState(
                 studentName = "Emma",
                 pronounPreference = PronounPreference.Feminine,
                 completedLessonIds = lessons.take(3).mapTo(hashSetOf(), LessonSummary::id),
+                lessonCatalog = lessons,
+                hasContent = { true },
             )
 
         assertEquals("Bienvenida, Emma", state.welcomeMessage)
@@ -29,13 +29,12 @@ class HomeViewModelTest {
     @Test
     fun `home state clamps completed lessons into available range`() {
         val lessons = lessons(4)
-        val viewModel = HomeViewModel(lessonCatalog = lessons)
-
         val state =
-            viewModel.createUiState(
+            createHomeUiState(
                 studentName = "Ari",
                 pronounPreference = PronounPreference.Neutral,
                 completedLessonIds = lessons.mapTo(hashSetOf(), LessonSummary::id) + "unknown",
+                lessonCatalog = lessons,
             )
 
         assertEquals(4, state.completedLessons)
@@ -47,13 +46,12 @@ class HomeViewModelTest {
 
     @Test
     fun `home state handles an empty lesson catalog`() {
-        val viewModel = HomeViewModel(lessonCatalog = emptyList())
-
         val state =
-            viewModel.createUiState(
+            createHomeUiState(
                 studentName = "Ari",
                 pronounPreference = PronounPreference.Neutral,
                 completedLessonIds = setOf("unknown"),
+                lessonCatalog = emptyList(),
             )
 
         assertEquals(0, state.completedLessons)
@@ -66,17 +64,13 @@ class HomeViewModelTest {
     @Test
     fun `home does not continue into a lesson without content`() {
         val lessons = lessons(2)
-        val viewModel =
-            HomeViewModel(
-                lessonCatalog = lessons,
-                hasContent = { lessonId -> lessonId == "lesson-0" },
-            )
-
         val state =
-            viewModel.createUiState(
+            createHomeUiState(
                 studentName = "Ari",
                 pronounPreference = PronounPreference.Neutral,
                 completedLessonIds = setOf("lesson-0"),
+                lessonCatalog = lessons,
+                hasContent = { lessonId -> lessonId == "lesson-0" },
             )
 
         assertEquals(null, state.continueLessonId)
@@ -85,18 +79,14 @@ class HomeViewModelTest {
     @Test
     fun `debug override can continue into later available content`() {
         val lessons = lessons(3)
-        val viewModel =
-            HomeViewModel(
-                lessonCatalog = lessons,
-                hasContent = { lessonId -> lessonId == "lesson-2" },
-            )
-
         val state =
-            viewModel.createUiState(
+            createHomeUiState(
                 studentName = "Ari",
                 pronounPreference = PronounPreference.Neutral,
                 completedLessonIds = emptySet(),
                 unlockAllLessons = true,
+                lessonCatalog = lessons,
+                hasContent = { lessonId -> lessonId == "lesson-2" },
             )
 
         assertEquals("lesson-2", state.continueLessonId)
@@ -106,14 +96,14 @@ class HomeViewModelTest {
     @Test
     fun `home distinguishes a started lesson and exposes its subject`() {
         val lessons = lessons(2)
-        val viewModel = HomeViewModel(lessonCatalog = lessons, hasContent = { true })
-
         val state =
-            viewModel.createUiState(
+            createHomeUiState(
                 studentName = "Ari",
                 pronounPreference = PronounPreference.Neutral,
                 completedLessonIds = emptySet(),
                 lessonStepIndices = mapOf("lesson-0" to 2),
+                lessonCatalog = lessons,
+                hasContent = { true },
             )
 
         assertTrue(state.isContinueLessonStarted)

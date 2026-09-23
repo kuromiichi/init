@@ -1,11 +1,18 @@
 package dev.kuromiichi.damprep.data.progress
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
+/**
+ * Las escrituras se lanzan en [externalScope], de ámbito de aplicación, para que el progreso
+ * se guarde aunque la lección se cierre justo después.
+ */
 class LessonProgressRepository(
     private val lessonProgressDao: LessonProgressDao,
+    private val externalScope: CoroutineScope,
     private val currentTimeMillis: () -> Long = System::currentTimeMillis,
 ) {
     val completedLessonIds: Flow<Set<String>> =
@@ -20,19 +27,20 @@ class LessonProgressRepository(
             .map { progress -> progress.associate { it.lessonId to it.stepIndex } }
             .distinctUntilChanged()
 
-    suspend fun completeLesson(lessonId: String) {
-        lessonProgressDao.completeLesson(
-            CompletedLessonEntity(
-                lessonId = lessonId,
-                completedAt = currentTimeMillis(),
-            ),
-        )
-    }
+    suspend fun completeLesson(lessonId: String) =
+        write {
+            lessonProgressDao.completeLesson(
+                CompletedLessonEntity(
+                    lessonId = lessonId,
+                    completedAt = currentTimeMillis(),
+                ),
+            )
+        }
 
     suspend fun saveLessonStep(
         lessonId: String,
         stepIndex: Int,
-    ) {
+    ) = write {
         lessonProgressDao.upsertStepProgress(
             LessonStepProgressEntity(
                 lessonId = lessonId,
@@ -41,7 +49,9 @@ class LessonProgressRepository(
         )
     }
 
-    suspend fun resetProgress() {
-        lessonProgressDao.resetProgress()
+    suspend fun resetProgress() = write { lessonProgressDao.resetProgress() }
+
+    private suspend fun write(block: suspend () -> Unit) {
+        externalScope.launch { block() }.join()
     }
 }

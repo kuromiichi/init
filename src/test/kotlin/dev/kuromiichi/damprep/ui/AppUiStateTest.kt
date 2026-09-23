@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class AppViewModelTest {
+class AppUiStateTest {
     @Test
     fun `app state is loading until preferences arrive`() {
         val state = AppUiState()
@@ -29,8 +29,6 @@ class AppViewModelTest {
                         themePreference = ThemePreference.Dark,
                         onboardingCompleted = false,
                     ),
-                completedLessonIds = emptySet(),
-                lessonStepIndices = emptyMap(),
             )
 
         assertEquals(ThemePreference.Dark, state.themePreference)
@@ -48,8 +46,6 @@ class AppViewModelTest {
                         themePreference = ThemePreference.Light,
                         onboardingCompleted = true,
                     ),
-                completedLessonIds = emptySet(),
-                lessonStepIndices = emptyMap(),
             )
 
         assertEquals(ThemePreference.Light, state.themePreference)

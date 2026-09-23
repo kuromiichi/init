@@ -1,12 +1,18 @@
 package dev.kuromiichi.damprep.ui.onboarding
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
+import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class OnboardingCompletion(
     val studentName: String,
@@ -22,6 +28,7 @@ data class OnboardingUiState(
     val themePreference: ThemePreference = ThemePreference.System,
     val targetOperatingSystem: TargetOperatingSystem? = null,
     val isTargetOperatingSystemConfirmed: Boolean = false,
+    val isFinished: Boolean = false,
 ) {
     val currentStep: OnboardingStep = steps[currentStepIndex]
     val isLastStep: Boolean = currentStepIndex == steps.lastIndex
@@ -37,30 +44,26 @@ data class OnboardingUiState(
 }
 
 class OnboardingViewModel(
-    initialThemePreference: ThemePreference,
+    private val preferencesRepository: UserPreferencesRepository,
     initialTargetOperatingSystem: TargetOperatingSystem? = TargetOperatingSystem.detect(),
     private val steps: List<OnboardingStep> = onboardingSteps,
-) {
+) : ViewModel() {
     private val _uiState =
         MutableStateFlow(
             OnboardingUiState(
                 steps = steps,
-                themePreference = initialThemePreference,
                 targetOperatingSystem = initialTargetOperatingSystem,
             ),
         )
-    val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
 
-    fun syncThemePreference(themePreference: ThemePreference) {
-        _uiState.update { state ->
-            state.copy(themePreference = themePreference)
-        }
-    }
+    /** El tema procede siempre de las preferencias guardadas, porque se aplica a toda la app. */
+    val uiState: StateFlow<OnboardingUiState> =
+        combine(_uiState, preferencesRepository.preferences) { state, preferences ->
+            state.copy(themePreference = preferences.themePreference)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), _uiState.value)
 
     fun updateThemePreference(themePreference: ThemePreference) {
-        _uiState.update { state ->
-            state.copy(themePreference = themePreference)
-        }
+        viewModelScope.launch { preferencesRepository.setThemePreference(themePreference) }
     }
 
     fun updateStudentName(studentName: String) {
@@ -94,25 +97,36 @@ class OnboardingViewModel(
         }
     }
 
-    fun continueOnboarding(): OnboardingCompletion? {
+    fun continueOnboarding() {
         val state = _uiState.value
-        if (!state.canContinue) {
-            return null
+        if (!state.canContinue || state.isFinished) {
+            return
         }
 
-        if (state.isLastStep) {
-            if (!state.isTargetOperatingSystemConfirmed) {
-                return null
-            }
-            val targetOperatingSystem = state.targetOperatingSystem ?: return null
-            return OnboardingCompletion(
-                studentName = state.normalizedName,
-                pronounPreference = state.pronounPreference,
-                targetOperatingSystem = targetOperatingSystem,
+        if (!state.isLastStep) {
+            _uiState.value = state.copy(currentStepIndex = state.currentStepIndex + 1)
+            return
+        }
+
+        val completion = state.toCompletion() ?: return
+        viewModelScope.launch {
+            preferencesRepository.completeOnboarding(
+                studentName = completion.studentName,
+                pronounPreference = completion.pronounPreference,
+                targetOperatingSystem = completion.targetOperatingSystem,
             )
+            _uiState.update { current -> current.copy(isFinished = true) }
         }
+    }
 
-        _uiState.value = state.copy(currentStepIndex = state.currentStepIndex + 1)
-        return null
+    private fun OnboardingUiState.toCompletion(): OnboardingCompletion? {
+        if (!isTargetOperatingSystemConfirmed) return null
+        val targetOperatingSystem = targetOperatingSystem ?: return null
+
+        return OnboardingCompletion(
+            studentName = normalizedName,
+            pronounPreference = pronounPreference,
+            targetOperatingSystem = targetOperatingSystem,
+        )
     }
 }

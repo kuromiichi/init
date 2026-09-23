@@ -1,6 +1,5 @@
 package dev.kuromiichi.damprep.data.lessons.contents
 
-import dev.kuromiichi.damprep.data.lessons.LessonCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonStep
@@ -16,7 +15,7 @@ import dev.kuromiichi.damprep.data.lessons.string
 
 val softwareDevelopmentLessonContent =
     LessonContent(
-        lessonId = LessonCatalog.lessons[1].id,
+        lessonId = "software-development",
         steps =
             listOf(
                 LessonStep(

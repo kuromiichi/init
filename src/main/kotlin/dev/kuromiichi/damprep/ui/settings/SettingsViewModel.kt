@@ -1,105 +1,82 @@
 package dev.kuromiichi.damprep.ui.settings
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
+import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
+import dev.kuromiichi.damprep.data.progress.LessonProgressRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class SettingsUiState(
-    val savedStudentName: String,
     val studentNameDraft: String,
-    val isStudentNameFocused: Boolean = false,
     val pronounPreference: PronounPreference,
     val targetOperatingSystem: TargetOperatingSystem?,
     val themePreference: ThemePreference,
+    val unlockAllLessons: Boolean,
+    val hasLessonProgress: Boolean,
 )
 
 class SettingsViewModel(
-    studentName: String,
-    pronounPreference: PronounPreference,
-    targetOperatingSystem: TargetOperatingSystem?,
-    themePreference: ThemePreference,
-) {
-    private val _uiState =
-        MutableStateFlow(
-            SettingsUiState(
-                savedStudentName = studentName,
-                studentNameDraft = studentName,
-                pronounPreference = pronounPreference,
-                targetOperatingSystem = targetOperatingSystem,
-                themePreference = themePreference,
-            ),
-        )
-    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+    private val preferencesRepository: UserPreferencesRepository,
+    private val lessonProgressRepository: LessonProgressRepository,
+) : ViewModel() {
+    /** Nombre que se está editando; `null` cuando el campo muestra el nombre guardado. */
+    private val studentNameDraft = MutableStateFlow<String?>(null)
 
-    fun syncPreferences(
-        studentName: String,
-        pronounPreference: PronounPreference,
-        targetOperatingSystem: TargetOperatingSystem?,
-        themePreference: ThemePreference,
-    ) {
-        _uiState.update { state ->
-            state.copy(
-                savedStudentName = studentName,
-                studentNameDraft =
-                    if (state.isStudentNameFocused) {
-                        state.studentNameDraft
-                    } else {
-                        studentName
-                    },
-                pronounPreference = pronounPreference,
-                targetOperatingSystem = targetOperatingSystem,
-                themePreference = themePreference,
+    val uiState: StateFlow<SettingsUiState?> =
+        combine(
+            preferencesRepository.preferences,
+            lessonProgressRepository.completedLessonIds,
+            lessonProgressRepository.lessonStepIndices,
+            studentNameDraft,
+        ) { preferences, completedLessonIds, lessonStepIndices, draft ->
+            SettingsUiState(
+                studentNameDraft = draft ?: preferences.studentName,
+                pronounPreference = preferences.pronounPreference,
+                targetOperatingSystem = preferences.targetOperatingSystem,
+                themePreference = preferences.themePreference,
+                unlockAllLessons = preferences.unlockAllLessons,
+                hasLessonProgress = completedLessonIds.isNotEmpty() || lessonStepIndices.isNotEmpty(),
             )
-        }
-    }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     fun updateStudentNameDraft(studentName: String) {
-        _uiState.update { state ->
-            state.copy(studentNameDraft = studentName)
+        studentNameDraft.value = studentName
+    }
+
+    fun commitStudentName() {
+        val draft = studentNameDraft.value ?: return
+
+        viewModelScope.launch {
+            preferencesRepository.setStudentName(draft)
+            studentNameDraft.compareAndSet(draft, null)
         }
     }
 
-    fun updateStudentNameFocus(isFocused: Boolean): String? {
-        val shouldCommit = _uiState.value.isStudentNameFocused && !isFocused
-        _uiState.update { state ->
-            state.copy(isStudentNameFocused = isFocused)
-        }
-        return if (shouldCommit) {
-            commitStudentName()
-        } else {
-            null
-        }
+    fun setPronounPreference(pronounPreference: PronounPreference) {
+        viewModelScope.launch { preferencesRepository.setPronounPreference(pronounPreference) }
     }
 
-    fun updatePronounPreference(pronounPreference: PronounPreference) {
-        _uiState.update { state ->
-            state.copy(pronounPreference = pronounPreference)
-        }
+    fun setTargetOperatingSystem(targetOperatingSystem: TargetOperatingSystem) {
+        viewModelScope.launch { preferencesRepository.setTargetOperatingSystem(targetOperatingSystem) }
     }
 
-    fun updateThemePreference(themePreference: ThemePreference) {
-        _uiState.update { state ->
-            state.copy(themePreference = themePreference)
-        }
+    fun setThemePreference(themePreference: ThemePreference) {
+        viewModelScope.launch { preferencesRepository.setThemePreference(themePreference) }
     }
 
-    fun updateTargetOperatingSystem(targetOperatingSystem: TargetOperatingSystem) {
-        _uiState.update { state ->
-            state.copy(targetOperatingSystem = targetOperatingSystem)
-        }
+    fun setUnlockAllLessons(unlockAllLessons: Boolean) {
+        viewModelScope.launch { preferencesRepository.setUnlockAllLessons(unlockAllLessons) }
     }
 
-    fun commitStudentName(): String? {
-        val state = _uiState.value
-        return if (state.studentNameDraft != state.savedStudentName) {
-            _uiState.value = state.copy(savedStudentName = state.studentNameDraft)
-            state.studentNameDraft
-        } else {
-            null
-        }
+    fun resetLessonProgress() {
+        viewModelScope.launch { lessonProgressRepository.resetProgress() }
     }
 }

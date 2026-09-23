@@ -1,18 +1,26 @@
 package dev.kuromiichi.damprep.data.preferences
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.io.IOException
 
+/**
+ * Las escrituras se lanzan en [externalScope], de ámbito de aplicación, para que terminen
+ * aunque la pantalla que las pidió se cierre antes.
+ */
 class UserPreferencesRepository(
     private val dataStore: DataStore<Preferences>,
+    private val externalScope: CoroutineScope,
 ) {
     val preferences: Flow<UserPreferences> =
         dataStore.data
@@ -34,31 +42,31 @@ class UserPreferencesRepository(
             }
 
     suspend fun setThemePreference(themePreference: ThemePreference) {
-        dataStore.edit { preferences ->
+        edit { preferences ->
             preferences[ThemePreferenceKey] = themePreference.name
         }
     }
 
     suspend fun setStudentName(studentName: String) {
-        dataStore.edit { preferences ->
+        edit { preferences ->
             preferences[StudentNameKey] = studentName
         }
     }
 
     suspend fun setPronounPreference(pronounPreference: PronounPreference) {
-        dataStore.edit { preferences ->
+        edit { preferences ->
             preferences[PronounPreferenceKey] = pronounPreference.name
         }
     }
 
     suspend fun setTargetOperatingSystem(targetOperatingSystem: TargetOperatingSystem) {
-        dataStore.edit { preferences ->
+        edit { preferences ->
             preferences[TargetOperatingSystemKey] = targetOperatingSystem.name
         }
     }
 
     suspend fun setUnlockAllLessons(unlockAllLessons: Boolean) {
-        dataStore.edit { preferences ->
+        edit { preferences ->
             preferences[UnlockAllLessonsKey] = unlockAllLessons
         }
     }
@@ -68,12 +76,16 @@ class UserPreferencesRepository(
         pronounPreference: PronounPreference,
         targetOperatingSystem: TargetOperatingSystem,
     ) {
-        dataStore.edit { preferences ->
+        edit { preferences ->
             preferences[StudentNameKey] = studentName
             preferences[PronounPreferenceKey] = pronounPreference.name
             preferences[TargetOperatingSystemKey] = targetOperatingSystem.name
             preferences[OnboardingCompletedKey] = true
         }
+    }
+
+    private suspend fun edit(transform: (MutablePreferences) -> Unit) {
+        externalScope.launch { dataStore.edit(transform) }.join()
     }
 
     private fun String?.toThemePreference(): ThemePreference = ThemePreference.entries.firstOrNull { it.name == this } ?: ThemePreference.System

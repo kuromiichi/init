@@ -1,68 +1,29 @@
 package dev.kuromiichi.damprep
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
-import dev.kuromiichi.damprep.data.progress.LessonProgressRepository
 import dev.kuromiichi.damprep.ui.AppViewModel
+import dev.kuromiichi.damprep.ui.common.LoadingScreen
 import dev.kuromiichi.damprep.ui.navigation.AppNavHost
 import dev.kuromiichi.damprep.ui.theme.DamPrepTheme
 import dev.kuromiichi.damprep.ui.window.WindowSizeGuard
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun App(
-    preferencesRepository: UserPreferencesRepository,
-    lessonProgressRepository: LessonProgressRepository,
-) {
+fun App(appViewModel: AppViewModel = koinViewModel()) {
     val navController = rememberNavController()
-    val coroutineScope = rememberCoroutineScope()
-    val appViewModel =
-        remember {
-            AppViewModel(
-                preferencesRepository = preferencesRepository,
-                lessonProgressRepository = lessonProgressRepository,
-                scope = coroutineScope,
-            )
-        }
-    val uiState by appViewModel.uiState.collectAsState()
+    val uiState by appViewModel.uiState.collectAsStateWithLifecycle()
 
     DamPrepTheme(themePreference = uiState.themePreference) {
         WindowSizeGuard {
-            val preferences = uiState.preferences
-
-            if (uiState.isLoading || preferences == null) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background,
-                ) {}
+            if (uiState.isLoading) {
+                LoadingScreen()
             } else {
                 AppNavHost(
                     navController = navController,
                     startDestination = uiState.startDestination,
-                    studentName = preferences.studentName,
-                    pronounPreference = preferences.pronounPreference,
-                    targetOperatingSystem = preferences.targetOperatingSystem,
-                    themePreference = preferences.themePreference,
-                    unlockAllLessons = preferences.unlockAllLessons,
-                    completedLessonIds = uiState.completedLessonIds.orEmpty(),
-                    lessonStepIndices = uiState.lessonStepIndices.orEmpty(),
-                    onThemePreferenceChanged = appViewModel::setThemePreference,
-                    onStudentNameChanged = appViewModel::setStudentName,
-                    onPronounPreferenceChanged = appViewModel::setPronounPreference,
-                    onTargetOperatingSystemChanged = appViewModel::setTargetOperatingSystem,
-                    onUnlockAllLessonsChanged = appViewModel::setUnlockAllLessons,
-                    onOnboardingFinished = appViewModel::completeOnboarding,
-                    onLessonFinished = appViewModel::completeLesson,
-                    onLessonStepChanged = appViewModel::saveLessonStep,
-                    onResetLessonProgress = appViewModel::resetLessonProgress,
                 )
             }
         }

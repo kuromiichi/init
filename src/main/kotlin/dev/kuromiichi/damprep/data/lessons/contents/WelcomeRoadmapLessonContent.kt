@@ -1,6 +1,5 @@
 package dev.kuromiichi.damprep.data.lessons.contents
 
-import dev.kuromiichi.damprep.data.lessons.LessonCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonTool
@@ -9,7 +8,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 
 val welcomeRoadmapLessonContent =
     LessonContent(
-        lessonId = LessonCatalog.lessons[0].id,
+        lessonId = "welcome-roadmap",
         steps =
             listOf(
                 LessonStep(

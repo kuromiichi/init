@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -42,11 +41,12 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import dev.kuromiichi.damprep.data.lessons.LessonSummary
-import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.kuromiichi.damprep.ui.common.AppScreen
+import dev.kuromiichi.damprep.ui.common.LoadingScreen
 import dev.kuromiichi.damprep.ui.common.OperatingSystemDropdown
 import dev.kuromiichi.damprep.ui.common.verticalFadingEdges
+import org.koin.compose.viewmodel.koinViewModel
 
 private val LessonContentMaxWidth = 1240.dp
 internal val LessonCompactBreakpoint = 860.dp
@@ -60,46 +60,35 @@ private val LessonScrollFadeHeight = 48.dp
 
 @Composable
 fun CurrentLessonScreen(
-    lessonId: String,
-    lessonSummary: LessonSummary?,
-    initialStepIndex: Int,
-    targetOperatingSystem: TargetOperatingSystem?,
-    onTargetOperatingSystemChanged: (TargetOperatingSystem) -> Unit,
     onBack: () -> Unit,
     onLessonFinished: () -> Unit,
-    onStepChanged: (Int) -> Unit,
+    viewModel: CurrentLessonViewModel = koinViewModel(),
 ) {
-    val lessonTitle = lessonSummary?.title ?: "Lección"
-    val viewModel =
-        remember(lessonId) {
-            CurrentLessonViewModel(
-                lessonId = lessonId,
-                initialStepIndex = initialStepIndex,
-            )
-        }
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lessonContent = uiState.lessonContent
-
-    val goToPreviousStep = {
-        val previousIndex = uiState.currentStepIndex
-        val currentIndex = viewModel.goToPreviousStep()
-        if (currentIndex != previousIndex) onStepChanged(currentIndex)
-    }
-    val goToNextStep = {
-        val previousIndex = uiState.currentStepIndex
-        val currentIndex = viewModel.goToNextStep()
-        if (currentIndex != previousIndex) onStepChanged(currentIndex)
-    }
+    val lessonTitle = uiState.lessonSummary?.title ?: "Lección"
+    val targetOperatingSystem = uiState.targetOperatingSystem
+    val goToPreviousStep = viewModel::goToPreviousStep
+    val goToNextStep = viewModel::goToNextStep
 
     if (uiState.isMissing || lessonContent == null) {
         MissingLessonScreen(onBack = onBack)
         return
     }
 
+    if (uiState.isLoading) {
+        LoadingScreen()
+        return
+    }
+
+    LaunchedEffect(uiState.isFinished) {
+        if (uiState.isFinished) onLessonFinished()
+    }
+
     val focusRequester = remember { FocusRequester() }
     val scrollState =
         key(
-            lessonId,
+            lessonContent.lessonId,
             uiState.currentStepIndex,
             uiState.isCompletionVisible,
             targetOperatingSystem,
@@ -108,7 +97,6 @@ fun CurrentLessonScreen(
         }
 
     LaunchedEffect(lessonContent.lessonId) {
-        onStepChanged(uiState.currentStepIndex)
         focusRequester.requestFocus()
     }
 
@@ -155,11 +143,11 @@ fun CurrentLessonScreen(
             if (!uiState.isCompletionVisible && uiState.currentStep?.isOperatingSystemSensitive == true) {
                 OperatingSystemDropdown(
                     selectedOperatingSystem = targetOperatingSystem,
-                    onOperatingSystemSelected = onTargetOperatingSystemChanged,
+                    onOperatingSystemSelected = viewModel::setTargetOperatingSystem,
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            lessonSummary?.subjectArea?.let { subjectArea ->
+            uiState.lessonSummary?.subjectArea?.let { subjectArea ->
                 SubjectAreaTag(subjectArea)
             }
         },
@@ -235,7 +223,7 @@ fun CurrentLessonScreen(
                         if (isCompletionVisible) {
                             LessonCompletion(
                                 lessonTitle = lessonTitle,
-                                onFinish = onLessonFinished,
+                                onFinish = viewModel::finishLesson,
                             )
                         } else {
                             val step = lessonContent.steps[animatedStepIndex]

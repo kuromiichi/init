@@ -1,6 +1,5 @@
 package dev.kuromiichi.damprep.data.lessons.contents
 
-import dev.kuromiichi.damprep.data.lessons.LessonCatalog
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
@@ -24,7 +23,7 @@ import dev.kuromiichi.damprep.data.lessons.string
 
 val inputDecisionsLessonContent =
     LessonContent(
-        lessonId = LessonCatalog.lessons[4].id,
+        lessonId = "input-decisions",
         steps =
             listOf(
                 LessonStep(

@@ -25,6 +25,15 @@ class LessonContentCatalogTest {
     }
 
     @Test
+    fun `every lesson content belongs to a different catalog lesson`() {
+        val catalogIds = LessonCatalog.lessons.mapTo(hashSetOf(), LessonSummary::id)
+        val contentIds = LessonContentCatalog.lessons.map(LessonContent::lessonId)
+
+        assertEquals(contentIds.size, contentIds.toSet().size)
+        assertTrue(catalogIds.containsAll(contentIds), "Contenido sin lección en el catálogo: ${contentIds - catalogIds}")
+    }
+
+    @Test
     fun `lesson content can be found by lesson id`() {
         val softwareLesson = LessonContentCatalog.findByLessonId("software-development")
 
