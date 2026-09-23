@@ -6,7 +6,7 @@ import java.awt.Insets
 import kotlin.math.roundToInt
 
 object WindowMetrics {
-    val MinimumUsableWidth = 1040.dp
+    val MinimumUsableWidth = 800.dp
     val MinimumUsableHeight = 680.dp
     val PreferredWidth = 1120.dp
     val PreferredHeight = 760.dp
