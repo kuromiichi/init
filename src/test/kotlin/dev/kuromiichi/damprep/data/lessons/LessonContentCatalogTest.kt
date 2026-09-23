@@ -5,6 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class LessonContentCatalogTest {
@@ -43,7 +44,7 @@ class LessonContentCatalogTest {
 
         assertNotNull(lesson)
         assertEquals(LessonCatalog.lessons[3].id, lesson.lessonId)
-        assertEquals(6, lesson.steps.size)
+        assertEquals(7, lesson.steps.size)
         assertTrue(lesson.steps.all { it.title.isNotBlank() && it.body.isNotBlank() })
         assertTrue(lesson.steps.all { it.visual.hasReadableContent() })
         assertTrue(lesson.steps.all { it.explanation.filterIsInstance<LessonExplanationBlock.Paragraph>().size >= 3 })
@@ -72,6 +73,23 @@ class LessonContentCatalogTest {
                     .any { paragraph -> paragraph.text.hasStyle(LessonTextSpanStyle.InlineCode) }
             },
         )
+    }
+
+    @Test
+    fun `first programs explains interpolation after its first example and before practice`() {
+        val lesson = assertNotNull(LessonContentCatalog.findByLessonId("first-programs"))
+        val variableStep = lesson.steps[4]
+        val interpolationStep = lesson.steps[5]
+        val practiceStep = lesson.steps[6]
+
+        assertTrue(variableStep.visual.readableText().contains("\$curso"))
+        assertTrue(variableStep.visual.readableText().contains("\$lecciones"))
+        assertTrue(interpolationStep.title.contains("Interpolación"))
+        assertTrue(interpolationStep.body.contains("interpolación", ignoreCase = true))
+        assertTrue(interpolationStep.visual.readableText().contains("\$nombre"))
+        assertFalse(interpolationStep.visual.readableText().contains("\$lecciones"))
+        assertNull(interpolationStep.practice)
+        assertNotNull(practiceStep.practice)
     }
 
     @Test
@@ -146,21 +164,15 @@ class LessonContentCatalogTest {
     }
 
     @Test
-    fun `final interpolation example stays smaller than the synthesis practice`() {
+    fun `final practice uses a planning flow instead of repeating a code example`() {
         val lesson = assertNotNull(LessonContentCatalog.findByLessonId("first-programs"))
         val finalVisual = lesson.steps.last().visual
 
-        assertTrue(finalVisual is LessonVisualContent.CodeExamples)
-        val sourceCode =
-            finalVisual.examples.single().lines.joinToString("\n") { line ->
-                line.tokens.joinToString("", transform = LessonCodeToken::text)
-            }
-
-        assertTrue(sourceCode.contains("val nombre"))
-        assertTrue(sourceCode.contains("\$nombre"))
-        assertEquals(1, Regex("\\bprintln\\b").findAll(sourceCode).count())
-        assertFalse(sourceCode.contains("var "))
-        assertEquals(1, sourceCode.lineSequence().count { it.contains("=") })
+        assertTrue(finalVisual is LessonVisualContent.Flow)
+        assertEquals(
+            listOf("Preparar los datos", "Mostrar el estado inicial", "Actualizar y mostrar"),
+            finalVisual.nodes,
+        )
     }
 
     @Test

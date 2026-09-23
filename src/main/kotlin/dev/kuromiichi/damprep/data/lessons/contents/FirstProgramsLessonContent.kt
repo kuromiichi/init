@@ -81,7 +81,7 @@ val firstProgramsLessonContent =
                             ),
                             paragraph(
                                 inlineCode("println"),
-                                regular(" es una instrucción preparada por Kotlin para mostrar algo. Sus paréntesis contienen el argumento: el valor que queremos mostrar."),
+                                regular(" es una función de Kotlin para mostrar algo en la consola. Al llamarla, sus paréntesis contienen el argumento: el valor que queremos mostrar."),
                             ),
                             paragraph(
                                 regular("El texto que escribes entre comillas es código; lo que aparece al ejecutar es la salida. Cada "),
@@ -178,7 +178,7 @@ val firstProgramsLessonContent =
                                         lines =
                                             listOf(
                                                 codeLine(keyword("fun "), function("main"), punctuation("() {")),
-                                                codeLine(plain("    "), function("println"), punctuation("("), string("\"Tema completado\""), punctuation(")")),
+                                                codeLine(plain("    "), function("println"), punctuation("("), string("\"Temas para repasar\""), punctuation(")")),
                                                 codeLine(plain("    "), function("println"), punctuation("("), number("4"), punctuation(")")),
                                                 codeLine(punctuation("}")),
                                             ),
@@ -215,24 +215,24 @@ val firstProgramsLessonContent =
                             examples =
                                 listOf(
                                     LessonCodeExample(
-                                        title = "Nombre fijo y puntos actualizados",
+                                        title = "Un curso y sus lecciones",
                                         lines =
                                             listOf(
                                                 codeLine(keyword("fun "), function("main"), punctuation("() {")),
-                                                codeLine(plain("    "), keyword("val "), plain("nombre "), operator("="), plain(" "), string("\"Luna\"")),
-                                                codeLine(plain("    "), keyword("var "), plain("puntos "), operator("="), plain(" "), number("0")),
-                                                codeLine(plain("    "), plain("puntos "), operator("="), plain(" "), number("10")),
-                                                codeLine(plain("    "), function("println"), punctuation("("), string("\""), interpolation("\$nombre"), string(": "), interpolation("\$puntos"), string("\""), punctuation(")")),
+                                                codeLine(plain("    "), keyword("val "), plain("curso "), operator("="), plain(" "), string("\"Kotlin\"")),
+                                                codeLine(plain("    "), keyword("var "), plain("lecciones "), operator("="), plain(" "), number("1")),
+                                                codeLine(plain("    "), plain("lecciones "), operator("="), plain(" "), number("2")),
+                                                codeLine(plain("    "), function("println"), punctuation("("), string("\""), interpolation("\$curso"), string(": "), interpolation("\$lecciones"), string("\""), punctuation(")")),
                                                 codeLine(punctuation("}")),
                                             ),
-                                        note = "La interpolación inserta el valor de nombre y puntos dentro del texto.",
+                                        note = "curso no cambia; lecciones pasa de 1 a 2. La consola muestra Kotlin: 2.",
                                     ),
                                 ),
                         ),
                 ),
                 LessonStep(
-                    title = "Une las piezas: marcador de práctica",
-                    body = "La interpolación inserta variables dentro de un texto. Al ejecutar, \$nombre se sustituye por su valor actual, para comprobarlo en la consola.",
+                    title = "Interpolación de variables",
+                    body = "En el ejemplo anterior, el mensaje usa \$curso y \$lecciones. La interpolación inserta sus valores dentro del texto al ejecutar esa línea.",
                     explanation =
                         listOf(
                             paragraph(
@@ -243,12 +243,12 @@ val firstProgramsLessonContent =
                                 regular(" avisa a Kotlin de que debe insertar su valor."),
                             ),
                             paragraph(
-                                regular("La interpolación usa el valor que tenga el nombre cuando se ejecuta esa línea. En este ejemplo, Kotlin sustituye "),
+                                regular("En este saludo, Kotlin sustituye "),
                                 inlineCode("\$nombre"),
-                                regular(" por el texto guardado."),
+                                regular(" por el nombre guardado. Las comillas delimitan el texto en el código, pero no forman parte de la salida."),
                             ),
                             paragraph(
-                                regular("Mira la consola después de ejecutar y compara el texto mostrado con las variables. Esa comprobación rápida confirma que el orden, los valores y la interpolación funcionan juntos."),
+                                regular("Si interpolas un nombre que puede cambiar, se usa el valor que tenga al llegar a esa instrucción. Por eso el ejemplo anterior muestra 2 y no 1."),
                             ),
                         ),
                     visual =
@@ -256,11 +256,31 @@ val firstProgramsLessonContent =
                             examples =
                                 listOf(
                                     LessonCodeExample(
-                                        title = "Un saludo con interpolación",
+                                        title = "Un saludo que usa un nombre",
                                         lines = interpolatedGreetingProgram(),
-                                        note = "La consola muestra Hola, Luna al sustituir el nombre dentro del texto.",
+                                        note = "La consola muestra Hola, Ada sin el signo \$ ni las comillas.",
                                     ),
                                 ),
+                        ),
+                ),
+                LessonStep(
+                    title = "Ahora te toca: una tarea que cambia",
+                    body = "Ya conoces la estructura de un programa, la salida por consola, los comentarios, los literales, los nombres y la interpolación. Úsalos juntos en una práctica breve.",
+                    explanation =
+                        listOf(
+                            paragraph(
+                                regular("Antes de escribir, distingue el dato que permanecerá igual del que vas a cambiar."),
+                            ),
+                            paragraph(
+                                regular("Usa el diagrama como plan: no necesitas escribirlo todo a la vez. Comprueba cada parte antes de pasar a la siguiente."),
+                            ),
+                            paragraph(
+                                regular("Después de ejecutar, compara las dos líneas de la consola con el resultado esperado. Si algo difiere, revisa los valores y el momento en que los muestras."),
+                            ),
+                        ),
+                    visual =
+                        LessonVisualContent.Flow(
+                            nodes = listOf("Preparar los datos", "Mostrar el estado inicial", "Actualizar y mostrar"),
                         ),
                     links =
                         listOf(
@@ -307,7 +327,7 @@ val firstProgramsLessonContent =
 private fun interpolatedGreetingProgram() =
     listOf(
         codeLine(keyword("fun "), function("main"), punctuation("() {")),
-        codeLine(plain("    "), keyword("val "), plain("nombre "), operator("="), plain(" "), string("\"Luna\"")),
+        codeLine(plain("    "), keyword("val "), plain("nombre "), operator("="), plain(" "), string("\"Ada\"")),
         codeLine(plain("    "), function("println"), punctuation("("), string("\"Hola, "), interpolation("\$nombre"), string("\""), punctuation(")")),
         codeLine(punctuation("}")),
     )
