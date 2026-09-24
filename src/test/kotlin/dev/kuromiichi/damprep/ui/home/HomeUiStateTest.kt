@@ -21,7 +21,7 @@ class HomeUiStateTest {
             )
 
         assertEquals("Bienvenida, Emma", state.welcomeMessage)
-        assertEquals("3 de 10 temas completados", state.progressLabel)
+        assertEquals("3 de 10 lecciones completadas", state.progressLabel)
         assertEquals(0.3f, state.progress)
         assertEquals("lesson-3", state.continueLessonId)
     }
@@ -40,7 +40,7 @@ class HomeUiStateTest {
         assertEquals(4, state.completedLessons)
         assertEquals(4, state.totalLessons)
         assertEquals(1f, state.progress)
-        assertEquals("4 de 4 temas completados", state.progressLabel)
+        assertEquals("4 de 4 lecciones completadas", state.progressLabel)
         assertEquals(null, state.continueLessonId)
     }
 
@@ -57,7 +57,7 @@ class HomeUiStateTest {
         assertEquals(0, state.completedLessons)
         assertEquals(0, state.totalLessons)
         assertEquals(0f, state.progress)
-        assertEquals("0 de 0 temas completados", state.progressLabel)
+        assertEquals("0 de 0 lecciones completadas", state.progressLabel)
         assertEquals(null, state.continueLessonId)
     }
 

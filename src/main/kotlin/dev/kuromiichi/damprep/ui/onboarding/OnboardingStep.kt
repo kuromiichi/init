@@ -21,11 +21,11 @@ val onboardingSteps =
         ),
         OnboardingStep(
             title = "Teoría guiada por pantallas",
-            body = "Los contenidos estarán organizados por temas y secciones breves. La idea es que puedas avanzar a tu ritmo sin tener que leer apuntes aburridos.",
+            body = "Los contenidos estarán organizados en lecciones con pasos breves. La idea es que puedas avanzar a tu ritmo sin tener que leer apuntes aburridos.",
         ),
         OnboardingStep(
             title = "Avance progresivo",
-            body = "Más adelante, cada tema podrá terminar con ejercicios para desbloquear el siguiente. La app podrá revisar entregas automáticamente o solicitar verificación externa.",
+            body = "Más adelante, cada lección podrá terminar con ejercicios para desbloquear la siguiente. La app podrá revisar entregas automáticamente o solicitar verificación externa.",
         ),
         OnboardingStep(
             kind = OnboardingStepKind.Theme,

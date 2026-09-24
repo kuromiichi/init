@@ -11,13 +11,26 @@ data class LessonListItemUiModel(
     val isUnlocked: Boolean,
     val isAvailable: Boolean,
     val isCompleted: Boolean,
-)
+    val previousLessonTitle: String? = null,
+) {
+    val canOpen: Boolean = isUnlocked && isAvailable
+
+    /** Explica por qué no se puede abrir la lección, o `null` si se puede. */
+    val unavailableReason: String? =
+        when {
+            canOpen -> null
+            !isUnlocked && previousLessonTitle != null -> "Completa «$previousLessonTitle» para desbloquear esta lección."
+            !isUnlocked -> "Completa la lección anterior para desbloquear esta lección."
+            else -> "Esta lección estará disponible próximamente."
+        }
+}
 
 fun LessonSummary.toLessonListItemUiModel(
     index: Int,
     isUnlocked: Boolean,
     isAvailable: Boolean,
     isCompleted: Boolean,
+    previousLessonTitle: String? = null,
 ): LessonListItemUiModel =
     LessonListItemUiModel(
         index = index,
@@ -27,4 +40,5 @@ fun LessonSummary.toLessonListItemUiModel(
         isUnlocked = isUnlocked,
         isAvailable = isAvailable,
         isCompleted = isCompleted,
+        previousLessonTitle = previousLessonTitle,
     )

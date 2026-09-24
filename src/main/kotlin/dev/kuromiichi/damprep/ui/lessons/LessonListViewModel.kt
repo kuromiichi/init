@@ -58,6 +58,7 @@ internal fun createLessonListUiState(
                     isUnlocked = lessonProgress.isUnlocked(index),
                     isAvailable = hasContent(lesson.id),
                     isCompleted = lessonProgress.isCompleted(lesson.id),
+                    previousLessonTitle = lessonCatalog.getOrNull(index - 1)?.title,
                 )
             },
     )

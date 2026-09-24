@@ -54,6 +54,7 @@ class LessonListUiStateTest {
         assertTrue(lessons[0].isCompleted)
         assertTrue(lessons[1].isUnlocked)
         assertFalse(lessons[2].isUnlocked)
+        assertEquals(lessons[1].title, lessons[2].previousLessonTitle)
     }
 
     @Test

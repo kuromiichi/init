@@ -77,7 +77,7 @@ internal fun createHomeUiState(
         totalLessons = lessonProgress.totalLessonCount,
         progress = lessonProgress.progress,
         progressLabel =
-            "${lessonProgress.completedLessonCount} de ${lessonProgress.totalLessonCount} temas completados",
+            "${lessonProgress.completedLessonCount} de ${lessonProgress.totalLessonCount} lecciones completadas",
         continueLessonId = continueLessonId,
         continueLessonTitle = continueLesson?.title,
         continueLessonSubject = continueLesson?.subjectArea?.label,
