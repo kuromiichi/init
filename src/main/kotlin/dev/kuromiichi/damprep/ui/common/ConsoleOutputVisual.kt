@@ -1,0 +1,76 @@
+package dev.kuromiichi.damprep.ui.common
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+/**
+ * Muestra una o varias ejecuciones como aparecerían en la consola. Lo que escribe la persona
+ * se resalta en verde, igual que la entrada de usuario en la consola de IntelliJ IDEA.
+ */
+@Composable
+fun ConsoleOutputVisual(
+    title: String,
+    runs: List<LearningConsoleRun>,
+    modifier: Modifier = Modifier,
+) {
+    val flavor = codeFlavor()
+    val hasInput = runs.any { run -> run.lines.any(LearningConsoleLine::isInput) }
+
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(color = flavor.base, shape = RoundedCornerShape(8.dp))
+                .padding(horizontal = 18.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelLarge,
+            color = flavor.subtext1,
+        )
+        runs.forEachIndexed { index, run ->
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                if (runs.size > 1) {
+                    Text(
+                        text = "Ejecución ${index + 1}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = flavor.overlay1,
+                    )
+                }
+                run.lines.forEach { line ->
+                    Text(
+                        text = line.text,
+                        style =
+                            MaterialTheme.typography.bodyMedium.copy(
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 15.sp,
+                                lineHeight = 20.sp,
+                                fontWeight = if (line.isInput) FontWeight.SemiBold else null,
+                            ),
+                        color = if (line.isInput) flavor.green else flavor.text,
+                    )
+                }
+            }
+        }
+        if (hasInput) {
+            Text(
+                text = "En verde, lo que escribes tú.",
+                style = MaterialTheme.typography.labelMedium,
+                color = flavor.subtext0,
+            )
+        }
+    }
+}

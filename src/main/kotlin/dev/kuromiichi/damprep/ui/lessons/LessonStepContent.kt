@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.lessons
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -12,8 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Checkbox
@@ -26,7 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,6 +40,9 @@ import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
+import dev.kuromiichi.damprep.ui.common.ConsoleOutputVisual
+import dev.kuromiichi.damprep.ui.common.LearningConsoleLine
+import dev.kuromiichi.damprep.ui.common.LearningConsoleRun
 
 @Composable
 internal fun LessonStepContent(
@@ -153,7 +157,7 @@ private fun LessonPracticeCard(
     isLessonCompletion: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    var hintsVisible by remember(practice.id) { mutableStateOf(false) }
+    var revealedHintCount by remember(practice.id) { mutableIntStateOf(0) }
 
     OutlinedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -213,14 +217,15 @@ private fun LessonPracticeCard(
                     PracticeSectionTitle("Qué debes comprobar")
                     practice.requirements.forEach { requirement ->
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalAlignment = Alignment.Top,
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(top = 2.dp).size(18.dp),
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .padding(start = 6.dp, top = 8.dp)
+                                        .size(6.dp)
+                                        .background(MaterialTheme.colorScheme.primary, CircleShape),
                             )
                             Text(
                                 text = requirement.toAnnotatedString(),
@@ -233,53 +238,58 @@ private fun LessonPracticeCard(
                 }
             }
 
-            practice.expectedResult?.let { expectedResult ->
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(14.dp),
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        Text(
-                            text = "Resultado esperado",
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                        Text(
-                            text = expectedResult.toAnnotatedString(),
-                            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
-                        )
-                    }
-                }
+            if (practice.expectedOutput.isNotEmpty()) {
+                ConsoleOutputVisual(
+                    title = "Resultado esperado",
+                    runs =
+                        practice.expectedOutput.map { run ->
+                            LearningConsoleRun(
+                                lines = run.lines.map { line -> LearningConsoleLine(text = line.text, isInput = line.isInput) },
+                            )
+                        },
+                )
             }
 
             if (practice.hints.isNotEmpty()) {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    TextButton(onClick = { hintsVisible = !hintsVisible }) {
+                val allHintsRevealed = revealedHintCount == practice.hints.size
+
+                Column(
+                    modifier = Modifier.animateContentSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    practice.hints.take(revealedHintCount).forEachIndexed { index, hint ->
+                        Column(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                        ) {
+                            Text(
+                                text = "Pista ${index + 1} de ${practice.hints.size}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                            Text(
+                                text = hint.toAnnotatedString(),
+                                style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                    TextButton(
+                        onClick = { revealedHintCount = if (allHintsRevealed) 0 else revealedHintCount + 1 },
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Lightbulb,
                             contentDescription = null,
                             modifier = Modifier.size(18.dp),
                         )
                         Spacer(modifier = Modifier.size(8.dp))
-                        Text(if (hintsVisible) "Ocultar pistas" else "Necesito una pista")
-                    }
-                    AnimatedVisibility(visible = hintsVisible) {
-                        Column(
-                            modifier = Modifier.padding(horizontal = 12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            practice.hints.forEach { hint ->
-                                Text(
-                                    text = hint.toAnnotatedString(),
-                                    style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        }
+                        Text(
+                            when {
+                                allHintsRevealed -> "Ocultar pistas"
+                                revealedHintCount == 0 -> "Necesito una pista"
+                                else -> "Otra pista"
+                            },
+                        )
                     }
                 }
             }

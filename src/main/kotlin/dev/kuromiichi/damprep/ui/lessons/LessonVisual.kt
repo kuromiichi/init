@@ -47,7 +47,7 @@ internal fun LessonVisual(
                             LearningCodeExample(
                                 title = example.title,
                                 lines = example.lines.map { it.toLearningCodeLine() },
-                                note = example.note,
+                                note = example.note.toCodeNote(),
                             )
                         },
                 )

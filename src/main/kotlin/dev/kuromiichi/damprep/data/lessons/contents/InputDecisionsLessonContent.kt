@@ -7,6 +7,9 @@ import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.codeLine
+import dev.kuromiichi.damprep.data.lessons.consoleInput
+import dev.kuromiichi.damprep.data.lessons.consoleOutput
+import dev.kuromiichi.damprep.data.lessons.consoleRun
 import dev.kuromiichi.damprep.data.lessons.emphasis
 import dev.kuromiichi.damprep.data.lessons.function
 import dev.kuromiichi.damprep.data.lessons.highlight
@@ -48,7 +51,7 @@ val inputDecisionsLessonContent =
                                             codeLine(plain("    "), function("println"), punctuation("("), string("\"Hola, "), plain("\$nombre"), string("\""), punctuation(")")),
                                             codeLine(punctuation("}")),
                                         ),
-                                    note = "Si escribes Ada, aparece Hola, Ada.",
+                                    note = richText(regular("Si escribes "), inlineCode("Ada"), regular(", aparece "), inlineCode("Hola, Ada"), regular(".")),
                                 ),
                             ),
                         ),
@@ -73,7 +76,7 @@ val inputDecisionsLessonContent =
                                             codeLine(keyword("val "), plain("porTema "), operator("= "), plain("total "), operator("/ "), number("2")),
                                             codeLine(function("println"), punctuation("("), plain("porTema"), punctuation(")")),
                                         ),
-                                    note = "La consola muestra 15 minutos por tema.",
+                                    note = richText(regular("La consola muestra "), inlineCode("15"), regular(": los minutos para cada tema.")),
                                 ),
                             ),
                         ),
@@ -98,7 +101,7 @@ val inputDecisionsLessonContent =
                                             codeLine(function("println"), punctuation("("), plain("grados "), operator(">= "), number("20"), punctuation(")")),
                                             codeLine(function("println"), punctuation("("), plain("grados "), operator("!= "), number("0"), punctuation(")")),
                                         ),
-                                    note = "La consola muestra false y después true.",
+                                    note = richText(regular("La consola muestra "), inlineCode("false"), regular(" y después "), inlineCode("true"), regular(".")),
                                 ),
                             ),
                         ),
@@ -126,7 +129,7 @@ val inputDecisionsLessonContent =
                                             codeLine(plain("    "), function("println"), punctuation("("), string("\"Todavía no\""), punctuation(")")),
                                             codeLine(punctuation("}")),
                                         ),
-                                    note = "Con 16 aparece Todavía no; con 18 aparece Puedes entrar.",
+                                    note = richText(regular("Con "), inlineCode("16"), regular(" aparece "), inlineCode("Todavía no"), regular("; con "), inlineCode("18"), regular(" aparece "), inlineCode("Puedes entrar"), regular(".")),
                                 ),
                             ),
                         ),
@@ -156,7 +159,7 @@ val inputDecisionsLessonContent =
                                             codeLine(plain("    "), function("println"), punctuation("("), string("\"Escribe si o no\""), punctuation(")")),
                                             codeLine(punctuation("}")),
                                         ),
-                                    note = "Escribir tal vez activa el último bloque, no el de no.",
+                                    note = richText(regular("Escribir "), inlineCode("tal vez"), regular(" activa el último bloque, no el de "), inlineCode("no"), regular(".")),
                                 ),
                             ),
                         ),
@@ -185,7 +188,7 @@ val inputDecisionsLessonContent =
                                             codeLine(plain("    "), function("println"), punctuation("("), string("\"Espera\""), punctuation(")")),
                                             codeLine(punctuation("}")),
                                         ),
-                                    note = "Aparece Espera. Cambia entrada a true y vuelve a ejecutar.",
+                                    note = richText(regular("Aparece "), inlineCode("Espera"), regular(". Cambia "), inlineCode("entrada"), regular(" a "), inlineCode("true"), regular(" y vuelve a ejecutar.")),
                                 ),
                             ),
                         ),
@@ -213,7 +216,7 @@ val inputDecisionsLessonContent =
                                             codeLine(plain("    "), keyword("else "), operator("-> "), function("println"), punctuation("("), string("\"Opción no válida\""), punctuation(")")),
                                             codeLine(punctuation("}")),
                                         ),
-                                    note = "1 y 2 tienen su mensaje; cualquier otra respuesta avisa del error.",
+                                    note = richText(inlineCode("1"), regular(" y "), inlineCode("2"), regular(" tienen su mensaje; cualquier otra respuesta avisa del error.")),
                                 ),
                             ),
                         ),
@@ -242,7 +245,7 @@ val inputDecisionsLessonContent =
                                             codeLine(plain("    "), function("println"), punctuation("("), plain("minutos "), operator("+ "), number("5"), punctuation(")")),
                                             codeLine(punctuation("}")),
                                         ),
-                                    note = "Con 20 aparece 25; con hola se pide un número.",
+                                    note = richText(regular("Con "), inlineCode("20"), regular(" aparece "), inlineCode("25"), regular("; con "), inlineCode("hola"), regular(" aparece "), inlineCode("Escribe un número"), regular(".")),
                                 ),
                             ),
                         ),
@@ -275,7 +278,12 @@ val inputDecisionsLessonContent =
                                     richText(regular("Si es 25 o más, muestra "), inlineCode("Toca una pausa"), regular(".")),
                                     richText(regular("Muestra solo uno de esos mensajes por ejecución.")),
                                 ),
-                            expectedResult = richText("Con 24: Sigue estudiando\nCon 25: Toca una pausa\nCon hola: Escribe un número entero"),
+                            expectedOutput =
+                                listOf(
+                                    consoleRun(consoleInput("24"), consoleOutput("Sigue estudiando")),
+                                    consoleRun(consoleInput("25"), consoleOutput("Toca una pausa")),
+                                    consoleRun(consoleInput("hola"), consoleOutput("Escribe un número entero")),
+                                ),
                             hints =
                                 listOf(
                                     richText("Separa primero la respuesta que no puede convertirse de las que sí son números."),

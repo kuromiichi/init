@@ -11,6 +11,8 @@ import dev.kuromiichi.damprep.data.lessons.LessonTool
 import dev.kuromiichi.damprep.data.lessons.LessonToolLogo
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.codeLine
+import dev.kuromiichi.damprep.data.lessons.consoleOutput
+import dev.kuromiichi.damprep.data.lessons.consoleRun
 import dev.kuromiichi.damprep.data.lessons.emphasis
 import dev.kuromiichi.damprep.data.lessons.function
 import dev.kuromiichi.damprep.data.lessons.highlight
@@ -276,7 +278,7 @@ val developmentEnvironmentLessonContent =
                                                 ),
                                                 codeLine(punctuation("}")),
                                             ),
-                                        note = "Resultado esperado en la consola: Hello World!",
+                                        note = richText(regular("Resultado esperado en la consola: "), inlineCode("Hello World!"), regular(".")),
                                     ),
                                 ),
                         ),
@@ -318,12 +320,7 @@ val developmentEnvironmentLessonContent =
                                         regular("."),
                                     ),
                                 ),
-                            expectedResult =
-                                richText(
-                                    regular("La consola muestra "),
-                                    inlineCode("Hello World!"),
-                                    regular("."),
-                                ),
+                            expectedOutput = listOf(consoleRun(consoleOutput("Hello World!"))),
                             hints =
                                 listOf(
                                     richText(

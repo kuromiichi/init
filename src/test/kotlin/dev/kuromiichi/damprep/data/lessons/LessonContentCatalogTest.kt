@@ -72,9 +72,8 @@ class LessonContentCatalogTest {
         assertEquals("input-decisions-break", practice.id)
         listOf("24", "25", "hola").forEach {
             assertTrue(
-                practice.expectedResult
-                    ?.plainText
-                    .orEmpty()
+                practice.expectedOutput
+                    .plainText()
                     .contains(it),
             )
         }
@@ -171,7 +170,7 @@ class LessonContentCatalogTest {
                 add(practice.objective.plainText)
                 add(practice.statement.plainText)
                 addAll(practice.requirements.map(LessonRichText::plainText))
-                practice.expectedResult?.plainText?.let(::add)
+                add(practice.expectedOutput.plainText())
                 addAll(practice.hints.map(LessonRichText::plainText))
                 practice.extension?.plainText?.let(::add)
                 add(practice.confirmation.plainText)
@@ -183,7 +182,7 @@ class LessonContentCatalogTest {
         assertTrue(practice.statement.plainText.isNotBlank())
         assertTrue(practice.requirements.size >= 5)
         assertTrue(practice.requirements.any { it.hasStyle(LessonTextSpanStyle.Emphasis) })
-        assertTrue(practice.expectedResult?.plainText == "Repasar Kotlin: pendiente\nRepasar Kotlin: completada")
+        assertEquals("Repasar Kotlin: pendiente\nRepasar Kotlin: completada", practice.expectedOutput.plainText())
         assertFalse(practiceVisibleText.contains("val tarea ="))
         assertFalse(practiceVisibleText.contains("var estado ="))
         assertFalse(practiceVisibleText.contains("estado ="))
@@ -399,7 +398,7 @@ class LessonContentCatalogTest {
         assertTrue(practice.objective.hasStyle(LessonTextSpanStyle.Highlight))
         assertTrue(practice.statement.hasStyle(LessonTextSpanStyle.InlineCode))
         assertTrue(practice.requirements.any { it.hasStyle(LessonTextSpanStyle.Emphasis) })
-        assertTrue(practice.expectedResult?.hasStyle(LessonTextSpanStyle.InlineCode) == true)
+        assertEquals("Hello World!", practice.expectedOutput.plainText())
         assertTrue(practice.confirmation.hasStyle(LessonTextSpanStyle.InlineCode))
 
         val visual = helloWorldStep.visual
@@ -663,7 +662,7 @@ private fun LessonContent.allVisibleText(): String =
                 add(practice.objective.plainText)
                 add(practice.statement.plainText)
                 addAll(practice.requirements.map(LessonRichText::plainText))
-                practice.expectedResult?.plainText?.let(::add)
+                add(practice.expectedOutput.plainText())
                 addAll(practice.hints.map(LessonRichText::plainText))
                 practice.extension?.plainText?.let(::add)
                 add(practice.confirmation.plainText)
@@ -683,7 +682,7 @@ private fun LessonVisualContent.readableText(): String =
     when (this) {
         is LessonVisualContent.CodeExamples ->
             examples.joinToString(" ") { example ->
-                "${example.title} ${example.note} " +
+                "${example.title} ${example.note.plainText} " +
                     example.lines.joinToString(" ") { line -> line.tokens.joinToString("") { token -> token.text } }
             }
         is LessonVisualContent.Cycle -> steps.joinToString(" ")
@@ -692,3 +691,5 @@ private fun LessonVisualContent.readableText(): String =
         is LessonVisualContent.Screenshot -> description
         is LessonVisualContent.ToolCards -> tools.joinToString(" ") { "${it.name} ${it.kind}" }
     }
+
+private fun List<LessonConsoleRun>.plainText(): String = joinToString("\n") { run -> run.lines.joinToString("\n", transform = LessonConsoleLine::text) }

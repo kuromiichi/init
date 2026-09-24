@@ -10,6 +10,7 @@ import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.regular
+import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
 import dev.kuromiichi.damprep.data.lessons.structuredStepContent
 
@@ -123,7 +124,7 @@ internal val windowsDevelopmentEnvironmentContent =
                         ),
                         explanationCode(
                             title = "Comprueba Git",
-                            note = "Debe responder con una versión de Git.",
+                            note = richText(regular("Debe responder con una versión de Git.")),
                             "git --version",
                         ),
                     ),

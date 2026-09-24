@@ -8,6 +8,8 @@ import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.codeLine
+import dev.kuromiichi.damprep.data.lessons.consoleOutput
+import dev.kuromiichi.damprep.data.lessons.consoleRun
 import dev.kuromiichi.damprep.data.lessons.emphasis
 import dev.kuromiichi.damprep.data.lessons.function
 import dev.kuromiichi.damprep.data.lessons.highlight
@@ -63,7 +65,7 @@ val firstProgramsLessonContent =
                                                 codeLine(keyword("fun "), function("main"), punctuation("() {")),
                                                 codeLine(punctuation("}")),
                                             ),
-                                        note = "Dentro de las llaves escribirás las instrucciones del programa.",
+                                        note = richText(regular("Dentro de las llaves escribirás las instrucciones del programa.")),
                                     ),
                                 ),
                         ),
@@ -101,7 +103,7 @@ val firstProgramsLessonContent =
                                                 codeLine(plain("    "), function("println"), punctuation("("), string("\"Termino este bloque.\""), punctuation(")")),
                                                 codeLine(punctuation("}")),
                                             ),
-                                        note = "Primero aparece el primer mensaje; después, el segundo.",
+                                        note = richText(regular("Primero aparece el primer mensaje; después, el segundo.")),
                                     ),
                                 ),
                         ),
@@ -141,7 +143,7 @@ val firstProgramsLessonContent =
                                                 codeLine(plain("       "), comment("   el cierre. */")),
                                                 codeLine(punctuation("}")),
                                             ),
-                                        note = "Los comentarios acompañan al código, pero no forman parte de la salida.",
+                                        note = richText(regular("Los comentarios acompañan al código, pero no forman parte de la salida.")),
                                     ),
                                 ),
                         ),
@@ -181,7 +183,7 @@ val firstProgramsLessonContent =
                                                 codeLine(plain("    "), function("println"), punctuation("("), number("4"), punctuation(")")),
                                                 codeLine(punctuation("}")),
                                             ),
-                                        note = "Las comillas distinguen el texto del número.",
+                                        note = richText(regular("Las comillas distinguen el texto del número.")),
                                     ),
                                 ),
                         ),
@@ -224,7 +226,7 @@ val firstProgramsLessonContent =
                                                 codeLine(plain("    "), function("println"), punctuation("("), string("\""), interpolation("\$curso"), string(": "), interpolation("\$lecciones"), string("\""), punctuation(")")),
                                                 codeLine(punctuation("}")),
                                             ),
-                                        note = "curso no cambia; lecciones pasa de 1 a 2. La consola muestra Kotlin: 2.",
+                                        note = richText(inlineCode("curso"), regular(" no cambia; "), inlineCode("lecciones"), regular(" pasa de 1 a 2. La consola muestra "), inlineCode("Kotlin: 2"), regular(".")),
                                     ),
                                 ),
                         ),
@@ -257,7 +259,7 @@ val firstProgramsLessonContent =
                                     LessonCodeExample(
                                         title = "Un saludo que usa un nombre",
                                         lines = interpolatedGreetingProgram(),
-                                        note = "La consola muestra Hola, Ada sin el signo \$ ni las comillas.",
+                                        note = richText(regular("La consola muestra "), inlineCode("Hola, Ada"), regular(" sin el signo "), inlineCode("\$"), regular(" ni las comillas.")),
                                     ),
                                 ),
                         ),
@@ -304,7 +306,13 @@ val firstProgramsLessonContent =
                                     richText(regular("Muestra una primera línea con la tarea y su estado mediante interpolación.")),
                                     richText(regular("Actualiza el estado a "), inlineCode("completada"), regular(" y muestra una segunda línea con el mismo formato.")),
                                 ),
-                            expectedResult = richText(inlineCode("Repasar Kotlin: pendiente\nRepasar Kotlin: completada")),
+                            expectedOutput =
+                                listOf(
+                                    consoleRun(
+                                        consoleOutput("Repasar Kotlin: pendiente"),
+                                        consoleOutput("Repasar Kotlin: completada"),
+                                    ),
+                                ),
                             hints =
                                 listOf(
                                     richText(regular("Empieza por decidir qué dato se mantiene y cuál debe poder cambiar durante el programa.")),

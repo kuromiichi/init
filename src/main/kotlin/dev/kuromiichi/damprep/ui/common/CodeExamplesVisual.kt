@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.kuromiichi.damprep.ui.theme.CatppuccinFlavor
 import dev.kuromiichi.damprep.ui.theme.CatppuccinLatte
 import dev.kuromiichi.damprep.ui.theme.CatppuccinMacchiato
 
@@ -48,12 +49,7 @@ fun CodeExamplesVisual(
 
 @Composable
 private fun CodeExampleCard(example: LearningCodeExample) {
-    val flavor =
-        if (MaterialTheme.colorScheme.background.luminance() > 0.5f) {
-            CatppuccinLatte
-        } else {
-            CatppuccinMacchiato
-        }
+    val flavor = codeFlavor()
 
     Column(
         modifier =
@@ -99,6 +95,15 @@ private fun CodeExampleCard(example: LearningCodeExample) {
         )
     }
 }
+
+/** Paleta de los bloques de código y consola, acorde con el tema claro u oscuro activo. */
+@Composable
+internal fun codeFlavor(): CatppuccinFlavor =
+    if (MaterialTheme.colorScheme.background.luminance() > 0.5f) {
+        CatppuccinLatte
+    } else {
+        CatppuccinMacchiato
+    }
 
 @Composable
 private fun CodeLine(

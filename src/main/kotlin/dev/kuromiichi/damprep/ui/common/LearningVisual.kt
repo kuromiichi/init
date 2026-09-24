@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,7 +40,16 @@ data class LearningToolCard(
 data class LearningCodeExample(
     val title: String,
     val lines: List<LearningCodeLine>,
-    val note: String,
+    val note: AnnotatedString,
+)
+
+data class LearningConsoleRun(
+    val lines: List<LearningConsoleLine>,
+)
+
+data class LearningConsoleLine(
+    val text: String,
+    val isInput: Boolean = false,
 )
 
 data class LearningCodeLine(

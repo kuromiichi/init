@@ -10,6 +10,7 @@ import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.regular
+import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
 import dev.kuromiichi.damprep.data.lessons.structuredStepContent
 
@@ -119,7 +120,7 @@ internal val macOsDevelopmentEnvironmentContent =
                         ),
                         explanationCode(
                             title = "Terminal",
-                            note = "Si Git no existe, macOS ofrecerá instalarlo. Repite el comando cuando termine.",
+                            note = richText(regular("Si Git no existe, macOS ofrecerá instalarlo. Repite el comando cuando termine.")),
                             "git --version",
                         ),
                         callout(

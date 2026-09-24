@@ -10,6 +10,7 @@ import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.regular
+import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
 import dev.kuromiichi.damprep.data.lessons.structuredStepContent
 
@@ -36,7 +37,7 @@ internal val linuxDevelopmentEnvironmentContent =
                         ),
                         explanationCode(
                             title = "Después de añadir el repositorio",
-                            note = "Utiliza el bloque que corresponda a tu distribución.",
+                            note = richText(regular("Utiliza el bloque que corresponda a tu distribución.")),
                             "# Debian o Ubuntu",
                             "sudo apt update",
                             "sudo apt install temurin-25-jdk",
@@ -84,7 +85,7 @@ internal val linuxDevelopmentEnvironmentContent =
                         ),
                         explanationCode(
                             title = "Terminal",
-                            note = "Sustituye <carpeta-extraída> por el directorio creado en /opt.",
+                            note = richText(regular("Sustituye "), inlineCode("<carpeta-extraída>"), regular(" por el directorio creado en "), inlineCode("/opt"), regular(".")),
                             "sudo tar -xzf idea-*.tar.gz -C /opt",
                             "/opt/<carpeta-extraída>/bin/idea.sh",
                         ),
@@ -116,7 +117,7 @@ internal val linuxDevelopmentEnvironmentContent =
                         ),
                         explanationCode(
                             title = "Instalación y comprobación",
-                            note = "Ejecuta apt en Debian/Ubuntu o dnf en Fedora; después comprueba la versión.",
+                            note = richText(regular("Ejecuta "), inlineCode("apt"), regular(" en Debian/Ubuntu o "), inlineCode("dnf"), regular(" en Fedora; después comprueba la versión.")),
                             "# Debian o Ubuntu",
                             "sudo apt update",
                             "sudo apt install git",

@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +47,7 @@ import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.LoadingScreen
 import dev.kuromiichi.damprep.ui.common.OperatingSystemDropdown
 import dev.kuromiichi.damprep.ui.common.verticalFadingEdges
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 private val LessonContentMaxWidth = 1240.dp
@@ -86,6 +88,7 @@ fun CurrentLessonScreen(
     }
 
     val focusRequester = remember { FocusRequester() }
+    val coroutineScope = rememberCoroutineScope()
     val scrollState =
         key(
             lessonContent.lessonId,
@@ -252,6 +255,13 @@ fun CurrentLessonScreen(
                     canContinue = uiState.canGoForward || uiState.canShowCompletion,
                     onPrevious = goToPreviousStep,
                     onNext = goToNextStep,
+                    onShowPendingPractice =
+                        if (uiState.isCurrentPracticeConfirmed) {
+                            null
+                        } else {
+                            // La práctica cierra siempre el paso: al final queda su casilla de confirmación.
+                            { coroutineScope.launch { scrollState.animateScrollTo(scrollState.maxValue) } }
+                        },
                 )
             }
         }

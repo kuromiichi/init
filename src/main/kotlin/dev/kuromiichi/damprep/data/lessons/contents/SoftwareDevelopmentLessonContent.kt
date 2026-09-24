@@ -11,6 +11,8 @@ import dev.kuromiichi.damprep.data.lessons.number
 import dev.kuromiichi.damprep.data.lessons.operator
 import dev.kuromiichi.damprep.data.lessons.plain
 import dev.kuromiichi.damprep.data.lessons.punctuation
+import dev.kuromiichi.damprep.data.lessons.regular
+import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.string
 
 val softwareDevelopmentLessonContent =
@@ -78,7 +80,7 @@ val softwareDevelopmentLessonContent =
                                                     string("\"Hola", hasErrorUnderline = true),
                                                 ),
                                             ),
-                                        note = "Faltan comillas y paréntesis de cierre: la frase queda incompleta.",
+                                        note = richText(regular("Faltan comillas y paréntesis de cierre: la frase queda incompleta.")),
                                     ),
                                     LessonCodeExample(
                                         title = "Error lógico",
@@ -103,7 +105,7 @@ val softwareDevelopmentLessonContent =
                                                     number("18", hasErrorUnderline = true),
                                                 ),
                                             ),
-                                        note = "Compila, pero permite entrar justo a quien no debería.",
+                                        note = richText(regular("Compila, pero permite entrar justo a quien no debería.")),
                                     ),
                                 ),
                         ),

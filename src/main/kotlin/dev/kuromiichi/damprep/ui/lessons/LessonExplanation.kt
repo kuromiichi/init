@@ -190,7 +190,7 @@ private fun LessonExplanationCode(code: LessonExplanationBlock.Code) {
                                 tokens = listOf(LearningCodeToken(text = line)),
                             )
                         },
-                    note = code.note,
+                    note = code.note.toCodeNote(),
                 ),
             ),
     )
@@ -219,6 +219,26 @@ internal fun LessonRichText.toAnnotatedString() =
                             color = MaterialTheme.colorScheme.primary,
                             fontFamily = FontFamily.Monospace,
                         )
+                }
+
+            withStyle(style) {
+                append(span.text)
+            }
+        }
+    }
+
+/**
+ * Versión de [toAnnotatedString] para las notas de los bloques de código: conserva los colores
+ * del bloque y distingue el código con fuente monoespaciada.
+ */
+internal fun LessonRichText.toCodeNote() =
+    buildAnnotatedString {
+        spans.forEach { span ->
+            val style =
+                when (span.style) {
+                    LessonTextSpanStyle.Regular -> SpanStyle()
+                    LessonTextSpanStyle.Emphasis, LessonTextSpanStyle.Highlight -> SpanStyle(fontWeight = FontWeight.SemiBold)
+                    LessonTextSpanStyle.InlineCode -> SpanStyle(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
                 }
 
             withStyle(style) {

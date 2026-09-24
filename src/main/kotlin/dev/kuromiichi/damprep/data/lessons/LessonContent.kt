@@ -35,10 +35,20 @@ data class LessonPractice(
     val objective: LessonRichText,
     val statement: LessonRichText,
     val requirements: List<LessonRichText>,
-    val expectedResult: LessonRichText? = null,
+    val expectedOutput: List<LessonConsoleRun> = emptyList(),
     val hints: List<LessonRichText> = emptyList(),
     val extension: LessonRichText? = null,
     val confirmation: LessonRichText,
+)
+
+/** Una ejecución del programa tal como se vería en la consola. */
+data class LessonConsoleRun(
+    val lines: List<LessonConsoleLine>,
+)
+
+data class LessonConsoleLine(
+    val text: String,
+    val isInput: Boolean = false,
 )
 
 data class LessonStepContent(
@@ -66,7 +76,7 @@ sealed interface LessonExplanationBlock {
     data class Code(
         val title: String,
         val lines: List<String>,
-        val note: String,
+        val note: LessonRichText,
     ) : LessonExplanationBlock
 }
 
@@ -131,7 +141,7 @@ sealed interface LessonVisualContent {
 data class LessonCodeExample(
     val title: String,
     val lines: List<LessonCodeLine>,
-    val note: String,
+    val note: LessonRichText,
 )
 
 data class LessonCodeLine(
@@ -194,6 +204,12 @@ object LessonContentCatalog {
 
     fun hasContent(lessonId: String): Boolean = findByLessonId(lessonId) != null
 }
+
+internal fun consoleRun(vararg lines: LessonConsoleLine): LessonConsoleRun = LessonConsoleRun(lines.toList())
+
+internal fun consoleInput(text: String): LessonConsoleLine = LessonConsoleLine(text = text, isInput = true)
+
+internal fun consoleOutput(text: String): LessonConsoleLine = LessonConsoleLine(text = text)
 
 internal fun codeLine(vararg tokens: LessonCodeToken): LessonCodeLine = LessonCodeLine(tokens = tokens.toList())
 
@@ -261,7 +277,7 @@ internal fun callout(
 
 internal fun explanationCode(
     title: String,
-    note: String,
+    note: LessonRichText,
     vararg lines: String,
 ): LessonExplanationBlock.Code =
     LessonExplanationBlock.Code(
@@ -299,7 +315,7 @@ private fun String.toParagraphBlocks(): List<LessonExplanationBlock> =
 private fun LessonExplanationBlock.plainText(): String =
     when (this) {
         is LessonExplanationBlock.Callout -> "$title: ${text.plainText}"
-        is LessonExplanationBlock.Code -> listOf(title, lines.joinToString("\n"), note).joinToString("\n")
+        is LessonExplanationBlock.Code -> listOf(title, lines.joinToString("\n"), note.plainText).joinToString("\n")
         is LessonExplanationBlock.Paragraph -> text.plainText
         is LessonExplanationBlock.Steps -> items.joinToString("\n") { item -> item.plainText }
     }
