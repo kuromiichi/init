@@ -6,23 +6,16 @@ import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
-import dev.kuromiichi.damprep.data.lessons.codeLine
 import dev.kuromiichi.damprep.data.lessons.consoleInput
 import dev.kuromiichi.damprep.data.lessons.consoleOutput
 import dev.kuromiichi.damprep.data.lessons.consoleRun
 import dev.kuromiichi.damprep.data.lessons.emphasis
-import dev.kuromiichi.damprep.data.lessons.function
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
-import dev.kuromiichi.damprep.data.lessons.keyword
-import dev.kuromiichi.damprep.data.lessons.number
-import dev.kuromiichi.damprep.data.lessons.operator
+import dev.kuromiichi.damprep.data.lessons.kotlinCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
-import dev.kuromiichi.damprep.data.lessons.plain
-import dev.kuromiichi.damprep.data.lessons.punctuation
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
-import dev.kuromiichi.damprep.data.lessons.string
 
 val inputDecisionsLessonContent =
     LessonContent(
@@ -44,12 +37,14 @@ val inputDecisionsLessonContent =
                                 LessonCodeExample(
                                     title = "Un saludo personal",
                                     lines =
-                                        listOf(
-                                            codeLine(keyword("fun "), function("main"), punctuation("() {")),
-                                            codeLine(plain("    "), function("print"), punctuation("("), string("\"Tu nombre: \""), punctuation(")")),
-                                            codeLine(plain("    "), keyword("val "), plain("nombre "), operator("= "), function("readln"), punctuation("()")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Hola, "), plain("\$nombre"), string("\""), punctuation(")")),
-                                            codeLine(punctuation("}")),
+                                        kotlinCode(
+                                            $$"""
+                                                fun main() {
+                                                    print("Tu nombre: ")
+                                                    val nombre = readln()
+                                                    println("Hola, $nombre")
+                                                }
+                                            """.trimIndent(),
                                         ),
                                     note = richText(regular("Si escribes "), inlineCode("Ada"), regular(", aparece "), inlineCode("Hola, Ada"), regular(".")),
                                 ),
@@ -71,10 +66,12 @@ val inputDecisionsLessonContent =
                                 LessonCodeExample(
                                     title = "Repartir tiempo de estudio",
                                     lines =
-                                        listOf(
-                                            codeLine(keyword("val "), plain("total "), operator("= "), number("30")),
-                                            codeLine(keyword("val "), plain("porTema "), operator("= "), plain("total "), operator("/ "), number("2")),
-                                            codeLine(function("println"), punctuation("("), plain("porTema"), punctuation(")")),
+                                        kotlinCode(
+                                            """
+                                            val total = 30
+                                            val porTema = total / 2
+                                            println(porTema)
+                                            """.trimIndent(),
                                         ),
                                     note = richText(regular("La consola muestra "), inlineCode("15"), regular(": los minutos para cada tema.")),
                                 ),
@@ -88,7 +85,7 @@ val inputDecisionsLessonContent =
                         listOf(
                             paragraph(inlineCode(">="), regular(" pregunta si el valor de la izquierda es mayor o igual que el de la derecha. También tienes "), inlineCode(">"), regular(", "), inlineCode("<"), regular(" y "), inlineCode("<="), regular(".")),
                             paragraph(inlineCode("=="), regular(" comprueba igualdad y "), inlineCode("!="), regular(" desigualdad. No confundas "), inlineCode("=="), regular(" con "), inlineCode("="), regular(", que asigna un valor.")),
-                            paragraph(regular("En el ejemplo, 18 no es mayor o igual que 20; por eso la primera línea muestra "), inlineCode("false"), regular(". La segunda muestra "), inlineCode("true"), regular(".")),
+                            paragraph(regular("En el ejemplo, "), inlineCode("18"), regular(" no es mayor o igual que "), inlineCode("20"), regular("; por eso la línea 2 muestra "), inlineCode("false"), regular(". La línea 3 muestra "), inlineCode("true"), regular(".")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -96,10 +93,12 @@ val inputDecisionsLessonContent =
                                 LessonCodeExample(
                                     title = "Comprobar la temperatura",
                                     lines =
-                                        listOf(
-                                            codeLine(keyword("val "), plain("grados "), operator("= "), number("18")),
-                                            codeLine(function("println"), punctuation("("), plain("grados "), operator(">= "), number("20"), punctuation(")")),
-                                            codeLine(function("println"), punctuation("("), plain("grados "), operator("!= "), number("0"), punctuation(")")),
+                                        kotlinCode(
+                                            """
+                                            val grados = 18
+                                            println(grados >= 20)
+                                            println(grados != 0)
+                                            """.trimIndent(),
                                         ),
                                     note = richText(regular("La consola muestra "), inlineCode("false"), regular(" y después "), inlineCode("true"), regular(".")),
                                 ),
@@ -113,7 +112,7 @@ val inputDecisionsLessonContent =
                         listOf(
                             paragraph(regular("La condición va entre paréntesis. Las llaves marcan qué instrucciones pertenecen a cada camino.")),
                             paragraph(regular("Solo se ejecuta uno de los dos bloques. Después, el programa continúa con las instrucciones que haya tras el "), inlineCode("if"), regular(".")),
-                            paragraph(regular("Aquí la edad es 16, así que aparece el mensaje del "), inlineCode("else"), regular(". Cambia 16 por 18 para comprobar el otro camino.")),
+                            paragraph(regular("Aquí "), inlineCode("edad"), regular(" vale "), inlineCode("16"), regular(", así que aparece el mensaje del "), inlineCode("else"), regular(". Cambia "), inlineCode("16"), regular(" por "), inlineCode("18"), regular(" para comprobar el otro camino.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -121,13 +120,15 @@ val inputDecisionsLessonContent =
                                 LessonCodeExample(
                                     title = "Una decisión por edad",
                                     lines =
-                                        listOf(
-                                            codeLine(keyword("val "), plain("edad "), operator("= "), number("16")),
-                                            codeLine(keyword("if "), punctuation("("), plain("edad "), operator(">= "), number("18"), punctuation(") {")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Puedes entrar\""), punctuation(")")),
-                                            codeLine(punctuation("} "), keyword("else "), punctuation("{")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Todavía no\""), punctuation(")")),
-                                            codeLine(punctuation("}")),
+                                        kotlinCode(
+                                            """
+                                            val edad = 16
+                                            if (edad >= 18) {
+                                                println("Puedes entrar")
+                                            } else {
+                                                println("Todavía no")
+                                            }
+                                            """.trimIndent(),
                                         ),
                                     note = richText(regular("Con "), inlineCode("16"), regular(" aparece "), inlineCode("Todavía no"), regular("; con "), inlineCode("18"), regular(" aparece "), inlineCode("Puedes entrar"), regular(".")),
                                 ),
@@ -149,15 +150,17 @@ val inputDecisionsLessonContent =
                                 LessonCodeExample(
                                     title = "Una invitación",
                                     lines =
-                                        listOf(
-                                            codeLine(keyword("val "), plain("respuesta "), operator("= "), function("readln"), punctuation("()")),
-                                            codeLine(keyword("if "), punctuation("("), plain("respuesta "), operator("== "), string("\"si\""), punctuation(") {")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Te esperamos\""), punctuation(")")),
-                                            codeLine(punctuation("} "), keyword("else if "), punctuation("("), plain("respuesta "), operator("== "), string("\"no\""), punctuation(") {")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Otra vez será\""), punctuation(")")),
-                                            codeLine(punctuation("} "), keyword("else "), punctuation("{")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Escribe si o no\""), punctuation(")")),
-                                            codeLine(punctuation("}")),
+                                        kotlinCode(
+                                            """
+                                            val respuesta = readln()
+                                            if (respuesta == "si") {
+                                                println("Te esperamos")
+                                            } else if (respuesta == "no") {
+                                                println("Otra vez será")
+                                            } else {
+                                                println("Escribe si o no")
+                                            }
+                                            """.trimIndent(),
                                         ),
                                     note = richText(regular("Escribir "), inlineCode("tal vez"), regular(" activa el último bloque, no el de "), inlineCode("no"), regular(".")),
                                 ),
@@ -170,7 +173,7 @@ val inputDecisionsLessonContent =
                     explanation =
                         listOf(
                             paragraph(inlineCode("&&"), regular(" se lee «y»: solo da "), inlineCode("true"), regular(" si las dos condiciones son verdaderas. "), inlineCode("||"), regular(" se lee «o»: basta con una.")),
-                            paragraph(inlineCode("!"), regular(" niega un valor Boolean. En el ejemplo, "), inlineCode("!entrada"), regular(" sería verdadero porque entrada vale false.")),
+                            paragraph(inlineCode("!"), regular(" niega un valor "), inlineCode("Boolean"), regular(". En el ejemplo, "), inlineCode("!entrada"), regular(" sería "), inlineCode("true"), regular(" porque "), inlineCode("entrada"), regular(" vale "), inlineCode("false"), regular(".")),
                             paragraph(regular("Aquí hay plaza, pero no entrada: con "), inlineCode("&&"), regular(" la condición es falsa y con "), inlineCode("||"), regular(" sería verdadera.")),
                         ),
                     visual =
@@ -179,14 +182,16 @@ val inputDecisionsLessonContent =
                                 LessonCodeExample(
                                     title = "Acceso a una actividad",
                                     lines =
-                                        listOf(
-                                            codeLine(keyword("val "), plain("plaza "), operator("= "), keyword("true")),
-                                            codeLine(keyword("val "), plain("entrada "), operator("= "), keyword("false")),
-                                            codeLine(keyword("if "), punctuation("("), plain("plaza "), operator("&& "), plain("entrada"), punctuation(") {")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Pasa\""), punctuation(")")),
-                                            codeLine(punctuation("} "), keyword("else "), punctuation("{")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Espera\""), punctuation(")")),
-                                            codeLine(punctuation("}")),
+                                        kotlinCode(
+                                            """
+                                            val plaza = true
+                                            val entrada = false
+                                            if (plaza && entrada) {
+                                                println("Pasa")
+                                            } else {
+                                                println("Espera")
+                                            }
+                                            """.trimIndent(),
                                         ),
                                     note = richText(regular("Aparece "), inlineCode("Espera"), regular(". Cambia "), inlineCode("entrada"), regular(" a "), inlineCode("true"), regular(" y vuelve a ejecutar.")),
                                 ),
@@ -208,13 +213,15 @@ val inputDecisionsLessonContent =
                                 LessonCodeExample(
                                     title = "Elegir un mensaje",
                                     lines =
-                                        listOf(
-                                            codeLine(keyword("val "), plain("opcion "), operator("= "), function("readln"), punctuation("()")),
-                                            codeLine(keyword("when "), punctuation("("), plain("opcion"), punctuation(") {")),
-                                            codeLine(plain("    "), string("\"1\" "), operator("-> "), function("println"), punctuation("("), string("\"Buenos días\""), punctuation(")")),
-                                            codeLine(plain("    "), string("\"2\" "), operator("-> "), function("println"), punctuation("("), string("\"Buenas noches\""), punctuation(")")),
-                                            codeLine(plain("    "), keyword("else "), operator("-> "), function("println"), punctuation("("), string("\"Opción no válida\""), punctuation(")")),
-                                            codeLine(punctuation("}")),
+                                        kotlinCode(
+                                            """
+                                            val opcion = readln()
+                                            when (opcion) {
+                                                "1" -> println("Buenos días")
+                                                "2" -> println("Buenas noches")
+                                                else -> println("Opción no válida")
+                                            }
+                                            """.trimIndent(),
                                         ),
                                     note = richText(inlineCode("1"), regular(" y "), inlineCode("2"), regular(" tienen su mensaje; cualquier otra respuesta avisa del error.")),
                                 ),
@@ -236,14 +243,16 @@ val inputDecisionsLessonContent =
                                 LessonCodeExample(
                                     title = "Minutos de lectura",
                                     lines =
-                                        listOf(
-                                            codeLine(keyword("val "), plain("texto "), operator("= "), function("readln"), punctuation("()")),
-                                            codeLine(keyword("val "), plain("minutos "), operator("= "), plain("texto."), function("toIntOrNull"), punctuation("()")),
-                                            codeLine(keyword("if "), punctuation("("), plain("minutos "), operator("== "), keyword("null"), punctuation(") {")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), string("\"Escribe un número\""), punctuation(")")),
-                                            codeLine(punctuation("} "), keyword("else "), punctuation("{")),
-                                            codeLine(plain("    "), function("println"), punctuation("("), plain("minutos "), operator("+ "), number("5"), punctuation(")")),
-                                            codeLine(punctuation("}")),
+                                        kotlinCode(
+                                            """
+                                            val texto = readln()
+                                            val minutos = texto.toIntOrNull()
+                                            if (minutos == null) {
+                                                println("Escribe un número")
+                                            } else {
+                                                println(minutos + 5)
+                                            }
+                                            """.trimIndent(),
                                         ),
                                     note = richText(regular("Con "), inlineCode("20"), regular(" aparece "), inlineCode("25"), regular("; con "), inlineCode("hola"), regular(" aparece "), inlineCode("Escribe un número"), regular(".")),
                                 ),

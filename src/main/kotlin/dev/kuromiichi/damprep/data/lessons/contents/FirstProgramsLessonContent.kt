@@ -1,28 +1,20 @@
 package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
-import dev.kuromiichi.damprep.data.lessons.LessonCodeToken
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
-import dev.kuromiichi.damprep.data.lessons.codeLine
 import dev.kuromiichi.damprep.data.lessons.consoleOutput
 import dev.kuromiichi.damprep.data.lessons.consoleRun
 import dev.kuromiichi.damprep.data.lessons.emphasis
-import dev.kuromiichi.damprep.data.lessons.function
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
-import dev.kuromiichi.damprep.data.lessons.keyword
-import dev.kuromiichi.damprep.data.lessons.number
-import dev.kuromiichi.damprep.data.lessons.operator
+import dev.kuromiichi.damprep.data.lessons.kotlinCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
-import dev.kuromiichi.damprep.data.lessons.plain
-import dev.kuromiichi.damprep.data.lessons.punctuation
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
-import dev.kuromiichi.damprep.data.lessons.string
 
 val firstProgramsLessonContent =
     LessonContent(
@@ -61,9 +53,11 @@ val firstProgramsLessonContent =
                                     LessonCodeExample(
                                         title = "La estructura mínima",
                                         lines =
-                                            listOf(
-                                                codeLine(keyword("fun "), function("main"), punctuation("() {")),
-                                                codeLine(punctuation("}")),
+                                            kotlinCode(
+                                                """
+                                                fun main() {
+                                                }
+                                                """.trimIndent(),
                                             ),
                                         note = richText(regular("Dentro de las llaves escribirás las instrucciones del programa.")),
                                     ),
@@ -97,11 +91,13 @@ val firstProgramsLessonContent =
                                     LessonCodeExample(
                                         title = "Dos salidas consecutivas",
                                         lines =
-                                            listOf(
-                                                codeLine(keyword("fun "), function("main"), punctuation("() {")),
-                                                codeLine(plain("    "), function("println"), punctuation("("), string("\"Empiezo a estudiar.\""), punctuation(")")),
-                                                codeLine(plain("    "), function("println"), punctuation("("), string("\"Termino este bloque.\""), punctuation(")")),
-                                                codeLine(punctuation("}")),
+                                            kotlinCode(
+                                                """
+                                                fun main() {
+                                                    println("Empiezo a estudiar.")
+                                                    println("Termino este bloque.")
+                                                }
+                                                """.trimIndent(),
                                             ),
                                         note = richText(regular("Primero aparece el primer mensaje; después, el segundo.")),
                                     ),
@@ -135,13 +131,15 @@ val firstProgramsLessonContent =
                                     LessonCodeExample(
                                         title = "Una nota breve y otra de varias líneas",
                                         lines =
-                                            listOf(
-                                                codeLine(keyword("fun "), function("main"), punctuation("() {")),
-                                                codeLine(plain("    "), comment("// Este mensaje abre el resumen")),
-                                                codeLine(plain("    "), function("println"), punctuation("("), string("\"Resumen del día\""), punctuation(")")),
-                                                codeLine(plain("    "), comment("/* Esta nota explica")),
-                                                codeLine(plain("       "), comment("   el cierre. */")),
-                                                codeLine(punctuation("}")),
+                                            kotlinCode(
+                                                """
+                                                fun main() {
+                                                    // Este mensaje abre el resumen
+                                                    println("Resumen del día")
+                                                    /* Esta nota explica
+                                                          el cierre. */
+                                                }
+                                                """.trimIndent(),
                                             ),
                                         note = richText(regular("Los comentarios acompañan al código, pero no forman parte de la salida.")),
                                     ),
@@ -177,11 +175,13 @@ val firstProgramsLessonContent =
                                     LessonCodeExample(
                                         title = "Texto y número",
                                         lines =
-                                            listOf(
-                                                codeLine(keyword("fun "), function("main"), punctuation("() {")),
-                                                codeLine(plain("    "), function("println"), punctuation("("), string("\"Temas para repasar\""), punctuation(")")),
-                                                codeLine(plain("    "), function("println"), punctuation("("), number("4"), punctuation(")")),
-                                                codeLine(punctuation("}")),
+                                            kotlinCode(
+                                                """
+                                                fun main() {
+                                                    println("Temas para repasar")
+                                                    println(4)
+                                                }
+                                                """.trimIndent(),
                                             ),
                                         note = richText(regular("Las comillas distinguen el texto del número.")),
                                     ),
@@ -218,13 +218,15 @@ val firstProgramsLessonContent =
                                     LessonCodeExample(
                                         title = "Un curso y sus lecciones",
                                         lines =
-                                            listOf(
-                                                codeLine(keyword("fun "), function("main"), punctuation("() {")),
-                                                codeLine(plain("    "), keyword("val "), plain("curso "), operator("="), plain(" "), string("\"Kotlin\"")),
-                                                codeLine(plain("    "), keyword("var "), plain("lecciones "), operator("="), plain(" "), number("1")),
-                                                codeLine(plain("    "), plain("lecciones "), operator("="), plain(" "), number("2")),
-                                                codeLine(plain("    "), function("println"), punctuation("("), string("\""), interpolation("\$curso"), string(": "), interpolation("\$lecciones"), string("\""), punctuation(")")),
-                                                codeLine(punctuation("}")),
+                                            kotlinCode(
+                                                $$"""
+                                                    fun main() {
+                                                        val curso = "Kotlin"
+                                                        var lecciones = 1
+                                                        lecciones = 2
+                                                        println("$curso: $lecciones")
+                                                    }
+                                                """.trimIndent(),
                                             ),
                                         note = richText(inlineCode("curso"), regular(" no cambia; "), inlineCode("lecciones"), regular(" pasa de 1 a 2. La consola muestra "), inlineCode("Kotlin: 2"), regular(".")),
                                     ),
@@ -239,7 +241,9 @@ val firstProgramsLessonContent =
                             paragraph(
                                 regular("Dentro de un texto entre comillas, escribe "),
                                 inlineCode("\$nombre"),
-                                regular(" para interpolar la variable llamada nombre. El signo "),
+                                regular(" para interpolar la variable llamada "),
+                                inlineCode("nombre"),
+                                regular(". El signo "),
                                 inlineCode("\$"),
                                 regular(" avisa a Kotlin de que debe insertar su valor."),
                             ),
@@ -332,13 +336,11 @@ val firstProgramsLessonContent =
     )
 
 private fun interpolatedGreetingProgram() =
-    listOf(
-        codeLine(keyword("fun "), function("main"), punctuation("() {")),
-        codeLine(plain("    "), keyword("val "), plain("nombre "), operator("="), plain(" "), string("\"Ada\"")),
-        codeLine(plain("    "), function("println"), punctuation("("), string("\"Hola, "), interpolation("\$nombre"), string("\""), punctuation(")")),
-        codeLine(punctuation("}")),
+    kotlinCode(
+        $$"""
+            fun main() {
+                val nombre = "Ada"
+                println("Hola, $nombre")
+            }
+        """.trimIndent(),
     )
-
-private fun comment(text: String): LessonCodeToken = LessonCodeToken(text = text, kind = dev.kuromiichi.damprep.data.lessons.LessonCodeTokenKind.Comment)
-
-private fun interpolation(text: String): LessonCodeToken = LessonCodeToken(text = text, kind = dev.kuromiichi.damprep.data.lessons.LessonCodeTokenKind.Interpolation)

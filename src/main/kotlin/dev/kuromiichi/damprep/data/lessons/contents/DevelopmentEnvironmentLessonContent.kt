@@ -10,20 +10,15 @@ import dev.kuromiichi.damprep.data.lessons.LessonStepContent
 import dev.kuromiichi.damprep.data.lessons.LessonTool
 import dev.kuromiichi.damprep.data.lessons.LessonToolLogo
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
-import dev.kuromiichi.damprep.data.lessons.codeLine
 import dev.kuromiichi.damprep.data.lessons.consoleOutput
 import dev.kuromiichi.damprep.data.lessons.consoleRun
 import dev.kuromiichi.damprep.data.lessons.emphasis
-import dev.kuromiichi.damprep.data.lessons.function
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
-import dev.kuromiichi.damprep.data.lessons.keyword
+import dev.kuromiichi.damprep.data.lessons.kotlinCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
-import dev.kuromiichi.damprep.data.lessons.plain
-import dev.kuromiichi.damprep.data.lessons.punctuation
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
-import dev.kuromiichi.damprep.data.lessons.string
 
 val developmentEnvironmentLessonContent =
     LessonContent(
@@ -263,20 +258,12 @@ val developmentEnvironmentLessonContent =
                                     LessonCodeExample(
                                         title = "Main.kt",
                                         lines =
-                                            listOf(
-                                                codeLine(
-                                                    keyword("fun "),
-                                                    function("main"),
-                                                    punctuation("() {"),
-                                                ),
-                                                codeLine(
-                                                    plain("    "),
-                                                    function("println"),
-                                                    punctuation("("),
-                                                    string("\"Hello World!\""),
-                                                    punctuation(")"),
-                                                ),
-                                                codeLine(punctuation("}")),
+                                            kotlinCode(
+                                                """
+                                                fun main() {
+                                                    println("Hello World!")
+                                                }
+                                                """.trimIndent(),
                                             ),
                                         note = richText(regular("Resultado esperado en la consola: "), inlineCode("Hello World!"), regular(".")),
                                     ),
