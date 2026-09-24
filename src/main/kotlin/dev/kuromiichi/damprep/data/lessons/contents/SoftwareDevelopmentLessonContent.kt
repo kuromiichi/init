@@ -5,10 +5,15 @@ import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.codeLine
+import dev.kuromiichi.damprep.data.lessons.emphasis
+import dev.kuromiichi.damprep.data.lessons.explanationCode
 import dev.kuromiichi.damprep.data.lessons.function
+import dev.kuromiichi.damprep.data.lessons.highlight
+import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.keyword
 import dev.kuromiichi.damprep.data.lessons.number
 import dev.kuromiichi.damprep.data.lessons.operator
+import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.paragraphs
 import dev.kuromiichi.damprep.data.lessons.plain
 import dev.kuromiichi.damprep.data.lessons.punctuation
@@ -49,6 +54,43 @@ val softwareDevelopmentLessonContent =
                         ),
                 ),
                 LessonStep(
+                    title = "Cómo es un buen algoritmo",
+                    explanation =
+                        listOf(
+                            paragraph(
+                                regular("Un algoritmo útil es "),
+                                emphasis("preciso"),
+                                regular(", porque indica el orden exacto de los pasos; "),
+                                emphasis("definido"),
+                                regular(", porque con los mismos datos da siempre el mismo resultado; y "),
+                                emphasis("finito"),
+                                regular(", porque termina en algún momento."),
+                            ),
+                            paragraph(
+                                regular("Antes de programar, podemos escribirlo en "),
+                                highlight("pseudocódigo"),
+                                regular(", un lenguaje cercano al nuestro, o dibujarlo como "),
+                                highlight("diagrama de flujo"),
+                                regular(". Ninguno depende de un lenguaje de programación concreto."),
+                            ),
+                            explanationCode(
+                                "Pseudocódigo: aplicar un descuento",
+                                richText("El diagrama de esta pantalla representa los mismos pasos."),
+                                "Inicio",
+                                "  Leer precio",
+                                "  Si precio > 50 entonces",
+                                "    precio ← precio × 0,9",
+                                "  Fin si",
+                                "  Mostrar precio",
+                                "Fin",
+                            ),
+                        ),
+                    visual =
+                        LessonVisualContent.Flow(
+                            nodes = listOf("Inicio", "Leer precio", "¿Más de 50 €?", "Aplicar descuento", "Mostrar precio", "Fin"),
+                        ),
+                ),
+                LessonStep(
                     title = "Hay varias formas de programar",
                     explanation =
                         paragraphs(
@@ -84,12 +126,25 @@ val softwareDevelopmentLessonContent =
                         ),
                 ),
                 LessonStep(
-                    title = "Errores: sintaxis y lógica",
+                    title = "Errores: sintaxis, ejecución y lógica",
                     explanation =
-                        paragraphs(
-                            "Al programar aparecerán errores. No significa que estés haciendo algo mal: estás trabajando con un sistema preciso.",
-                            "Los errores sintácticos aparecen cuando el código no respeta las reglas del lenguaje, como una frase con palabras mal colocadas.",
-                            "Los errores lógicos permiten ejecutar el programa, pero producen un resultado distinto del esperado. Aprender a distinguirlos te ahorrará mucha frustración.",
+                        listOf(
+                            paragraph("Al programar aparecerán errores. No significa que estés haciendo algo mal: estás trabajando con un sistema preciso. Aprender a distinguirlos te ahorrará mucha frustración."),
+                            paragraph(
+                                regular("Los errores "),
+                                emphasis("sintácticos"),
+                                regular(" aparecen cuando el código no respeta las reglas del lenguaje, como una frase con palabras mal colocadas. El programa ni siquiera llega a compilarse."),
+                            ),
+                            paragraph(
+                                regular("Los errores "),
+                                emphasis("de ejecución"),
+                                regular(" aparecen con el programa en marcha: el código compila, pero una instrucción no puede completarse y el programa se detiene."),
+                            ),
+                            paragraph(
+                                regular("Los errores "),
+                                emphasis("lógicos"),
+                                regular(" permiten ejecutar el programa hasta el final, pero producen un resultado distinto del esperado."),
+                            ),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -106,6 +161,21 @@ val softwareDevelopmentLessonContent =
                                                 ),
                                             ),
                                         note = richText(regular("Faltan comillas y paréntesis de cierre: la frase queda incompleta.")),
+                                    ),
+                                    LessonCodeExample(
+                                        title = "Error de ejecución",
+                                        lines =
+                                            listOf(
+                                                codeLine(
+                                                    keyword("val"),
+                                                    plain(" minutos "),
+                                                    operator("="),
+                                                    plain(" "),
+                                                    string("\"hola\"", hasErrorUnderline = true),
+                                                    plain(".toInt()", hasErrorUnderline = true),
+                                                ),
+                                            ),
+                                        note = richText(regular("Compila, pero al ejecutarse se detiene: "), inlineCode("hola"), regular(" no se puede convertir en número.")),
                                     ),
                                     LessonCodeExample(
                                         title = "Error lógico",
@@ -136,19 +206,55 @@ val softwareDevelopmentLessonContent =
                         ),
                 ),
                 LessonStep(
-                    title = "Lenguajes y traducción",
+                    title = "Niveles de lenguaje y traductores",
                     explanation =
-                        paragraphs(
-                            "Nosotros escribiremos en Kotlin, un lenguaje de alto nivel pensado para que las personas podamos leerlo y escribirlo con cierta comodidad.",
-                            "En escritorio, Kotlin se compila normalmente a bytecode: una forma intermedia que entiende la máquina virtual de Java.",
-                            "Después, la JVM convierte y ejecuta esas instrucciones de una forma que el ordenador puede realizar.",
+                        listOf(
+                            paragraph(
+                                regular("Los lenguajes de "),
+                                emphasis("bajo nivel"),
+                                regular(", como el código máquina o el ensamblador, están muy cerca del procesador. Los de "),
+                                emphasis("alto nivel"),
+                                regular(", como Kotlin, Java o Python, se parecen más a nuestra forma de expresarnos."),
+                            ),
+                            paragraph(
+                                regular("El procesador solo ejecuta código máquina, así que hace falta un traductor. Un "),
+                                highlight("compilador"),
+                                regular(" traduce todo el código fuente antes de ejecutarlo y genera un resultado que se puede ejecutar después."),
+                            ),
+                            paragraph(
+                                regular("Un "),
+                                highlight("intérprete"),
+                                regular(" lee y ejecuta el programa instrucción a instrucción, sin generar antes un ejecutable. Algunos lenguajes combinan ambas ideas."),
+                            ),
+                        ),
+                    visual =
+                        LessonVisualContent.IconText(
+                            title = "Compilar o interpretar",
+                            body = "El compilador traduce todo antes de ejecutar; el intérprete traduce y ejecuta sobre la marcha.",
+                        ),
+                ),
+                LessonStep(
+                    title = "Kotlin: compilado y ejecutado en la JVM",
+                    explanation =
+                        listOf(
+                            paragraph(
+                                regular("Kotlin para escritorio sigue un modelo mixto. El compilador traduce tu código fuente, escrito en archivos "),
+                                inlineCode(".kt"),
+                                regular(", a bytecode: un código intermedio que se guarda en archivos "),
+                                inlineCode(".class"),
+                                regular("."),
+                            ),
+                            paragraph("La máquina virtual de Java, la JVM, ejecuta ese bytecode: lo interpreta y, mientras el programa funciona, compila a código máquina las partes que más se usan."),
+                            paragraph("Por eso el mismo bytecode funciona en Windows, macOS o Linux siempre que haya una JVM instalada."),
                         ),
                     visual =
                         LessonVisualContent.Flow(
                             nodes =
                                 listOf(
-                                    "Kotlin",
-                                    "Bytecode JVM",
+                                    "Código fuente .kt",
+                                    "Compilador de Kotlin",
+                                    "Bytecode .class",
+                                    "JVM",
                                     "Código máquina",
                                 ),
                         ),
@@ -158,6 +264,7 @@ val softwareDevelopmentLessonContent =
                     explanation =
                         paragraphs(
                             "El software casi nunca queda terminado para siempre. Cambia porque encontramos fallos, entendemos mejor el problema o aparecen nuevas necesidades.",
+                            "Hay distintos modelos de ciclo de vida. En el modelo en cascada, cada fase termina antes de empezar la siguiente; en los modelos iterativos y en las metodologías ágiles, el ciclo se repite en versiones pequeñas que se revisan y mejoran.",
                             "Por eso avanzaremos en pasos pequeños: escribir algo, probarlo, leer qué ocurre, corregir y mejorar.",
                             "Esa forma de trabajar es más importante que acertar a la primera.",
                         ),

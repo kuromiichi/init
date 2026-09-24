@@ -54,8 +54,8 @@ val inputDecisionsLessonContent =
                     title = "Operar con números",
                     explanation =
                         listOf(
-                            paragraph(inlineCode("Int"), regular(" es un tipo para números enteros, sin decimales. Un literal como "), inlineCode("12"), regular(" permite a Kotlin inferir ese tipo.")),
-                            paragraph(inlineCode("+"), regular(", "), inlineCode("-"), regular(", "), inlineCode("*"), regular(" y "), inlineCode("/"), regular(" realizan las operaciones habituales. Con dos "), inlineCode("Int"), regular(", la división descarta la parte decimal: "), inlineCode("7 / 2"), regular(" da "), inlineCode("3"), regular(".")),
+                            paragraph(inlineCode("Int"), regular(" es un tipo para números enteros, sin decimales. Un literal como "), inlineCode("30"), regular(" permite a Kotlin inferir ese tipo, aunque también puedes escribirlo tú tras dos puntos: "), inlineCode("val total: Int = 30"), regular(".")),
+                            paragraph(inlineCode("+"), regular(", "), inlineCode("-"), regular(", "), inlineCode("*"), regular(" y "), inlineCode("/"), regular(" realizan las operaciones habituales. Con dos "), inlineCode("Int"), regular(", la división descarta la parte decimal: "), inlineCode("7 / 2"), regular(" da "), inlineCode("3"), regular(". El operador "), inlineCode("%"), regular(" da el resto: "), inlineCode("7 % 2"), regular(" da "), inlineCode("1"), regular(", lo que sirve, por ejemplo, para saber si un número es par.")),
                             paragraph(regular("Si necesitas decimales, usa un valor como "), inlineCode("2.0"), regular(" (tipo "), inlineCode("Double"), regular("). Aquí basta trabajar con minutos enteros. Desde este ejemplo, los fragmentos muestran instrucciones que pondrías dentro de "), inlineCode("main"), regular(".")),
                         ),
                     visual =
@@ -66,12 +66,14 @@ val inputDecisionsLessonContent =
                                     lines =
                                         kotlinCode(
                                             """
-                                            val total = 30
-                                            val porTema = total / 2
+                                            val total: Int = 30
+                                            val porTema = total / 4
+                                            val sobran = total % 4
                                             println(porTema)
+                                            println(sobran)
                                             """.trimIndent(),
                                         ),
-                                    note = richText(regular("La consola muestra "), inlineCode("15"), regular(": los minutos para cada tema.")),
+                                    note = richText(regular("La consola muestra "), inlineCode("7"), regular(" y después "), inlineCode("2"), regular(": siete minutos para cada uno de los cuatro temas y dos que sobran.")),
                                 ),
                             ),
                         ),
@@ -225,7 +227,7 @@ val inputDecisionsLessonContent =
                     title = "Cuando necesitas un número",
                     explanation =
                         listOf(
-                            paragraph(regular("Comparar directamente la respuesta de "), inlineCode("readln()"), regular(" con un número no sirve: primero hay que convertir el texto.")),
+                            paragraph(regular("Comparar directamente la respuesta de "), inlineCode("readln()"), regular(" con un número no sirve: primero hay que convertir el texto. "), inlineCode("toInt()"), regular(" lo convierte, pero si el texto no es un número entero el programa se detiene con un error de ejecución.")),
                             paragraph(inlineCode("toIntOrNull()"), regular(" permite comprobar el resultado antes de usarlo. Si el texto no representa un entero, "), inlineCode("null"), regular(" indica que no se pudo convertir; no es el número cero.")),
                             paragraph(regular("Tras comprobar que no es "), inlineCode("null"), regular(", Kotlin permite tratar "), inlineCode("minutos"), regular(" como número en el otro bloque. El estudio completo de valores nulos queda para más adelante.")),
                         ),
