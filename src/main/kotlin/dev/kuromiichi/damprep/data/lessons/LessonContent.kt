@@ -198,8 +198,6 @@ object LessonContentCatalog {
             inputDecisionsLessonContent,
         )
 
-    val currentLesson = lessons.first()
-
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }
 
     fun hasContent(lessonId: String): Boolean = findByLessonId(lessonId) != null
