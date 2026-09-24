@@ -24,7 +24,6 @@ val inputDecisionsLessonContent =
             listOf(
                 LessonStep(
                     title = "Pedir una respuesta",
-                    body = "Un programa puede pedir información por la consola. print deja el cursor en la misma línea y readln espera a que escribas una respuesta y pulses Intro.",
                     explanation =
                         listOf(
                             paragraph(inlineCode("print"), regular(" muestra el mensaje sin añadir un salto de línea; así puedes escribir la respuesta a su lado.")),
@@ -53,7 +52,6 @@ val inputDecisionsLessonContent =
                 ),
                 LessonStep(
                     title = "Operar con números",
-                    body = "Los números permiten calcular antes de decidir. Int representa enteros; Kotlin puede sumar, restar, multiplicar y dividir con +, -, * y /.",
                     explanation =
                         listOf(
                             paragraph(inlineCode("Int"), regular(" es un tipo para números enteros, sin decimales. Un literal como "), inlineCode("12"), regular(" permite a Kotlin inferir ese tipo.")),
@@ -80,7 +78,6 @@ val inputDecisionsLessonContent =
                 ),
                 LessonStep(
                     title = "Preguntas con respuesta verdadera o falsa",
-                    body = "Una comparación produce un Boolean: true o false. Puedes comparar números o comprobar si dos valores son iguales.",
                     explanation =
                         listOf(
                             paragraph(inlineCode(">="), regular(" pregunta si el valor de la izquierda es mayor o igual que el de la derecha. También tienes "), inlineCode(">"), regular(", "), inlineCode("<"), regular(" y "), inlineCode("<="), regular(".")),
@@ -107,7 +104,6 @@ val inputDecisionsLessonContent =
                 ),
                 LessonStep(
                     title = "Elegir entre dos caminos",
-                    body = "if ejecuta su bloque cuando la condición es true. Si es false y hay un else, ejecuta el otro bloque.",
                     explanation =
                         listOf(
                             paragraph(regular("La condición va entre paréntesis. Las llaves marcan qué instrucciones pertenecen a cada camino.")),
@@ -137,7 +133,6 @@ val inputDecisionsLessonContent =
                 ),
                 LessonStep(
                     title = "Distinguir una tercera respuesta",
-                    body = "Con else if puedes comprobar otra condición antes de llegar a else. Así no confundes una respuesta inesperada con un «no».",
                     explanation =
                         listOf(
                             paragraph(regular("La primera condición que resulte verdadera determina el bloque que se ejecuta. Las siguientes ya no se evalúan.")),
@@ -169,7 +164,6 @@ val inputDecisionsLessonContent =
                 ),
                 LessonStep(
                     title = "Combinar condiciones",
-                    body = "Los operadores lógicos forman una condición a partir de otras: && exige ambas, || acepta cualquiera y ! invierte true y false.",
                     explanation =
                         listOf(
                             paragraph(inlineCode("&&"), regular(" se lee «y»: solo da "), inlineCode("true"), regular(" si las dos condiciones son verdaderas. "), inlineCode("||"), regular(" se lee «o»: basta con una.")),
@@ -200,7 +194,6 @@ val inputDecisionsLessonContent =
                 ),
                 LessonStep(
                     title = "Elegir entre varias opciones",
-                    body = "when expresa con claridad una selección entre varios valores. Cada rama tiene un valor, una flecha y la acción correspondiente.",
                     explanation =
                         listOf(
                             paragraph(regular("Kotlin compara "), inlineCode("opcion"), regular(" con cada valor escrito a la izquierda de "), inlineCode("->"), regular(". Ejecuta la rama que coincida.")),
@@ -230,7 +223,6 @@ val inputDecisionsLessonContent =
                 ),
                 LessonStep(
                     title = "Cuando necesitas un número",
-                    body = "readln devuelve texto incluso si escribes dígitos. toIntOrNull intenta convertirlo a Int y devuelve null cuando no es un número entero válido.",
                     explanation =
                         listOf(
                             paragraph(regular("Comparar directamente la respuesta de "), inlineCode("readln()"), regular(" con un número no sirve: primero hay que convertir el texto.")),
@@ -261,7 +253,6 @@ val inputDecisionsLessonContent =
                 ),
                 LessonStep(
                     title = "Ahora te toca: planear una pausa",
-                    body = "Combina lectura, conversión y decisión en un programa pequeño. Comprueba tanto una entrada válida como una inválida antes de darlo por terminado.",
                     explanation =
                         listOf(
                             paragraph(regular("Piensa primero en los caminos posibles: un texto que no sea un número, un tiempo inferior al límite y un tiempo que alcance el límite.")),

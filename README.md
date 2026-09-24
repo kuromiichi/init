@@ -200,6 +200,12 @@ lines =
 
 El prefijo `$$` hace que `$nombre` se muestre tal cual en lugar de interpolarse. El resultado esperado de una práctica se describe con `consoleRun(consoleInput(...), consoleOutput(...))`.
 
+Cada paso se explica con bloques (`paragraph`, `steps`, `callout`, `explanationCode`); para texto sin formato basta `paragraphs("…", "…")`. En el texto enriquecido se sigue esta convención:
+
+- `inlineCode`: código, nombres de archivos, comandos, rutas, paquetes y formatos (`Main.kt`, `git --version`, `/opt`, `MSI`).
+- `emphasis`: etiquetas de la interfaz de IntelliJ IDEA o del sistema operativo (*New Project*, *Add sample code*, *Aplicaciones*) y palabras que se quieren resaltar.
+- `highlight`: la idea principal de un párrafo o el objetivo de una práctica.
+
 Las pruebas de `LessonContentRulesTest` comprueban reglas generales del contenido, como variantes completas por sistema operativo, prácticas verificables, que no se muestre trazabilidad curricular al alumno o que una lección no use construcciones que se enseñan más adelante. Validan la estructura y el alcance, no la redacción.
 
 ## Próximos pasos

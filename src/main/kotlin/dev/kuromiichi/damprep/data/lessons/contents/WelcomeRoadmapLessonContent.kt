@@ -5,6 +5,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonTool
 import dev.kuromiichi.damprep.data.lessons.LessonToolLogo
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
+import dev.kuromiichi.damprep.data.lessons.paragraphs
 
 val welcomeRoadmapLessonContent =
     LessonContent(
@@ -13,7 +14,11 @@ val welcomeRoadmapLessonContent =
             listOf(
                 LessonStep(
                     title = "Bienvenida y mapa del camino",
-                    body = "Esta app está pensada como una tutoría guiada.\n\nIrás avanzando poco a poco, con pantallas breves y una idea importante cada vez.",
+                    explanation =
+                        paragraphs(
+                            "Esta app está pensada como una tutoría guiada.",
+                            "Irás avanzando poco a poco, con pantallas breves y una idea importante cada vez.",
+                        ),
                     visual =
                         LessonVisualContent.IconText(
                             title = "Ruta",
@@ -22,7 +27,11 @@ val welcomeRoadmapLessonContent =
                 ),
                 LessonStep(
                     title = "No necesitas saber programar todavía",
-                    body = "Empezamos desde cero. No pasa nada si aún no sabes qué es una variable, un proyecto o un error de compilación.\n\nLo iremos construyendo paso a paso.",
+                    explanation =
+                        paragraphs(
+                            "Empezamos desde cero. No pasa nada si aún no sabes qué es una variable, un proyecto o un error de compilación.",
+                            "Lo iremos construyendo paso a paso.",
+                        ),
                     visual =
                         LessonVisualContent.IconText(
                             title = "Punto de partida",
@@ -31,7 +40,11 @@ val welcomeRoadmapLessonContent =
                 ),
                 LessonStep(
                     title = "Usaremos Kotlin e IntelliJ IDEA",
-                    body = "Kotlin será el lenguaje principal: la forma en la que escribiremos instrucciones para el ordenador.\n\nIntelliJ IDEA será el entorno donde escribiremos, ejecutaremos y revisaremos esos programas.",
+                    explanation =
+                        paragraphs(
+                            "Kotlin será el lenguaje principal: la forma en la que escribiremos instrucciones para el ordenador.",
+                            "IntelliJ IDEA será el entorno donde escribiremos, ejecutaremos y revisaremos esos programas.",
+                        ),
                     visual =
                         LessonVisualContent.ToolCards(
                             tools =
@@ -51,7 +64,11 @@ val welcomeRoadmapLessonContent =
                 ),
                 LessonStep(
                     title = "Programar es aprender a pensar con orden",
-                    body = "Programar no va de memorizar comandos.\n\nVa de observar un problema, dividirlo en partes pequeñas y explicar una solución con claridad.",
+                    explanation =
+                        paragraphs(
+                            "Programar no va de memorizar comandos.",
+                            "Va de observar un problema, dividirlo en partes pequeñas y explicar una solución con claridad.",
+                        ),
                     visual =
                         LessonVisualContent.IconText(
                             title = "Forma de pensar",
@@ -60,7 +77,11 @@ val welcomeRoadmapLessonContent =
                 ),
                 LessonStep(
                     title = "Las herramientas también cuentan",
-                    body = "También aprenderás a trabajar con un entorno real.\n\nEjecutarás proyectos, leerás errores, depurarás, guardarás versiones y comprobarás que tu código hace lo esperado.",
+                    explanation =
+                        paragraphs(
+                            "También aprenderás a trabajar con un entorno real.",
+                            "Ejecutarás proyectos, leerás errores, depurarás, guardarás versiones y comprobarás que tu código hace lo esperado.",
+                        ),
                     visual =
                         LessonVisualContent.IconText(
                             title = "Herramientas",
@@ -69,7 +90,11 @@ val welcomeRoadmapLessonContent =
                 ),
                 LessonStep(
                     title = "Cómo avanzar",
-                    body = "Lee cada pantalla con calma.\n\nMás adelante, cada tema tendrá actividades para confirmar que puedes aplicar lo aprendido antes de continuar.",
+                    explanation =
+                        paragraphs(
+                            "Lee cada pantalla con calma.",
+                            "Muchas lecciones terminan con una práctica guiada: te propone un pequeño programa y te pide confirmar que funciona antes de continuar.",
+                        ),
                     visual =
                         LessonVisualContent.IconText(
                             title = "Progreso",

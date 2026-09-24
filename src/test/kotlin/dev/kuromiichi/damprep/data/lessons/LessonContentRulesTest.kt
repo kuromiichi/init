@@ -10,6 +10,8 @@ import kotlin.test.assertTrue
  * Reglas que debe cumplir cualquier lección. Comprueban la estructura y el alcance del contenido,
  * no su redacción, para que reescribir un texto no obligue a tocar las pruebas.
  */
+private const val MAX_PARAGRAPH_LENGTH = 320
+
 class LessonContentRulesTest {
     private val lessons = LessonContentCatalog.lessons
 
@@ -20,10 +22,12 @@ class LessonContentRulesTest {
                 val where = "${lesson.lessonId} › ${step.title}"
                 assertTrue(step.title.isNotBlank(), "Paso sin título en ${lesson.lessonId}")
                 step.allContents().forEach { content ->
-                    assertTrue(content.body.isNotBlank(), "Paso sin texto: $where")
+                    assertTrue(content.explanation.isNotEmpty(), "Paso sin explicación: $where")
                     assertTrue(content.visual.readableText().isNotBlank(), "Visual vacío: $where")
                     assertTrue(content.explanation.all { it.readableText().isNotBlank() }, "Bloque vacío: $where")
-                    assertTrue(content.body.length < 240 || content.explanation.size > 1, "Explicación sin dividir: $where")
+                    content.explanation.filterIsInstance<LessonExplanationBlock.Paragraph>().forEach { paragraph ->
+                        assertTrue(paragraph.text.plainText.length <= MAX_PARAGRAPH_LENGTH, "Párrafo demasiado largo: $where")
+                    }
                 }
             }
         }
@@ -35,7 +39,7 @@ class LessonContentRulesTest {
             assertEquals(TargetOperatingSystem.entries.toSet(), step.operatingSystemContent.keys, step.title)
             val variants = TargetOperatingSystem.entries.map(step::contentFor)
             assertTrue(variants.all { it.links.isNotEmpty() }, "Variante sin enlaces: ${step.title}")
-            assertEquals(variants.size, variants.map(LessonStepContent::body).toSet().size, "Variantes repetidas: ${step.title}")
+            assertEquals(variants.size, variants.map(LessonStepContent::explanation).toSet().size, "Variantes repetidas: ${step.title}")
         }
     }
 
@@ -122,7 +126,6 @@ private fun LessonContent.allVisibleText(): String =
         buildList {
             add(step.title)
             step.allContents().forEach { content ->
-                add(content.body)
                 add(content.visual.readableText())
                 addAll(content.explanation.map(LessonExplanationBlock::readableText))
                 addAll(content.links.map(LessonLink::label))

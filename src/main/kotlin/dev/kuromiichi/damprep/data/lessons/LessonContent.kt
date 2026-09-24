@@ -9,10 +9,9 @@ import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 
 data class LessonStep(
     val title: String,
-    val body: String,
+    val explanation: List<LessonExplanationBlock>,
     val visual: LessonVisualContent,
     val links: List<LessonLink> = emptyList(),
-    val explanation: List<LessonExplanationBlock> = body.toParagraphBlocks(),
     val operatingSystemContent: Map<TargetOperatingSystem, LessonStepContent> = emptyMap(),
     val practice: LessonPractice? = null,
 ) {
@@ -23,7 +22,6 @@ data class LessonStep(
         targetOperatingSystem
             ?.let(operatingSystemContent::get)
             ?: LessonStepContent(
-                body = body,
                 visual = visual,
                 links = links,
                 explanation = explanation,
@@ -52,10 +50,9 @@ data class LessonConsoleLine(
 )
 
 data class LessonStepContent(
-    val body: String,
+    val explanation: List<LessonExplanationBlock>,
     val visual: LessonVisualContent,
     val links: List<LessonLink> = emptyList(),
-    val explanation: List<LessonExplanationBlock> = body.toParagraphBlocks(),
 )
 
 sealed interface LessonExplanationBlock {
@@ -256,20 +253,31 @@ internal fun paragraph(vararg spans: LessonTextSpan): LessonExplanationBlock.Par
 
 internal fun paragraph(text: String): LessonExplanationBlock.Paragraph = paragraph(regular(text))
 
+/** Párrafos de texto sin formato, para pasos que no citan código ni elementos de la interfaz. */
+internal fun paragraphs(vararg texts: String): List<LessonExplanationBlock> = texts.map(::paragraph)
+
 internal fun richText(vararg spans: LessonTextSpan): LessonRichText = LessonRichText(spans.toList())
 
 internal fun richText(text: String): LessonRichText = richText(regular(text))
 
 internal fun steps(vararg items: String): LessonExplanationBlock.Steps = LessonExplanationBlock.Steps(items.map { item -> LessonRichText(listOf(regular(item))) })
 
+internal fun steps(vararg items: LessonRichText): LessonExplanationBlock.Steps = LessonExplanationBlock.Steps(items.toList())
+
 internal fun callout(
     title: String,
     text: String,
     tone: LessonCalloutTone = LessonCalloutTone.Information,
+): LessonExplanationBlock.Callout = callout(title, richText(text), tone)
+
+internal fun callout(
+    title: String,
+    text: LessonRichText,
+    tone: LessonCalloutTone = LessonCalloutTone.Information,
 ): LessonExplanationBlock.Callout =
     LessonExplanationBlock.Callout(
         title = title,
-        text = LessonRichText(listOf(regular(text))),
+        text = text,
         tone = tone,
     )
 
@@ -284,18 +292,6 @@ internal fun explanationCode(
         note = note,
     )
 
-internal fun structuredStepContent(
-    explanation: List<LessonExplanationBlock>,
-    visual: LessonVisualContent,
-    links: List<LessonLink> = emptyList(),
-): LessonStepContent =
-    LessonStepContent(
-        body = explanation.joinToString("\n\n", transform = LessonExplanationBlock::plainText),
-        visual = visual,
-        links = links,
-        explanation = explanation,
-    )
-
 internal fun regular(text: String): LessonTextSpan = LessonTextSpan(text)
 
 internal fun emphasis(text: String): LessonTextSpan = LessonTextSpan(text, LessonTextSpanStyle.Emphasis)
@@ -303,17 +299,3 @@ internal fun emphasis(text: String): LessonTextSpan = LessonTextSpan(text, Lesso
 internal fun highlight(text: String): LessonTextSpan = LessonTextSpan(text, LessonTextSpanStyle.Highlight)
 
 internal fun inlineCode(text: String): LessonTextSpan = LessonTextSpan(text, LessonTextSpanStyle.InlineCode)
-
-private fun String.toParagraphBlocks(): List<LessonExplanationBlock> =
-    trim()
-        .split(Regex("\\n\\s*\\n"))
-        .filter(String::isNotBlank)
-        .map(::paragraph)
-
-private fun LessonExplanationBlock.plainText(): String =
-    when (this) {
-        is LessonExplanationBlock.Callout -> "$title: ${text.plainText}"
-        is LessonExplanationBlock.Code -> listOf(title, lines.joinToString("\n"), note.plainText).joinToString("\n")
-        is LessonExplanationBlock.Paragraph -> text.plainText
-        is LessonExplanationBlock.Steps -> items.joinToString("\n") { item -> item.plainText }
-    }

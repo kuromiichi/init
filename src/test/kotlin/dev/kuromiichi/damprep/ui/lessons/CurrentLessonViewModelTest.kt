@@ -5,6 +5,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
+import dev.kuromiichi.damprep.data.lessons.paragraphs
 import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.testing.ViewModelTest
@@ -265,7 +266,7 @@ class CurrentLessonViewModelTest : ViewModelTest() {
     ): LessonStep =
         LessonStep(
             title = title,
-            body = "Contenido",
+            explanation = paragraphs("Contenido"),
             visual =
                 LessonVisualContent.IconText(
                     title = "Visual",

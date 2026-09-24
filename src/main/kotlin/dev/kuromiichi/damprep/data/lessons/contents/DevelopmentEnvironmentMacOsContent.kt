@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCalloutTone
 import dev.kuromiichi.damprep.data.lessons.LessonLink
+import dev.kuromiichi.damprep.data.lessons.LessonStepContent
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.callout
 import dev.kuromiichi.damprep.data.lessons.emphasis
@@ -12,12 +13,11 @@ import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
-import dev.kuromiichi.damprep.data.lessons.structuredStepContent
 
 internal val macOsDevelopmentEnvironmentContent =
     DevelopmentEnvironmentPlatformContent(
         jdkInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(
@@ -30,14 +30,14 @@ internal val macOsDevelopmentEnvironmentContent =
                             regular("."),
                         ),
                         steps(
-                            "Abre Acerca de este Mac y comprueba el procesador.",
-                            "Elige aarch64 para Apple Silicon —M1 o posterior—, o x64 para Intel.",
-                            "Descarga el JDK 25, abre el PKG y acepta la licencia.",
-                            "Conserva el destino propuesto y pulsa Instalar.",
+                            richText(regular("Abre "), emphasis("Acerca de este Mac"), regular(" y comprueba el procesador.")),
+                            richText(regular("Elige "), inlineCode("aarch64"), regular(" para Apple Silicon —M1 o posterior—, o "), inlineCode("x64"), regular(" para Intel.")),
+                            richText(regular("Descarga el JDK 25, abre el "), inlineCode("PKG"), regular(" y acepta la licencia.")),
+                            richText(regular("Conserva el destino propuesto y pulsa "), emphasis("Instalar"), regular(".")),
                         ),
                         callout(
                             title = "Destino de la instalación",
-                            text = "Temurin quedará dentro de /Library/Java/JavaVirtualMachines.",
+                            text = richText(regular("Temurin quedará dentro de "), inlineCode("/Library/Java/JavaVirtualMachines"), regular(".")),
                             tone = LessonCalloutTone.Tip,
                         ),
                     ),
@@ -65,7 +65,7 @@ internal val macOsDevelopmentEnvironmentContent =
                     ),
             ),
         intellijInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(
@@ -76,9 +76,9 @@ internal val macOsDevelopmentEnvironmentContent =
                             regular(" para la arquitectura de tu Mac."),
                         ),
                         steps(
-                            "Elige Apple Silicon para M1 o posterior, o Intel para x64.",
-                            "Abre el DMG y arrastra IntelliJ IDEA a Aplicaciones.",
-                            "Expulsa la imagen y abre el IDE desde Aplicaciones, Launchpad o Spotlight.",
+                            richText("Elige Apple Silicon para M1 o posterior, o Intel para x64."),
+                            richText(regular("Abre el "), inlineCode("DMG"), regular(" y arrastra IntelliJ IDEA a "), emphasis("Aplicaciones"), regular(".")),
+                            richText(regular("Expulsa la imagen y abre el IDE desde "), emphasis("Aplicaciones"), regular(", Launchpad o Spotlight.")),
                         ),
                         callout(
                             title = "Primer arranque",
@@ -109,7 +109,7 @@ internal val macOsDevelopmentEnvironmentContent =
                     ),
             ),
         gitInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(

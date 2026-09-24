@@ -17,8 +17,10 @@ import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.kotlinCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
+import dev.kuromiichi.damprep.data.lessons.paragraphs
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
+import dev.kuromiichi.damprep.data.lessons.steps
 
 val developmentEnvironmentLessonContent =
     LessonContent(
@@ -27,7 +29,12 @@ val developmentEnvironmentLessonContent =
             listOf(
                 LessonStep(
                     title = "Tu entorno de trabajo",
-                    body = "Antes de escribir código con comodidad necesitamos preparar el lugar donde vas a trabajar.\n\nUn entorno de desarrollo es el conjunto de herramientas que te ayudan a escribir, ejecutar, revisar y corregir programas.\n\nEmpezaremos con cuatro piezas: IntelliJ IDEA, Kotlin, un JDK y Git.",
+                    explanation =
+                        paragraphs(
+                            "Antes de escribir código con comodidad necesitamos preparar el lugar donde vas a trabajar.",
+                            "Un entorno de desarrollo es el conjunto de herramientas que te ayudan a escribir, ejecutar, revisar y corregir programas.",
+                            "Empezaremos con cuatro piezas: IntelliJ IDEA, Kotlin, un JDK y Git.",
+                        ),
                     visual =
                         LessonVisualContent.ToolCards(
                             tools =
@@ -57,7 +64,12 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "IDE: la mesa de trabajo",
-                    body = "IDE significa entorno de desarrollo integrado. Lo importante está en integrado: reúne herramientas que por separado serían más incómodas.\n\nEl editor colorea el código y avisa de errores. El sistema de ejecución lanza el programa y el depurador permite detenerlo para mirar valores.\n\nEl IDE no programa por ti: te da señales mientras piensas y mantiene juntos el SDK, el lenguaje y las dependencias.",
+                    explanation =
+                        paragraphs(
+                            "IDE significa entorno de desarrollo integrado. Lo importante está en integrado: reúne herramientas que por separado serían más incómodas.",
+                            "El editor colorea el código y avisa de errores. El sistema de ejecución lanza el programa y el depurador permite detenerlo para mirar valores.",
+                            "El IDE no programa por ti: te da señales mientras piensas y mantiene juntos el SDK, el lenguaje y las dependencias.",
+                        ),
                     visual =
                         LessonVisualContent.Screenshot(
                             image = LessonScreenshot.IntellijIdeWorkspace,
@@ -66,7 +78,16 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "JDK y JRE: no son lo mismo",
-                    body = "Java aparece aunque escribamos Kotlin porque Kotlin/JVM se apoya en la máquina virtual de Java.\n\nUn entorno de ejecución permite arrancar programas ya preparados. El JDK añade las herramientas necesarias para desarrollarlos, entre ellas el compilador javac.\n\nDesde Java 11 el JDK ya no contiene una carpeta JRE separada. Para DAM Prep instalaremos el JDK completo y lo seleccionaremos como SDK del proyecto.",
+                    explanation =
+                        listOf(
+                            paragraph("Java aparece aunque escribamos Kotlin porque Kotlin/JVM se apoya en la máquina virtual de Java."),
+                            paragraph(
+                                regular("El JRE, o entorno de ejecución, permite arrancar programas ya preparados. El JDK añade las herramientas necesarias para desarrollarlos, entre ellas el compilador "),
+                                inlineCode("javac"),
+                                regular("."),
+                            ),
+                            paragraph("Desde Java 9 el JDK ya no incluye una carpeta JRE en su interior, y desde Java 11 Oracle dejó de publicar el JRE por separado. Para DAM Prep instalaremos el JDK completo y lo seleccionaremos como SDK del proyecto."),
+                        ),
                     visual =
                         LessonVisualContent.Flow(
                             nodes =
@@ -81,7 +102,12 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "Kotlin, IntelliJ y el plugin",
-                    body = "Kotlin será el idioma en el que escribiremos las instrucciones. IntelliJ IDEA será el taller donde las escribiremos.\n\nEl soporte del lenguaje permite al IDE reconocer la sintaxis, mostrar avisos, ofrecer autocompletado y conectar con el compilador.\n\nEn IntelliJ moderno viene integrado. Aun así, el proyecto debe indicar con qué versión de Kotlin va a trabajar.",
+                    explanation =
+                        paragraphs(
+                            "Kotlin será el idioma en el que escribiremos las instrucciones. IntelliJ IDEA será el taller donde las escribiremos.",
+                            "El soporte del lenguaje permite al IDE reconocer la sintaxis, mostrar avisos, ofrecer autocompletado y conectar con el compilador.",
+                            "En IntelliJ moderno viene integrado. Aun así, el proyecto debe indicar con qué versión de Kotlin va a trabajar.",
+                        ),
                     visual =
                         LessonVisualContent.ToolCards(
                             tools =
@@ -101,7 +127,12 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "Gradle: construir sin hacerlo a mano",
-                    body = "Gradle es una herramienta de construcción. Lee la configuración del proyecto para saber cómo compilar, ejecutar pruebas, empaquetar y resolver dependencias.\n\nAl principio lo verás como archivos y botones de sincronización dentro de IntelliJ.\n\nNo hace falta dominarlo ahora. Su papel es evitar el trabajo manual y permitir que el proyecto se construya igual en otro ordenador.",
+                    explanation =
+                        paragraphs(
+                            "Gradle es una herramienta de construcción. Lee la configuración del proyecto para saber cómo compilar, ejecutar pruebas, empaquetar y resolver dependencias.",
+                            "Al principio lo verás como archivos y botones de sincronización dentro de IntelliJ.",
+                            "No hace falta dominarlo ahora. Su papel es evitar el trabajo manual y permitir que el proyecto se construya igual en otro ordenador.",
+                        ),
                     visual =
                         LessonVisualContent.Flow(
                             nodes =
@@ -116,7 +147,12 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "Git: memoria del proyecto",
-                    body = "Git no compila ni ejecuta el programa. Registra la historia del proyecto: qué cambió, cuándo cambió y por qué.\n\nEl control de versiones forma parte del entorno profesional, aunque todavía no necesites escribir comandos.\n\nMás adelante nos permitirá guardar puntos seguros, comparar cambios y trabajar sin miedo a romper algo.",
+                    explanation =
+                        paragraphs(
+                            "Git no compila ni ejecuta el programa. Registra la historia del proyecto: qué cambió, cuándo cambió y por qué.",
+                            "El control de versiones forma parte del entorno profesional, aunque todavía no necesites escribir comandos.",
+                            "Más adelante nos permitirá guardar puntos seguros, comparar cambios y trabajar sin miedo a romper algo.",
+                        ),
                     visual =
                         LessonVisualContent.Flow(
                             nodes =
@@ -131,7 +167,10 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "1. Instalar el JDK 25 para DAM Prep",
-                    body = "Selecciona el sistema operativo que vas a utilizar para ver el paquete, la arquitectura y los pasos de instalación adecuados.",
+                    explanation =
+                        paragraphs(
+                            "Selecciona el sistema operativo que vas a utilizar para ver el paquete, la arquitectura y los pasos de instalación adecuados.",
+                        ),
                     visual =
                         LessonVisualContent.Flow(
                             nodes =
@@ -147,7 +186,10 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "2. Instalar IntelliJ IDEA",
-                    body = "Selecciona tu sistema operativo para instalar IntelliJ IDEA mediante el formato recomendado por JetBrains.",
+                    explanation =
+                        paragraphs(
+                            "Selecciona tu sistema operativo para instalar IntelliJ IDEA mediante el formato recomendado por JetBrains.",
+                        ),
                     visual =
                         LessonVisualContent.ToolCards(
                             tools =
@@ -163,7 +205,10 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "3. Instalar Git",
-                    body = "Selecciona tu sistema operativo para instalar Git con el método apropiado y comprobar que está disponible.",
+                    explanation =
+                        paragraphs(
+                            "Selecciona tu sistema operativo para instalar Git con el método apropiado y comprobar que está disponible.",
+                        ),
                     visual =
                         LessonVisualContent.Flow(
                             nodes =
@@ -178,7 +223,17 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "4. Crear el proyecto Kotlin con Gradle",
-                    body = "No necesitas descargar Kotlin ni Gradle por separado. El soporte de Kotlin viene incluido en IntelliJ IDEA y el Gradle Wrapper descargará la versión configurada.\n\nEn New Project, elige Kotlin, Gradle, JDK 25 y Kotlin DSL. Activa Add sample code y, en Advanced Settings, comprueba que Gradle distribution utiliza Wrapper.\n\nCrea el proyecto y espera a que finalice la primera sincronización antes de ejecutar nada.",
+                    explanation =
+                        listOf(
+                            paragraph("No necesitas descargar Kotlin ni Gradle por separado. El soporte de Kotlin viene incluido en IntelliJ IDEA y el Gradle Wrapper descargará la versión configurada."),
+                            steps(
+                                richText(regular("Abre "), emphasis("New Project"), regular(" y elige el generador "), emphasis("Kotlin"), regular(".")),
+                                richText(regular("En "), emphasis("Build system"), regular(" selecciona "), emphasis("Gradle"), regular("; en "), emphasis("JDK"), regular(", el JDK 25 que instalaste; y en "), emphasis("Gradle DSL"), regular(", "), emphasis("Kotlin"), regular(".")),
+                                richText(regular("Activa "), emphasis("Add sample code"), regular(" para que se cree un programa de ejemplo.")),
+                                richText(regular("En "), emphasis("Advanced Settings"), regular(", comprueba que "), emphasis("Gradle distribution"), regular(" es "), emphasis("Wrapper"), regular(".")),
+                            ),
+                            paragraph("Crea el proyecto y espera a que finalice la primera sincronización antes de ejecutar nada."),
+                        ),
                     visual =
                         LessonVisualContent.Flow(
                             nodes =
@@ -204,7 +259,12 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "Ejecutar no es lo mismo que depurar",
-                    body = "Cuando ejecutas un programa, lo pones en marcha y observas el resultado.\n\nCuando depuras, puedes detenerlo en una línea, avanzar paso a paso y mirar cuánto vale cada variable.\n\nEjecutar responde qué ha pasado. Depurar ayuda a descubrir por qué.",
+                    explanation =
+                        paragraphs(
+                            "Cuando ejecutas un programa, lo pones en marcha y observas el resultado.",
+                            "Cuando depuras, puedes detenerlo en una línea, avanzar paso a paso y mirar cuánto vale cada variable.",
+                            "Ejecutar responde qué ha pasado. Depurar ayuda a descubrir por qué.",
+                        ),
                     visual =
                         LessonVisualContent.Flow(
                             nodes =
@@ -219,7 +279,12 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "Configurar sin convertirlo en ritual",
-                    body = "Los IDE tienen paneles de configuración, atajos, temas, plugins y actualizaciones. No hace falta tocarlo todo el primer día.\n\nCambia solo lo que mejora tu trabajo: el tema visual, el tamaño de letra, el SDK correcto y los plugins necesarios.\n\nDe momento buscamos una base estable: abrir, entender, ejecutar y corregir.",
+                    explanation =
+                        paragraphs(
+                            "Los IDE tienen paneles de configuración, atajos, temas, plugins y actualizaciones. No hace falta tocarlo todo el primer día.",
+                            "Cambia solo lo que mejora tu trabajo: el tema visual, el tamaño de letra, el SDK correcto y los plugins necesarios.",
+                            "De momento buscamos una base estable: abrir, entender, ejecutar y corregir.",
+                        ),
                     visual =
                         LessonVisualContent.IconText(
                             title = "Base estable",
@@ -228,7 +293,6 @@ val developmentEnvironmentLessonContent =
                 ),
                 LessonStep(
                     title = "Comprobar el entorno con Hello World",
-                    body = "IntelliJ IDEA habrá creado un pequeño programa de ejemplo. No necesitas entender todavía cómo está escrito.\n\nAbre Main.kt, pulsa el icono verde situado junto a main y ejecuta MainKt.\n\nCuando termine, comprueba que la consola muestra Hello World!.",
                     explanation =
                         listOf(
                             paragraph(
@@ -314,12 +378,12 @@ val developmentEnvironmentLessonContent =
                                         regular("Pulsa el icono verde junto a "),
                                         inlineCode("fun main()"),
                                         regular(" y elige "),
-                                        inlineCode("Run 'MainKt'"),
+                                        emphasis("Run 'MainKt'"),
                                         regular("."),
                                     ),
                                     richText(
                                         regular("Si no aparece la salida, abre la ventana "),
-                                        inlineCode("Run"),
+                                        emphasis("Run"),
                                         regular(" y comprueba que se ejecutó "),
                                         inlineCode("MainKt"),
                                         regular("."),

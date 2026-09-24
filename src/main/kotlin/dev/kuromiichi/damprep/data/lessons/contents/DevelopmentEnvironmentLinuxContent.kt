@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCalloutTone
 import dev.kuromiichi.damprep.data.lessons.LessonLink
+import dev.kuromiichi.damprep.data.lessons.LessonStepContent
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.callout
 import dev.kuromiichi.damprep.data.lessons.emphasis
@@ -12,12 +13,11 @@ import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
-import dev.kuromiichi.damprep.data.lessons.structuredStepContent
 
 internal val linuxDevelopmentEnvironmentContent =
     DevelopmentEnvironmentPlatformContent(
         jdkInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(
@@ -30,10 +30,10 @@ internal val linuxDevelopmentEnvironmentContent =
                             regular("."),
                         ),
                         steps(
-                            "Abre la guía oficial y añade la clave y el repositorio.",
-                            "Actualiza el índice de paquetes.",
-                            "Instala temurin-25-jdk con apt o dnf.",
-                            "Abre una terminal nueva al finalizar.",
+                            richText("Abre la guía oficial y añade la clave y el repositorio."),
+                            richText("Actualiza el índice de paquetes."),
+                            richText(regular("Instala "), inlineCode("temurin-25-jdk"), regular(" con "), inlineCode("apt"), regular(" o "), inlineCode("dnf"), regular(".")),
+                            richText("Abre una terminal nueva al finalizar."),
                         ),
                         explanationCode(
                             title = "Después de añadir el repositorio",
@@ -46,7 +46,7 @@ internal val linuxDevelopmentEnvironmentContent =
                         ),
                         callout(
                             title = "Otras distribuciones",
-                            text = "La guía incluye openSUSE y Alpine. Si la tuya no está cubierta, usa el TAR.GZ oficial.",
+                            text = richText(regular("La guía incluye openSUSE y Alpine. Si la tuya no está cubierta, usa el "), inlineCode("TAR.GZ"), regular(" oficial.")),
                             tone = LessonCalloutTone.Information,
                         ),
                     ),
@@ -67,7 +67,7 @@ internal val linuxDevelopmentEnvironmentContent =
                     ),
             ),
         intellijInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(
@@ -78,10 +78,10 @@ internal val linuxDevelopmentEnvironmentContent =
                             regular("."),
                         ),
                         steps(
-                            "Elige x86_64 o ARM64 según tu procesador.",
-                            "Descarga el TAR.GZ y no lo mezcles con una instalación anterior.",
-                            "Extráelo en /opt y ejecuta idea.sh desde su carpeta bin.",
-                            "En el IDE, usa Tools > Create Desktop Entry si quieres añadirlo al menú.",
+                            richText("Elige x86_64 o ARM64 según tu procesador."),
+                            richText(regular("Descarga el "), inlineCode("TAR.GZ"), regular(" y no lo mezcles con una instalación anterior.")),
+                            richText(regular("Extráelo en "), inlineCode("/opt"), regular(" y ejecuta "), inlineCode("idea.sh"), regular(" desde su carpeta "), inlineCode("bin"), regular(".")),
+                            richText(regular("En el IDE, usa "), emphasis("Tools | Create Desktop Entry"), regular(" si quieres añadirlo al menú.")),
                         ),
                         explanationCode(
                             title = "Terminal",
@@ -107,7 +107,7 @@ internal val linuxDevelopmentEnvironmentContent =
                     ),
             ),
         gitInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(

@@ -23,7 +23,6 @@ val firstProgramsLessonContent =
             listOf(
                 LessonStep(
                     title = "Un programa empieza en main",
-                    body = "Un programa Kotlin se organiza en un archivo y empieza a ejecutar desde main. Dentro de su bloque escribimos las instrucciones, con sangría para leerlas mejor.",
                     explanation =
                         listOf(
                             paragraph(
@@ -66,7 +65,6 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Instrucciones en orden",
-                    body = "Una instrucción ordena al programa hacer una acción. Kotlin las ejecuta de arriba abajo; println muestra información en la consola.",
                     explanation =
                         listOf(
                             paragraph(
@@ -106,7 +104,6 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Comentarios para explicar una decisión",
-                    body = "Los comentarios aclaran el código para las personas. Kotlin los ignora al ejecutar: puedes usar // en una línea o /* */ en varias.",
                     explanation =
                         listOf(
                             paragraph(
@@ -148,7 +145,6 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Valores escritos en el programa",
-                    body = "Un literal es un valor escrito directamente en el programa. Las comillas delimitan texto; un número como 4 se escribe sin ellas.",
                     explanation =
                         listOf(
                             paragraph(
@@ -190,7 +186,6 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Guardar valores con val y var",
-                    body = "Una variable guarda un valor bajo un nombre. Empieza con val si no debe cambiar; usa var cuando necesites reasignar el valor.",
                     explanation =
                         listOf(
                             paragraph(
@@ -235,7 +230,6 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Interpolación de variables",
-                    body = "En el ejemplo anterior, el mensaje usa \$curso y \$lecciones. La interpolación inserta sus valores dentro del texto al ejecutar esa línea.",
                     explanation =
                         listOf(
                             paragraph(
@@ -270,7 +264,6 @@ val firstProgramsLessonContent =
                 ),
                 LessonStep(
                     title = "Ahora te toca: una tarea que cambia",
-                    body = "Ya conoces la estructura de un programa, la salida por consola, los comentarios, los literales, los nombres y la interpolación. Úsalos juntos en una práctica breve.",
                     explanation =
                         listOf(
                             paragraph(
@@ -326,9 +319,7 @@ val firstProgramsLessonContent =
                             extension = richText(regular("Cambia solo el texto de la tarea y conserva el mismo cambio de estado y el formato de las dos líneas.")),
                             confirmation =
                                 richText(
-                                    regular("Confirma que la consola muestra las dos líneas indicadas, primero con el estado inicial y después con el "),
-                                    inlineCode("estado"),
-                                    regular(" actualizado."),
+                                    regular("Confirma que la consola muestra las dos líneas indicadas, primero con el estado inicial y después con el actualizado."),
                                 ),
                         ),
                 ),

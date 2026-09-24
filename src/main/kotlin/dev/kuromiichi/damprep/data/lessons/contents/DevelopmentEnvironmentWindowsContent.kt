@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCalloutTone
 import dev.kuromiichi.damprep.data.lessons.LessonLink
+import dev.kuromiichi.damprep.data.lessons.LessonStepContent
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.callout
 import dev.kuromiichi.damprep.data.lessons.emphasis
@@ -12,12 +13,11 @@ import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
-import dev.kuromiichi.damprep.data.lessons.structuredStepContent
 
 internal val windowsDevelopmentEnvironmentContent =
     DevelopmentEnvironmentPlatformContent(
         jdkInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(
@@ -30,14 +30,14 @@ internal val windowsDevelopmentEnvironmentContent =
                             regular("."),
                         ),
                         steps(
-                            "Descarga el paquete JDK 25 para Windows x64.",
-                            "Abre el MSI, acepta la licencia y conserva la ruta propuesta.",
-                            "En Custom Setup deja activado PATH y activa Set JAVA_HOME.",
-                            "Finaliza y cierra las terminales que estuvieran abiertas.",
+                            richText("Descarga el paquete JDK 25 para Windows x64."),
+                            richText(regular("Abre el "), inlineCode("MSI"), regular(", acepta la licencia y conserva la ruta propuesta.")),
+                            richText(regular("En "), emphasis("Custom Setup"), regular(", deja activada la opción que añade Java al "), inlineCode("PATH"), regular(" y activa también la que configura "), inlineCode("JAVA_HOME"), regular(".")),
+                            richText("Finaliza y cierra las terminales que estuvieran abiertas."),
                         ),
                         callout(
                             title = "Comprueba el paquete",
-                            text = "Elige JDK, no JRE: necesitamos también el compilador javac.",
+                            text = richText(regular("Elige JDK, no JRE: necesitamos también el compilador "), inlineCode("javac"), regular(".")),
                             tone = LessonCalloutTone.Warning,
                         ),
                     ),
@@ -65,7 +65,7 @@ internal val windowsDevelopmentEnvironmentContent =
                     ),
             ),
         intellijInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(
@@ -76,10 +76,10 @@ internal val windowsDevelopmentEnvironmentContent =
                             regular(" oficial de Windows."),
                         ),
                         steps(
-                            "Descarga el EXE x64, salvo que tu equipo use ARM64.",
-                            "Ejecuta el asistente y abre Installation Options.",
-                            "Activa Open Folder as Project; añadir el lanzador al PATH es opcional.",
-                            "Termina la instalación y abre IntelliJ IDEA desde Inicio.",
+                            richText(regular("Descarga el "), inlineCode("EXE"), regular(" x64, salvo que tu equipo use ARM64.")),
+                            richText(regular("Ejecuta el asistente hasta llegar a "), emphasis("Installation Options"), regular(".")),
+                            richText(regular("Activa "), emphasis("Open Folder as Project"), regular("; añadir los lanzadores al "), inlineCode("PATH"), regular(" es opcional.")),
+                            richText(regular("Termina la instalación y abre IntelliJ IDEA desde "), emphasis("Inicio"), regular(".")),
                         ),
                         callout(
                             title = "Dos runtimes distintos",
@@ -110,7 +110,7 @@ internal val windowsDevelopmentEnvironmentContent =
                     ),
             ),
         gitInstallation =
-            structuredStepContent(
+            LessonStepContent(
                 explanation =
                     listOf(
                         paragraph(
@@ -118,9 +118,9 @@ internal val windowsDevelopmentEnvironmentContent =
                             regular(" proporciona Git y su integración con la terminal."),
                         ),
                         steps(
-                            "Descarga Git for Windows y abre el instalador.",
-                            "Conserva las opciones recomendadas, incluida la línea de comandos.",
-                            "Finaliza y abre PowerShell, Windows Terminal o Git Bash.",
+                            richText("Descarga Git for Windows y abre el instalador."),
+                            richText("Conserva las opciones recomendadas, incluida la línea de comandos."),
+                            richText("Finaliza y abre PowerShell, Windows Terminal o Git Bash."),
                         ),
                         explanationCode(
                             title = "Comprueba Git",
