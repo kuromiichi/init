@@ -8,7 +8,7 @@ El agente principal lleva cada tarea de principio a fin. Los pasos son flexibles
 
 1. **Definir** el objetivo, la experiencia esperada y el alcance cuando haga falta. Si una ambigüedad cambia materialmente el resultado, preguntar; si no, asumir algo razonable y decirlo.
 2. **Investigar** solo el código y las fuentes relevantes. Para contenido docente, contrastar con [Programación 1DAM](https://github.com/joseluisgs/Programacion-00-2022-2023), [Entornos de Desarrollo 1DAM](https://github.com/joseluisgs/EntornosDesarrollo-00-2022-2023) y, cuando proceda, el BOE. Para detalles técnicos, priorizar la documentación oficial de Kotlin, Compose Multiplatform, Material 3, Room, Koin y Gradle.
-3. **Implementar** cambios acotados e idiomáticos, reutilizando componentes y patrones existentes y añadiendo pruebas útiles para la lógica afectada.
+3. **Implementar** cambios acotados e idiomáticos, reutilizando componentes y patrones existentes y añadiendo pruebas útiles para la lógica afectada. Antes de dar un cambio por bueno, contrastar cada patrón o API nuevos con la documentación oficial (guías de arquitectura de Android para ViewModels, estado y corrutinas; Kotlin; Compose Multiplatform; Material 3; Koin; Room) y con la versión de la dependencia que usa el proyecto. No basta con que compile y funcione: si algo se aparta de la práctica recomendada, corregirlo o justificarlo, e indicar qué se ha verificado.
 4. **Revisar el diff y verificar según el riesgo.** Para cambios sustanciales, ejecutar la build limpia descrita abajo.
 5. **Probar la experiencia en la app** si cambia la interfaz o una lección.
 6. **Corregir** lo detectado y repetir las comprobaciones afectadas. Hacer commit solo si se pide o forma parte explícita del encargo.
@@ -24,7 +24,7 @@ El agente principal lleva cada tarea de principio a fin. Los pasos son flexibles
 
 ## Verificación
 
-No ejecutar invocaciones de Gradle en paralelo. Una ejecución interrumpida o solapada puede dejar procesos del compilador esperando tras KSP y hacer que una build sana parezca colgada; antes de reintentar, detener la anterior y ejecutar `./gradlew --stop`.
+No ejecutar invocaciones de Gradle en paralelo. Si una compilación se queda colgada (suele deberse a permisos sobre salidas previas en `build/`), detenerla, ejecutar `./gradlew --stop` y repetir la tarea precedida de `clean`, por ejemplo `./gradlew --no-daemon clean compileKotlin`.
 
 Durante la iteración bastan tareas focalizadas (`./gradlew test`, `./gradlew ktlintCheck`, `./gradlew ktlintFormat`). Para cambios sustanciales, cerrar con:
 

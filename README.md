@@ -22,19 +22,18 @@ Actualmente incluye:
 
 - onboarding y preferencias persistentes de nombre, tratamiento, sistema operativo y tema;
 - temas claro, oscuro y según el sistema;
-- navegación entre portada, listado y lecciones;
-- navegación por botones y teclado dentro de las lecciones;
-- finalización explícita y progreso persistente de las lecciones;
-- desbloqueo secuencial, recuperación del último paso visitado y barra de progreso reactiva;
-- itinerario lineal provisional de 29 lecciones;
-- cuatro lecciones con contenido:
+- navegación entre portada, listado y lecciones, con navegación por botones y teclado dentro de cada lección;
+- itinerario lineal provisional de 29 lecciones con desbloqueo secuencial; las lecciones que aún no se pueden abrir explican el motivo;
+- progreso persistente: una lección sin terminar se retoma en el último paso visitado y una lección completada se repasa desde el principio sin alterar el progreso;
+- cinco lecciones con contenido:
     1. Bienvenida y mapa del camino;
     2. Qué es el software y cómo se construye;
     3. Preparar el entorno de trabajo;
     4. Primeros programas;
-- componentes visuales para diagramas, ejemplos de código, herramientas y capturas;
-- prácticas finales estructuradas para comprobar el entorno y construir los primeros programas;
-- pruebas automatizadas de los modelos, preferencias, progreso, base de datos y catálogo de contenidos;
+    5. Leer datos y tomar decisiones;
+- componentes visuales para diagramas, ejemplos de código resaltados, herramientas y capturas;
+- prácticas guiadas con requisitos, resultado esperado en forma de consola, pistas progresivas y confirmación explícita;
+- pruebas automatizadas de los modelos, preferencias, progreso, base de datos, ViewModels, resaltado de código y reglas del contenido;
 - verificación automática del formato, las pruebas y la compilación.
 
 La pantalla de apuntes todavía está pendiente. Las lecciones futuras permanecen bloqueadas o marcadas como próximas hasta que se complete la anterior y exista contenido disponible.
@@ -83,10 +82,11 @@ El código fuente de DAM Prep no tiene todavía una licencia publicada. Esta dis
 - Kotlin/JVM
 - Compose Multiplatform para escritorio
 - Material 3
-- Navigation Compose
+- Navigation Compose con rutas tipadas
+- ViewModels de AndroidX Lifecycle
 - DataStore Preferences
 - Room sobre SQLite para los datos de progreso
-- Koin para la inyección de dependencias
+- Koin para la inyección de dependencias, incluidos los ViewModels
 - KSP para la generación de código de Room
 - Gradle con Kotlin DSL
 - Kotlin Test y JUnit Platform
@@ -119,10 +119,11 @@ Ejecutar las pruebas:
 ./gradlew test
 ```
 
-Compilar y verificar el proyecto completo:
+Compilar y verificar el proyecto completo desde cero:
 
 ```bash
-./gradlew clean build
+./gradlew --stop
+./gradlew --no-daemon clean build
 ```
 
 La tarea `build` también comprueba el estilo del código. Para aplicar automáticamente el formato acordado:
@@ -130,6 +131,8 @@ La tarea `build` también comprueba el estilo del código. Para aplicar automát
 ```bash
 ./gradlew ktlintFormat
 ```
+
+Si una compilación se queda detenida sin avanzar, suele deberse a salidas previas en `build/`: basta con detenerla, ejecutar `./gradlew --stop` y repetir la tarea precedida de `clean`.
 
 Para generar el instalador correspondiente al sistema operativo actual:
 
@@ -150,11 +153,11 @@ Si macOS rechaza la firma porque la carpeta está gestionada por un servicio de 
 ```text
 src/main/kotlin/dev/kuromiichi/damprep/
 ├── data/
-│   ├── lessons/       Catálogo, modelos y contenidos de las lecciones
+│   ├── lessons/       Catálogo, modelos, contenidos y resaltado de ejemplos de Kotlin
 │   ├── local/         Resolución del directorio de datos de la aplicación
 │   ├── preferences/   Preferencias persistentes del usuario
 │   └── progress/      Base Room y repositorio de progreso
-├── di/                Dependencias compartidas configuradas con Koin
+├── di/                Módulos de Koin: datos y ViewModels
 ├── ui/
 │   ├── common/        Componentes compartidos y visuales didácticos
 │   ├── home/          Portada y resumen de progreso
@@ -170,13 +173,41 @@ src/main/kotlin/dev/kuromiichi/damprep/
 
 Los recursos gráficos se encuentran en `src/main/composeResources/drawable` y las pruebas en `src/test/kotlin`.
 
+## Arquitectura
+
+La aplicación sigue las guías de arquitectura de Android adaptadas a escritorio:
+
+- Cada pantalla obtiene su `ViewModel` con `koinViewModel()` y observa un único `StateFlow` de estado mediante `collectAsStateWithLifecycle()`.
+- Los ViewModels producen el estado combinando los flujos de los repositorios con `stateIn(WhileSubscribed(5_000))`, sin lanzar trabajo en `init`. Los eventos de un solo uso, como terminar una lección, se exponen como estado.
+- Los repositorios escriben en un ámbito de corrutinas de aplicación inyectado, de modo que el progreso se guarda aunque la pantalla se cierre justo después.
+- La lección abierta recibe su identificador de la ruta tipada mediante `SavedStateHandle.toRoute()`.
+
+## Escribir contenido
+
+Cada lección es un `LessonContent` en `data/lessons/contents`, identificado con el mismo id que su entrada en `LessonCatalog`. Los ejemplos de código se escriben como Kotlin normal y se resaltan automáticamente:
+
+```kotlin
+lines =
+    kotlinCode(
+        $$"""
+            fun main() {
+                val nombre = readln()
+                println("Hola, $nombre")
+            }
+        """.trimIndent(),
+    ),
+```
+
+El prefijo `$$` hace que `$nombre` se muestre tal cual en lugar de interpolarse. El resultado esperado de una práctica se describe con `consoleRun(consoleInput(...), consoleOutput(...))`.
+
+Las pruebas de `LessonContentRulesTest` comprueban reglas generales del contenido, como variantes completas por sistema operativo, prácticas verificables, que no se muestre trazabilidad curricular al alumno o que una lección no use construcciones que se enseñan más adelante. Validan la estructura y el alcance, no la redacción.
+
 ## Próximos pasos
 
-1. Desarrollar la lección de lectura de datos y toma de decisiones, manteniendo la progresión lineal.
+1. Desarrollar la lección de bucles y algoritmos, manteniendo la progresión lineal.
 2. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
-3. Incorporar prácticas estructuradas en las lecciones donde exista una aplicación significativa.
-4. Implementar apuntes persistentes sobre la base de datos local.
-5. Completar los metadatos, iconos y pruebas de los instaladores nativos.
+3. Implementar apuntes persistentes sobre la base de datos local.
+4. Completar los metadatos, iconos y pruebas de los instaladores nativos.
 
 ## Contribución
 
@@ -187,3 +218,5 @@ El proyecto todavía está definiendo su modelo de contenidos y su alcance. Ante
 - qué fuentes se han utilizado;
 - qué conocimientos previos necesita;
 - qué actividad permitirá comprobar que el concepto se ha entendido.
+
+El flujo de trabajo con agentes de IA y las comprobaciones previas a cada cambio se describen en [CLAUDE.md](CLAUDE.md).
