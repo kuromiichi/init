@@ -51,12 +51,40 @@ val inputDecisionsLessonContent =
                         ),
                 ),
                 LessonStep(
+                    title = "Tipos de datos básicos",
+                    explanation =
+                        listOf(
+                            paragraph(regular("Cada valor tiene un "), highlight("tipo"), regular(" que indica qué clase de dato es y qué puedes hacer con él. Kotlin lo comprueba al compilar: no te deja guardar un texto donde espera un número.")),
+                            paragraph(inlineCode("Int"), regular(" guarda enteros; "), inlineCode("Double"), regular(", números con decimales, que se escriben con punto; "), inlineCode("String"), regular(", texto entre comillas; y "), inlineCode("Boolean"), regular(", solo "), inlineCode("true"), regular(" o "), inlineCode("false"), regular(". Hay más, como "), inlineCode("Char"), regular(" para un carácter o "), inlineCode("Long"), regular(" para enteros muy grandes.")),
+                            paragraph(regular("Puedes escribir el tipo tras dos puntos, como en el ejemplo, u omitirlo para que Kotlin lo deduzca del valor. Por eso lo que devuelve "), inlineCode("readln()"), regular(" es siempre un "), inlineCode("String"), regular(", aunque escribas dígitos. Desde aquí, los fragmentos muestran instrucciones que irían dentro de "), inlineCode("main"), regular(".")),
+                        ),
+                    visual =
+                        LessonVisualContent.CodeExamples(
+                            listOf(
+                                LessonCodeExample(
+                                    title = "Datos de una alumna",
+                                    lines =
+                                        kotlinCode(
+                                            $$"""
+                                                val nombre: String = "Ada"
+                                                val edad: Int = 17
+                                                val nota: Double = 7.5
+                                                val matriculada: Boolean = true
+                                                println("$nombre, $edad, $nota")
+                                            """.trimIndent(),
+                                        ),
+                                    note = richText(regular("La consola muestra "), inlineCode("Ada, 17, 7.5"), regular(". El valor de "), inlineCode("matriculada"), regular(" no se imprime; los valores lógicos servirán para decidir.")),
+                                ),
+                            ),
+                        ),
+                ),
+                LessonStep(
                     title = "Operar con números",
                     explanation =
                         listOf(
-                            paragraph(inlineCode("Int"), regular(" es un tipo para números enteros, sin decimales. Un literal como "), inlineCode("30"), regular(" permite a Kotlin inferir ese tipo, aunque también puedes escribirlo tú tras dos puntos: "), inlineCode("val total: Int = 30"), regular(".")),
+                            paragraph(regular("Los números permiten calcular antes de decidir. Si operas con dos "), inlineCode("Int"), regular(", el resultado también es un "), inlineCode("Int"), regular(".")),
                             paragraph(inlineCode("+"), regular(", "), inlineCode("-"), regular(", "), inlineCode("*"), regular(" y "), inlineCode("/"), regular(" realizan las operaciones habituales. Con dos "), inlineCode("Int"), regular(", la división descarta la parte decimal: "), inlineCode("7 / 2"), regular(" da "), inlineCode("3"), regular(". El operador "), inlineCode("%"), regular(" da el resto: "), inlineCode("7 % 2"), regular(" da "), inlineCode("1"), regular(", lo que sirve, por ejemplo, para saber si un número es par.")),
-                            paragraph(regular("Si necesitas decimales, usa un valor como "), inlineCode("2.0"), regular(" (tipo "), inlineCode("Double"), regular("). Aquí basta trabajar con minutos enteros. Desde este ejemplo, los fragmentos muestran instrucciones que pondrías dentro de "), inlineCode("main"), regular(".")),
+                            paragraph(regular("Si necesitas decimales, basta con que uno de los valores sea un "), inlineCode("Double"), regular(": "), inlineCode("7 / 2.0"), regular(" da "), inlineCode("3.5"), regular(". Aquí basta trabajar con minutos enteros.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
