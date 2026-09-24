@@ -3,6 +3,7 @@ package dev.kuromiichi.damprep.data.lessons
 import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.firstProgramsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.inputDecisionsLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.loopsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.softwareDevelopmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.welcomeRoadmapLessonContent
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
@@ -133,7 +134,19 @@ sealed interface LessonVisualContent {
     data class CodeExamples(
         val examples: List<LessonCodeExample>,
     ) : LessonVisualContent
+
+    /** Un ejemplo de código junto a la tabla que sigue sus variables vuelta a vuelta. */
+    data class Trace(
+        val example: LessonCodeExample,
+        val table: LessonTraceTable,
+    ) : LessonVisualContent
 }
+
+data class LessonTraceTable(
+    val title: String,
+    val columns: List<String>,
+    val rows: List<List<String>>,
+)
 
 data class LessonCodeExample(
     val title: String,
@@ -194,6 +207,7 @@ object LessonContentCatalog {
             developmentEnvironmentLessonContent,
             firstProgramsLessonContent,
             inputDecisionsLessonContent,
+            loopsLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

@@ -68,7 +68,7 @@ class LessonContentRulesTest {
     @Test
     fun `code examples and links are well formed`() {
         lessons.flatMap(LessonContent::steps).flatMap(LessonStep::allContents).forEach { content ->
-            (content.visual as? LessonVisualContent.CodeExamples)?.examples?.forEach { example ->
+            content.visual.codeExamples().forEach { example ->
                 assertTrue(example.title.isNotBlank())
                 assertTrue(example.lines.isNotEmpty(), example.title)
                 assertTrue(example.note.plainText.isNotBlank(), example.title)
@@ -78,6 +78,18 @@ class LessonContentRulesTest {
                 assertTrue(link.url.startsWith("https://"), link.url)
             }
         }
+    }
+
+    @Test
+    fun `trace tables have one value per column`() {
+        lessons
+            .flatMap(LessonContent::steps)
+            .flatMap(LessonStep::allContents)
+            .mapNotNull { (it.visual as? LessonVisualContent.Trace)?.table }
+            .forEach { table ->
+                assertTrue(table.rows.isNotEmpty(), table.title)
+                assertTrue(table.rows.all { it.size == table.columns.size }, "Fila incompleta en ${table.title}")
+            }
     }
 
     @Test
@@ -98,6 +110,7 @@ class LessonContentRulesTest {
             mapOf(
                 "first-programs" to listOf("""\breadln\b""", """\bif \(""", """\bwhen \(""", """\bfor \(""", """\bwhile \("""),
                 "input-decisions" to listOf("""\bfor \(""", """\bwhile \(""", """\bfun (?!main\b)""", """\blistOf\b"""),
+                "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 
         laterConstructs.forEach { (lessonId, patterns) ->
@@ -116,10 +129,16 @@ private fun LessonContent.sourceCode(): String =
     steps
         .flatMap(LessonStep::allContents)
         .map(LessonStepContent::visual)
-        .filterIsInstance<LessonVisualContent.CodeExamples>()
-        .flatMap(LessonVisualContent.CodeExamples::examples)
+        .flatMap { it.codeExamples() }
         .flatMap(LessonCodeExample::lines)
         .joinToString("\n") { line -> line.tokens.joinToString("", transform = LessonCodeToken::text) }
+
+private fun LessonVisualContent.codeExamples(): List<LessonCodeExample> =
+    when (this) {
+        is LessonVisualContent.CodeExamples -> examples
+        is LessonVisualContent.Trace -> listOf(example)
+        else -> emptyList()
+    }
 
 private fun LessonContent.allVisibleText(): String =
     steps.joinToString(" ") { step ->
@@ -152,14 +171,13 @@ private fun LessonExplanationBlock.readableText(): String =
 
 private fun LessonVisualContent.readableText(): String =
     when (this) {
-        is LessonVisualContent.CodeExamples ->
-            examples.joinToString(" ") { example ->
-                "${example.title} ${example.note.plainText} " +
-                    example.lines.joinToString(" ") { line -> line.tokens.joinToString("") { token -> token.text } }
-            }
+        is LessonVisualContent.CodeExamples -> examples.joinToString(" ", transform = LessonCodeExample::readableText)
+        is LessonVisualContent.Trace -> "${example.readableText()} ${table.title} ${table.columns.joinToString(" ")}"
         is LessonVisualContent.Cycle -> steps.joinToString(" ")
         is LessonVisualContent.Flow -> nodes.joinToString(" ")
         is LessonVisualContent.IconText -> "$title $body"
         is LessonVisualContent.Screenshot -> description
         is LessonVisualContent.ToolCards -> tools.joinToString(" ") { "${it.name} ${it.kind}" }
     }
+
+private fun LessonCodeExample.readableText(): String = "$title ${note.plainText} " + lines.joinToString(" ") { line -> line.tokens.joinToString("") { token -> token.text } }

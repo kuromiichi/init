@@ -1,5 +1,7 @@
 package dev.kuromiichi.damprep.ui.lessons
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -11,6 +13,7 @@ import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
 import dev.kuromiichi.dam_prep.generated.resources.jdk
 import dev.kuromiichi.dam_prep.generated.resources.kotlin
+import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
 import dev.kuromiichi.damprep.data.lessons.LessonCodeLine
 import dev.kuromiichi.damprep.data.lessons.LessonCodeToken
 import dev.kuromiichi.damprep.data.lessons.LessonCodeTokenKind
@@ -26,9 +29,11 @@ import dev.kuromiichi.damprep.ui.common.LearningCodeLine
 import dev.kuromiichi.damprep.ui.common.LearningCodeToken
 import dev.kuromiichi.damprep.ui.common.LearningCodeTokenKind
 import dev.kuromiichi.damprep.ui.common.LearningToolCard
+import dev.kuromiichi.damprep.ui.common.LearningTraceTable
 import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
 import dev.kuromiichi.damprep.ui.common.ScreenshotLearningVisual
 import dev.kuromiichi.damprep.ui.common.ToolLogoCards
+import dev.kuromiichi.damprep.ui.common.TraceTableVisual
 import org.jetbrains.compose.resources.DrawableResource
 
 @Composable
@@ -43,14 +48,7 @@ internal fun LessonVisual(
         when (visual) {
             is LessonVisualContent.CodeExamples ->
                 CodeExamplesVisual(
-                    examples =
-                        visual.examples.map { example ->
-                            LearningCodeExample(
-                                title = example.title,
-                                lines = example.lines.map { it.toLearningCodeLine() },
-                                note = example.note.toCodeNote(),
-                            )
-                        },
+                    examples = visual.examples.map { it.toLearningCodeExample() },
                 )
 
             is LessonVisualContent.Cycle ->
@@ -70,6 +68,19 @@ internal fun LessonVisual(
                     image = visual.image.drawableResource,
                     description = visual.description,
                 )
+
+            is LessonVisualContent.Trace ->
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    CodeExamplesVisual(examples = listOf(visual.example.toLearningCodeExample()))
+                    TraceTableVisual(
+                        table =
+                            LearningTraceTable(
+                                title = visual.table.title,
+                                columns = visual.table.columns,
+                                rows = visual.table.rows,
+                            ),
+                    )
+                }
 
             is LessonVisualContent.ToolCards ->
                 ToolLogoCards(
@@ -91,7 +102,15 @@ internal val LessonVisualContent.isRich: Boolean
         this is LessonVisualContent.Flow ||
             this is LessonVisualContent.Cycle ||
             this is LessonVisualContent.CodeExamples ||
+            this is LessonVisualContent.Trace ||
             this is LessonVisualContent.Screenshot
+
+private fun LessonCodeExample.toLearningCodeExample(): LearningCodeExample =
+    LearningCodeExample(
+        title = title,
+        lines = lines.map { it.toLearningCodeLine() },
+        note = note.toCodeNote(),
+    )
 
 private fun LessonCodeLine.toLearningCodeLine(): LearningCodeLine = LearningCodeLine(tokens = tokens.map { it.toLearningCodeToken() })
 

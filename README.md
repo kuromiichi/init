@@ -25,13 +25,14 @@ Actualmente incluye:
 - navegación entre portada, listado y lecciones, con navegación por botones y teclado dentro de cada lección;
 - itinerario lineal provisional de 29 lecciones con desbloqueo secuencial; las lecciones que aún no se pueden abrir explican el motivo;
 - progreso persistente: una lección sin terminar se retoma en el último paso visitado y una lección completada se repasa desde el principio sin alterar el progreso;
-- cinco lecciones con contenido:
+- seis lecciones con contenido:
     1. Bienvenida y mapa del camino;
     2. Qué es el software y cómo se construye;
     3. Preparar el entorno de trabajo;
     4. Primeros programas;
     5. Leer datos y tomar decisiones;
-- componentes visuales para diagramas, ejemplos de código resaltados, herramientas y capturas;
+    6. Repetir acciones y construir algoritmos;
+- componentes visuales para diagramas, ejemplos de código resaltados, tablas de traza, herramientas y capturas;
 - prácticas guiadas con requisitos, resultado esperado en forma de consola, pistas progresivas y confirmación explícita;
 - pruebas automatizadas de los modelos, preferencias, progreso, base de datos, ViewModels, resaltado de código y reglas del contenido;
 - verificación automática del formato, las pruebas y la compilación.
@@ -198,7 +199,7 @@ lines =
     ),
 ```
 
-El prefijo `$$` hace que `$nombre` se muestre tal cual en lugar de interpolarse. El resultado esperado de una práctica se describe con `consoleRun(consoleInput(...), consoleOutput(...))`.
+El prefijo `$$` hace que `$nombre` se muestre tal cual en lugar de interpolarse. El resultado esperado de una práctica se describe con `consoleRun(consoleInput(...), consoleOutput(...))`. Para seguir un bucle vuelta a vuelta, `LessonVisualContent.Trace` muestra un ejemplo junto a su `LessonTraceTable`.
 
 Cada paso se explica con bloques (`paragraph`, `steps`, `callout`, `explanationCode`); para texto sin formato basta `paragraphs("…", "…")`. En el texto enriquecido se sigue esta convención:
 
@@ -210,7 +211,7 @@ Las pruebas de `LessonContentRulesTest` comprueban reglas generales del contenid
 
 ## Próximos pasos
 
-1. Desarrollar la lección de bucles y algoritmos, manteniendo la progresión lineal.
+1. Desarrollar la lección de errores y depuración, manteniendo la progresión lineal.
 2. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
 3. Implementar apuntes persistentes sobre la base de datos local.
 4. Completar los metadatos, iconos y pruebas de los instaladores nativos.

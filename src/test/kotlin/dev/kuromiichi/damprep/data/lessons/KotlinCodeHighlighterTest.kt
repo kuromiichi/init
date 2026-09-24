@@ -30,6 +30,18 @@ class KotlinCodeHighlighterTest {
     }
 
     @Test
+    fun `range operators are not confused with decimal numbers`() {
+        val closed = kotlinCode("for (i in 1..5 step 2)").single().tokens
+        val open = kotlinCode("val decimal = 1.5 + (0..<3).count()").single().tokens
+
+        assertEquals(LessonCodeTokenKind.Number, closed.kindOf("1"))
+        assertEquals(LessonCodeTokenKind.Operator, closed.kindOf(".."))
+        assertEquals(LessonCodeTokenKind.Number, closed.kindOf("5"))
+        assertEquals(LessonCodeTokenKind.Operator, open.kindOf("..<"))
+        assertEquals(LessonCodeTokenKind.Number, open.kindOf("1.5"))
+    }
+
+    @Test
     fun `string templates are separated from literal text`() {
         val tokens = kotlinCode($$"""println("Hola, $nombre y ${otro.length}")""").single().tokens
 

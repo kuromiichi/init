@@ -43,6 +43,12 @@ data class LearningCodeExample(
     val note: AnnotatedString,
 )
 
+data class LearningTraceTable(
+    val title: String,
+    val columns: List<String>,
+    val rows: List<List<String>>,
+)
+
 data class LearningConsoleRun(
     val lines: List<LearningConsoleLine>,
 )
