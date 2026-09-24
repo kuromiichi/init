@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.dam_prep.generated.resources.Res
 import dev.kuromiichi.dam_prep.generated.resources.git
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debug_breakpoint
 import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
 import dev.kuromiichi.dam_prep.generated.resources.jdk
@@ -127,4 +128,5 @@ private val LessonScreenshot.drawableResource: DrawableResource
     get() =
         when (this) {
             LessonScreenshot.IntellijIdeWorkspace -> Res.drawable.intellij_ide_workspace
+            LessonScreenshot.IntellijDebugBreakpoint -> Res.drawable.intellij_debug_breakpoint
         }

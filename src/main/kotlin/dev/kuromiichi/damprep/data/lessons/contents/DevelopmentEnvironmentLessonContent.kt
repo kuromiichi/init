@@ -260,21 +260,25 @@ val developmentEnvironmentLessonContent =
                 LessonStep(
                     title = "Ejecutar no es lo mismo que depurar",
                     explanation =
-                        paragraphs(
-                            "Cuando ejecutas un programa, lo pones en marcha y observas el resultado.",
-                            "Cuando depuras, puedes detenerlo en una línea, avanzar paso a paso y mirar cuánto vale cada variable.",
-                            "Ejecutar responde qué ha pasado. Depurar ayuda a descubrir por qué.",
+                        listOf(
+                            paragraph(
+                                regular("Cuando ejecutas un programa con el triángulo verde situado junto a "),
+                                inlineCode("main"),
+                                regular(", lo pones en marcha y observas el resultado en la consola."),
+                            ),
+                            paragraph(
+                                regular("Para depurar, haz clic junto al número de una línea: aparece un punto rojo, un "),
+                                highlight("breakpoint"),
+                                regular(". Al lanzar "),
+                                emphasis("Debug"),
+                                regular(", el programa se detiene en esa línea y puedes avanzar paso a paso y mirar cuánto vale cada variable."),
+                            ),
+                            paragraph("Ejecutar responde qué ha pasado. Depurar ayuda a descubrir por qué."),
                         ),
                     visual =
-                        LessonVisualContent.Flow(
-                            nodes =
-                                listOf(
-                                    "Run",
-                                    "Consola",
-                                    "Breakpoint",
-                                    "Paso a paso",
-                                    "Variables",
-                                ),
+                        LessonVisualContent.Screenshot(
+                            image = LessonScreenshot.IntellijDebugBreakpoint,
+                            description = "Editor de IntelliJ IDEA con el triángulo verde para ejecutar main y un breakpoint rojo en la línea de println.",
                         ),
                 ),
                 LessonStep(

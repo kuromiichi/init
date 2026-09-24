@@ -178,6 +178,7 @@ enum class LessonToolLogo {
 
 enum class LessonScreenshot {
     IntellijIdeWorkspace,
+    IntellijDebugBreakpoint,
 }
 
 data class LessonContent(
