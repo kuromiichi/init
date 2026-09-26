@@ -81,6 +81,19 @@ class LessonContentRulesTest {
     }
 
     @Test
+    fun `copyable examples are complete programs`() {
+        lessons
+            .flatMap(LessonContent::steps)
+            .flatMap(LessonStep::allContents)
+            .flatMap { it.visual.codeExamples() }
+            .filter(LessonCodeExample::isCopyable)
+            .forEach { example ->
+                assertTrue(example.sourceText.startsWith("fun main() {"), example.title)
+                assertTrue(example.sourceText.endsWith("}"), example.title)
+            }
+    }
+
+    @Test
     fun `trace tables have one value per column`() {
         lessons
             .flatMap(LessonContent::steps)
@@ -110,6 +123,7 @@ class LessonContentRulesTest {
             mapOf(
                 "first-programs" to listOf("""\breadln\b""", """\bif \(""", """\bwhen \(""", """\bfor \(""", """\bwhile \("""),
                 "input-decisions" to listOf("""\bfor \(""", """\bwhile \(""", """\bfun (?!main\b)""", """\blistOf\b"""),
+                "debugging" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf)\b""", """\b(try|catch)\b"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 
@@ -130,8 +144,7 @@ private fun LessonContent.sourceCode(): String =
         .flatMap(LessonStep::allContents)
         .map(LessonStepContent::visual)
         .flatMap { it.codeExamples() }
-        .flatMap(LessonCodeExample::lines)
-        .joinToString("\n") { line -> line.tokens.joinToString("", transform = LessonCodeToken::text) }
+        .joinToString("\n", transform = LessonCodeExample::sourceText)
 
 private fun LessonVisualContent.codeExamples(): List<LessonCodeExample> =
     when (this) {
@@ -173,6 +186,7 @@ private fun LessonVisualContent.readableText(): String =
     when (this) {
         is LessonVisualContent.CodeExamples -> examples.joinToString(" ", transform = LessonCodeExample::readableText)
         is LessonVisualContent.Trace -> "${example.readableText()} ${table.title} ${table.columns.joinToString(" ")}"
+        is LessonVisualContent.Console -> "$title " + runs.flatMap(LessonConsoleRun::lines).joinToString(" ", transform = LessonConsoleLine::text)
         is LessonVisualContent.Cycle -> steps.joinToString(" ")
         is LessonVisualContent.Flow -> nodes.joinToString(" ")
         is LessonVisualContent.IconText -> "$title $body"
@@ -180,4 +194,4 @@ private fun LessonVisualContent.readableText(): String =
         is LessonVisualContent.ToolCards -> tools.joinToString(" ") { "${it.name} ${it.kind}" }
     }
 
-private fun LessonCodeExample.readableText(): String = "$title ${note.plainText} " + lines.joinToString(" ") { line -> line.tokens.joinToString("") { token -> token.text } }
+private fun LessonCodeExample.readableText(): String = "$title ${note.plainText} $sourceText"

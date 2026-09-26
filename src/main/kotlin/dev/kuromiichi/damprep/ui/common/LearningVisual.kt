@@ -41,6 +41,8 @@ data class LearningCodeExample(
     val title: String,
     val lines: List<LearningCodeLine>,
     val note: AnnotatedString,
+    /** Texto que copia el botón del ejemplo; si es nulo, el ejemplo no se puede copiar. */
+    val copyText: String? = null,
 )
 
 data class LearningTraceTable(
@@ -56,6 +58,7 @@ data class LearningConsoleRun(
 data class LearningConsoleLine(
     val text: String,
     val isInput: Boolean = false,
+    val isError: Boolean = false,
 )
 
 data class LearningCodeLine(

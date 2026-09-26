@@ -1,5 +1,6 @@
 package dev.kuromiichi.damprep.data.lessons
 
+import dev.kuromiichi.damprep.data.lessons.contents.debuggingLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.firstProgramsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.inputDecisionsLessonContent
@@ -48,6 +49,7 @@ data class LessonConsoleRun(
 data class LessonConsoleLine(
     val text: String,
     val isInput: Boolean = false,
+    val isError: Boolean = false,
 )
 
 data class LessonStepContent(
@@ -135,6 +137,12 @@ sealed interface LessonVisualContent {
         val examples: List<LessonCodeExample>,
     ) : LessonVisualContent
 
+    /** Una o varias ejecuciones tal como se verían en la consola, incluidos los mensajes de error. */
+    data class Console(
+        val title: String,
+        val runs: List<LessonConsoleRun>,
+    ) : LessonVisualContent
+
     /** Un ejemplo de código junto a la tabla que sigue sus variables vuelta a vuelta. */
     data class Trace(
         val example: LessonCodeExample,
@@ -152,7 +160,12 @@ data class LessonCodeExample(
     val title: String,
     val lines: List<LessonCodeLine>,
     val note: LessonRichText,
-)
+    /** Muestra un botón para copiar el código, pensado para programas que el alumno debe pegar en su proyecto. */
+    val isCopyable: Boolean = false,
+) {
+    val sourceText: String
+        get() = lines.joinToString("\n") { line -> line.tokens.joinToString("", transform = LessonCodeToken::text) }
+}
 
 data class LessonCodeLine(
     val tokens: List<LessonCodeToken>,
@@ -192,6 +205,8 @@ enum class LessonToolLogo {
 enum class LessonScreenshot {
     IntellijIdeWorkspace,
     IntellijDebugBreakpoint,
+    IntellijDebuggerPaused,
+    IntellijDebuggerPanel,
 }
 
 data class LessonContent(
@@ -208,6 +223,7 @@ object LessonContentCatalog {
             firstProgramsLessonContent,
             inputDecisionsLessonContent,
             loopsLessonContent,
+            debuggingLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }
@@ -220,6 +236,8 @@ internal fun consoleRun(vararg lines: LessonConsoleLine): LessonConsoleRun = Les
 internal fun consoleInput(text: String): LessonConsoleLine = LessonConsoleLine(text = text, isInput = true)
 
 internal fun consoleOutput(text: String): LessonConsoleLine = LessonConsoleLine(text = text)
+
+internal fun consoleError(text: String): LessonConsoleLine = LessonConsoleLine(text = text, isError = true)
 
 internal fun codeLine(vararg tokens: LessonCodeToken): LessonCodeLine = LessonCodeLine(tokens = tokens.toList())
 

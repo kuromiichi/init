@@ -9,6 +9,8 @@ import androidx.compose.ui.unit.dp
 import dev.kuromiichi.dam_prep.generated.resources.Res
 import dev.kuromiichi.dam_prep.generated.resources.git
 import dev.kuromiichi.dam_prep.generated.resources.intellij_debug_breakpoint
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_panel
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_paused
 import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
 import dev.kuromiichi.dam_prep.generated.resources.jdk
@@ -17,10 +19,12 @@ import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
 import dev.kuromiichi.damprep.data.lessons.LessonCodeLine
 import dev.kuromiichi.damprep.data.lessons.LessonCodeToken
 import dev.kuromiichi.damprep.data.lessons.LessonCodeTokenKind
+import dev.kuromiichi.damprep.data.lessons.LessonConsoleRun
 import dev.kuromiichi.damprep.data.lessons.LessonScreenshot
 import dev.kuromiichi.damprep.data.lessons.LessonToolLogo
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.ui.common.CodeExamplesVisual
+import dev.kuromiichi.damprep.ui.common.ConsoleOutputVisual
 import dev.kuromiichi.damprep.ui.common.CycleDiagram
 import dev.kuromiichi.damprep.ui.common.FlowDiagram
 import dev.kuromiichi.damprep.ui.common.IconTextLearningVisual
@@ -28,6 +32,8 @@ import dev.kuromiichi.damprep.ui.common.LearningCodeExample
 import dev.kuromiichi.damprep.ui.common.LearningCodeLine
 import dev.kuromiichi.damprep.ui.common.LearningCodeToken
 import dev.kuromiichi.damprep.ui.common.LearningCodeTokenKind
+import dev.kuromiichi.damprep.ui.common.LearningConsoleLine
+import dev.kuromiichi.damprep.ui.common.LearningConsoleRun
 import dev.kuromiichi.damprep.ui.common.LearningToolCard
 import dev.kuromiichi.damprep.ui.common.LearningTraceTable
 import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
@@ -49,6 +55,12 @@ internal fun LessonVisual(
             is LessonVisualContent.CodeExamples ->
                 CodeExamplesVisual(
                     examples = visual.examples.map { it.toLearningCodeExample() },
+                )
+
+            is LessonVisualContent.Console ->
+                ConsoleOutputVisual(
+                    title = visual.title,
+                    runs = visual.runs.map { it.toLearningConsoleRun() },
                 )
 
             is LessonVisualContent.Cycle ->
@@ -102,6 +114,7 @@ internal val LessonVisualContent.isRich: Boolean
         this is LessonVisualContent.Flow ||
             this is LessonVisualContent.Cycle ||
             this is LessonVisualContent.CodeExamples ||
+            this is LessonVisualContent.Console ||
             this is LessonVisualContent.Trace ||
             this is LessonVisualContent.Screenshot
 
@@ -110,6 +123,12 @@ private fun LessonCodeExample.toLearningCodeExample(): LearningCodeExample =
         title = title,
         lines = lines.map { it.toLearningCodeLine() },
         note = note.toCodeNote(),
+        copyText = sourceText.takeIf { isCopyable },
+    )
+
+internal fun LessonConsoleRun.toLearningConsoleRun(): LearningConsoleRun =
+    LearningConsoleRun(
+        lines = lines.map { line -> LearningConsoleLine(text = line.text, isInput = line.isInput, isError = line.isError) },
     )
 
 private fun LessonCodeLine.toLearningCodeLine(): LearningCodeLine = LearningCodeLine(tokens = tokens.map { it.toLearningCodeToken() })
@@ -148,4 +167,6 @@ private val LessonScreenshot.drawableResource: DrawableResource
         when (this) {
             LessonScreenshot.IntellijIdeWorkspace -> Res.drawable.intellij_ide_workspace
             LessonScreenshot.IntellijDebugBreakpoint -> Res.drawable.intellij_debug_breakpoint
+            LessonScreenshot.IntellijDebuggerPaused -> Res.drawable.intellij_debugger_paused
+            LessonScreenshot.IntellijDebuggerPanel -> Res.drawable.intellij_debugger_panel
         }

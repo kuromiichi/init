@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 
 /**
  * Muestra una o varias ejecuciones como aparecerían en la consola. Lo que escribe la persona
- * se resalta en verde, igual que la entrada de usuario en la consola de IntelliJ IDEA.
+ * se resalta en verde y los mensajes de error en rojo, igual que en la consola de IntelliJ IDEA.
  */
 @Composable
 fun ConsoleOutputVisual(
@@ -27,6 +27,7 @@ fun ConsoleOutputVisual(
 ) {
     val flavor = codeFlavor()
     val hasInput = runs.any { run -> run.lines.any(LearningConsoleLine::isInput) }
+    val hasError = runs.any { run -> run.lines.any(LearningConsoleLine::isError) }
 
     Column(
         modifier =
@@ -60,7 +61,12 @@ fun ConsoleOutputVisual(
                                 lineHeight = 20.sp,
                                 fontWeight = if (line.isInput) FontWeight.SemiBold else null,
                             ),
-                        color = if (line.isInput) flavor.green else flavor.text,
+                        color =
+                            when {
+                                line.isInput -> flavor.green
+                                line.isError -> flavor.red
+                                else -> flavor.text
+                            },
                     )
                 }
             }
@@ -68,6 +74,13 @@ fun ConsoleOutputVisual(
         if (hasInput) {
             Text(
                 text = "En verde, lo que escribes tú.",
+                style = MaterialTheme.typography.labelMedium,
+                color = flavor.subtext0,
+            )
+        }
+        if (hasError) {
+            Text(
+                text = "En rojo, los mensajes de error.",
                 style = MaterialTheme.typography.labelMedium,
                 color = flavor.subtext0,
             )

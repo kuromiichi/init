@@ -41,8 +41,6 @@ import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.common.ConsoleOutputVisual
-import dev.kuromiichi.damprep.ui.common.LearningConsoleLine
-import dev.kuromiichi.damprep.ui.common.LearningConsoleRun
 
 @Composable
 internal fun LessonStepContent(
@@ -242,11 +240,7 @@ private fun LessonPracticeCard(
                 ConsoleOutputVisual(
                     title = "Resultado esperado",
                     runs =
-                        practice.expectedOutput.map { run ->
-                            LearningConsoleRun(
-                                lines = run.lines.map { line -> LearningConsoleLine(text = line.text, isInput = line.isInput) },
-                            )
-                        },
+                        practice.expectedOutput.map { it.toLearningConsoleRun() },
                 )
             }
 
