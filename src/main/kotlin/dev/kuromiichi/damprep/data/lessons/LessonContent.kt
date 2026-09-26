@@ -4,6 +4,7 @@ import dev.kuromiichi.damprep.data.lessons.contents.debuggingLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.firstProgramsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.functionsModularityLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.gitVersionControlLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.inputDecisionsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.loopsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.softwareDevelopmentLessonContent
@@ -208,6 +209,10 @@ enum class LessonScreenshot {
     IntellijDebugBreakpoint,
     IntellijDebuggerPaused,
     IntellijDebuggerPanel,
+    IntellijGitCommit,
+    IntellijGitBranches,
+    IntellijGitLog,
+    IntellijGitConflicts,
 }
 
 data class LessonContent(
@@ -226,6 +231,7 @@ object LessonContentCatalog {
             loopsLessonContent,
             debuggingLessonContent,
             functionsModularityLessonContent,
+            gitVersionControlLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

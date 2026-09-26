@@ -11,6 +11,10 @@ import dev.kuromiichi.dam_prep.generated.resources.git
 import dev.kuromiichi.dam_prep.generated.resources.intellij_debug_breakpoint
 import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_panel
 import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_paused
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_branches
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_commit
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_conflicts
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_log
 import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
 import dev.kuromiichi.dam_prep.generated.resources.jdk
@@ -169,4 +173,8 @@ private val LessonScreenshot.drawableResource: DrawableResource
             LessonScreenshot.IntellijDebugBreakpoint -> Res.drawable.intellij_debug_breakpoint
             LessonScreenshot.IntellijDebuggerPaused -> Res.drawable.intellij_debugger_paused
             LessonScreenshot.IntellijDebuggerPanel -> Res.drawable.intellij_debugger_panel
+            LessonScreenshot.IntellijGitCommit -> Res.drawable.intellij_git_commit
+            LessonScreenshot.IntellijGitBranches -> Res.drawable.intellij_git_branches
+            LessonScreenshot.IntellijGitLog -> Res.drawable.intellij_git_log
+            LessonScreenshot.IntellijGitConflicts -> Res.drawable.intellij_git_conflicts
         }
