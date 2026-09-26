@@ -3,6 +3,7 @@ package dev.kuromiichi.damprep.data.lessons
 import dev.kuromiichi.damprep.data.lessons.contents.debuggingLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.firstProgramsLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.functionsModularityLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.inputDecisionsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.loopsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.softwareDevelopmentLessonContent
@@ -224,6 +225,7 @@ object LessonContentCatalog {
             inputDecisionsLessonContent,
             loopsLessonContent,
             debuggingLessonContent,
+            functionsModularityLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

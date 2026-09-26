@@ -124,6 +124,7 @@ class LessonContentRulesTest {
                 "first-programs" to listOf("""\breadln\b""", """\bif \(""", """\bwhen \(""", """\bfor \(""", """\bwhile \("""),
                 "input-decisions" to listOf("""\bfor \(""", """\bwhile \(""", """\bfun (?!main\b)""", """\blistOf\b"""),
                 "debugging" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf)\b""", """\b(try|catch)\b"""),
+                "functions-modularity" to listOf("""\b(listOf|arrayOf|Array)\b""", """\b(try|catch)\b""", """\bclass\b""", """\bvararg\b"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 
