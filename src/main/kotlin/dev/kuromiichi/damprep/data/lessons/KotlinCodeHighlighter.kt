@@ -4,8 +4,8 @@ package dev.kuromiichi.damprep.data.lessons
  * Convierte un fragmento de Kotlin en líneas coloreadas para los ejemplos de las lecciones.
  *
  * Es un resaltado léxico sencillo pensado para fragmentos cortos: reconoce comentarios, cadenas
- * con interpolación, números, palabras clave, llamadas a funciones, operadores y signos de
- * puntuación. Para marcar un error con subrayado se siguen usando los tokens manuales.
+ * con interpolación, números, palabras clave, anotaciones, llamadas a funciones (también con
+ * nombres entre comillas invertidas), operadores y signos de puntuación. Para marcar un error con subrayado se siguen usando los tokens manuales.
  *
  * Los ejemplos suelen escribirse como `kotlinCode($$"""...""".trimIndent())` para que `$nombre`
  * se muestre tal cual en lugar de interpolarse al compilar la app.
@@ -33,6 +33,7 @@ internal fun kotlinCode(source: String): List<LessonCodeLine> {
             match.groups["comment"] != null -> addToken(text, LessonCodeTokenKind.Comment)
             match.groups["string"] != null -> text.stringTokens().forEach { (part, kind) -> addToken(part, kind) }
             match.groups["number"] != null -> addToken(text, LessonCodeTokenKind.Number)
+            match.groups["annotation"] != null -> addToken(text, LessonCodeTokenKind.Keyword)
             match.groups["identifier"] != null -> addToken(text, text.identifierKind(source, match.range.last + 1))
             match.groups["operator"] != null -> addToken(text, LessonCodeTokenKind.Operator)
             match.groups["punctuation"] != null -> addToken(text, LessonCodeTokenKind.Punctuation)
@@ -50,7 +51,8 @@ private val KotlinTokenPattern =
             """(?<comment>//[^\n]*|/\*[\s\S]*?(?:\*/|$))""",
             """(?<string>"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?)""",
             """(?<number>\b\d+(?:\.\d+)?[LfF]?\b)""",
-            """(?<identifier>[A-Za-z_][A-Za-z0-9_]*)""",
+            """(?<annotation>@[A-Za-z_][A-Za-z0-9_]*)""",
+            """(?<identifier>`[^`\n]+`|[A-Za-z_][A-Za-z0-9_]*)""",
             """(?<operator>->|\.\.<?|==|!=|>=|<=|&&|\|\||\+\+|--|[+\-*/%=<>!?:])""",
             """(?<punctuation>[(){}\[\],;])""",
             """(?<other>\s+|.)""",

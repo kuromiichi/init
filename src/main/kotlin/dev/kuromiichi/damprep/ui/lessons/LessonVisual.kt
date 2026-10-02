@@ -17,6 +17,7 @@ import dev.kuromiichi.dam_prep.generated.resources.intellij_git_conflicts
 import dev.kuromiichi.dam_prep.generated.resources.intellij_git_log
 import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
+import dev.kuromiichi.dam_prep.generated.resources.intellij_test_results
 import dev.kuromiichi.dam_prep.generated.resources.jdk
 import dev.kuromiichi.dam_prep.generated.resources.kotlin
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
@@ -177,4 +178,5 @@ private val LessonScreenshot.drawableResource: DrawableResource
             LessonScreenshot.IntellijGitBranches -> Res.drawable.intellij_git_branches
             LessonScreenshot.IntellijGitLog -> Res.drawable.intellij_git_log
             LessonScreenshot.IntellijGitConflicts -> Res.drawable.intellij_git_conflicts
+            LessonScreenshot.IntellijTestResults -> Res.drawable.intellij_test_results
         }

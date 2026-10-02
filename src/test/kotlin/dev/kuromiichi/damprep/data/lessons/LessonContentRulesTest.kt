@@ -125,6 +125,7 @@ class LessonContentRulesTest {
                 "input-decisions" to listOf("""\bfor \(""", """\bwhile \(""", """\bfun (?!main\b)""", """\blistOf\b"""),
                 "debugging" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf)\b""", """\b(try|catch)\b"""),
                 "functions-modularity" to listOf("""\b(listOf|arrayOf|Array)\b""", """\b(try|catch)\b""", """\bclass\b""", """\bvararg\b"""),
+                "basic-testing" to listOf("""\b(listOf|arrayOf|Array)\b""", """\b(try|catch)\b""", """\bassertFailsWith\b""", """(?i)\bmock"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 

@@ -1,5 +1,6 @@
 package dev.kuromiichi.damprep.data.lessons
 
+import dev.kuromiichi.damprep.data.lessons.contents.basicTestingLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.debuggingLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.firstProgramsLessonContent
@@ -213,6 +214,7 @@ enum class LessonScreenshot {
     IntellijGitBranches,
     IntellijGitLog,
     IntellijGitConflicts,
+    IntellijTestResults,
 }
 
 data class LessonContent(
@@ -232,6 +234,7 @@ object LessonContentCatalog {
             debuggingLessonContent,
             functionsModularityLessonContent,
             gitVersionControlLessonContent,
+            basicTestingLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

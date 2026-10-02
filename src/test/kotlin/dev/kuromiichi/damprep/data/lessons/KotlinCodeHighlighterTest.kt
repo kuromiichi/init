@@ -75,6 +75,21 @@ class KotlinCodeHighlighterTest {
         assertEquals(listOf("println", "(", "\"if val\"", ")", " ", "// when"), tokens.map(LessonCodeToken::text))
     }
 
+    @Test
+    fun `annotations and backtick names are single tokens`() {
+        val lines =
+            kotlinCode(
+                """
+                @Test
+                fun `un 7 es notable`() {
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.Keyword, lines[0].tokens.single().kind)
+        assertEquals(LessonCodeTokenKind.Function, lines[1].tokens.kindOf("`un 7 es notable`"))
+        assertEquals(LessonCodeTokenKind.Keyword, lines[1].tokens.kindOf("fun"))
+    }
+
     private fun List<LessonCodeToken>.kindOf(text: String): LessonCodeTokenKind = first { it.text.trim() == text }.kind
 
     private fun LessonCodeLine.sourceText(): String = tokens.joinToString("") { it.text }
