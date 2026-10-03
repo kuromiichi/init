@@ -22,6 +22,16 @@ El agente principal lleva cada tarea de principio a fin. Los pasos son flexibles
 - Preferir Kotlin idiomático y patrones nativos del framework frente a infraestructura propia.
 - Cambios acotados: sin refactorizaciones oportunistas ni modificaciones ajenas a la tarea.
 
+## Guía visual
+
+- Los visuales de las lecciones (diagramas, tarjetas de logos, iconos) van sobre un panel más oscuro que la página (`surfaceContainerLow`) y sus nodos, más claros y con borde fino (`surfaceContainerHigh` + `outlineVariant`). Nada debe fundirse con el fondo en ninguno de los dos temas.
+- Bloques de código, consola y tablas usan `codeBlockSurface` (fondo del editor con borde). El resaltado de Kotlin reproduce el de IntelliJ IDEA con Catppuccin: ver `KotlinCodeHighlighter` y `spanStyle` en `CodeExamplesVisual`. Los errores subrayados se marcan con `⟦…⟧` dentro del código.
+- El código en línea usa el color del texto sobre un fondo translúcido de ese mismo color (`toAnnotatedString(tintedContentColor = …)`), para mantener el contraste en la página y sobre avisos de color.
+- El contraste de los pares texto/fondo del tema se fija en `ThemeContrastTest`; un color nuevo debe pasarlo en claro y en oscuro.
+- Las capturas de IntelliJ IDEA existen siempre en pareja `_light`/`_dark`: mismo estado, mismo recorte y solo cambia el tema del IDE (Catppuccin Latte/Macchiato Islands). Se capturan solo de la ventana del IDE, sin marco ni sombra, con el degradado de color de proyecto desactivado y sin el resplandor de computer use. Se muestran a su resolución real, con borde y ampliables.
+- Todo paso cuyo contenido cambie según el sistema operativo (comandos, rutas, archivos del sistema, atajos) se declara con `operatingSystemStep` para que muestre el selector y adapte el contenido.
+- La interfaz debe verse y funcionar igual en macOS, Windows y Linux. Limitación conocida: `sqlite-bundled` no incluye Windows ARM64.
+
 ## Verificación
 
 No ejecutar invocaciones de Gradle en paralelo. Si una compilación se queda colgada (suele deberse a permisos sobre salidas previas en `build/`), detenerla, ejecutar `./gradlew --stop` y repetir la tarea precedida de `clean`, por ejemplo `./gradlew --no-daemon clean compileKotlin`.
