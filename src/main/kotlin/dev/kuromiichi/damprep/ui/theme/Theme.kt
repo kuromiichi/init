@@ -6,71 +6,104 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
 
-private val DamPrepLightColorScheme: ColorScheme =
+/** Proporción de acento mezclada sobre la base para los contenedores tintados. */
+private const val CONTAINER_TINT = 0.18f
+
+private fun CatppuccinFlavor.tinted(accent: Color): Color = lerp(base, accent, CONTAINER_TINT)
+
+private fun latteColorScheme(flavor: CatppuccinFlavor): ColorScheme =
     lightColorScheme(
-        primary = CatppuccinLatte.blue,
-        onPrimary = CatppuccinLatte.base,
-        primaryContainer = CatppuccinLatte.surface0,
-        onPrimaryContainer = CatppuccinLatte.blue,
-        secondary = CatppuccinLatte.mauve,
-        onSecondary = CatppuccinLatte.base,
-        secondaryContainer = CatppuccinLatte.surface1,
-        onSecondaryContainer = CatppuccinLatte.mauve,
-        tertiary = CatppuccinLatte.peach,
-        onTertiary = CatppuccinLatte.base,
-        tertiaryContainer = CatppuccinLatte.surface1,
-        onTertiaryContainer = CatppuccinLatte.peach,
-        error = CatppuccinLatte.red,
-        onError = CatppuccinLatte.base,
-        errorContainer = CatppuccinLatte.flamingo,
-        onErrorContainer = CatppuccinLatte.text,
-        background = CatppuccinLatte.base,
-        onBackground = CatppuccinLatte.text,
-        surface = CatppuccinLatte.base,
-        onSurface = CatppuccinLatte.text,
-        surfaceVariant = CatppuccinLatte.mantle,
-        onSurfaceVariant = CatppuccinLatte.subtext0,
-        outline = CatppuccinLatte.overlay0,
-        outlineVariant = CatppuccinLatte.surface1,
-        inverseSurface = CatppuccinLatte.text,
-        inverseOnSurface = CatppuccinLatte.base,
-        inversePrimary = CatppuccinLatte.lavender,
-        surfaceTint = CatppuccinLatte.blue,
+        primary = flavor.blue,
+        onPrimary = flavor.base,
+        primaryContainer = flavor.tinted(flavor.blue),
+        onPrimaryContainer = flavor.text,
+        secondary = flavor.mauve,
+        onSecondary = flavor.base,
+        secondaryContainer = flavor.tinted(flavor.mauve),
+        onSecondaryContainer = flavor.text,
+        tertiary = flavor.peach,
+        onTertiary = flavor.text,
+        tertiaryContainer = flavor.tinted(flavor.peach),
+        onTertiaryContainer = flavor.text,
+        error = flavor.red,
+        onError = flavor.base,
+        errorContainer = flavor.tinted(flavor.red),
+        onErrorContainer = flavor.text,
+        background = flavor.base,
+        onBackground = flavor.text,
+        surface = flavor.base,
+        onSurface = flavor.text,
+        surfaceVariant = flavor.mantle,
+        onSurfaceVariant = flavor.subtext1,
+        outline = flavor.overlay2,
+        outlineVariant = flavor.surface1,
+        inverseSurface = flavor.text,
+        inverseOnSurface = flavor.base,
+        inversePrimary = flavor.lavender,
+        surfaceTint = flavor.blue,
+        scrim = flavor.crust,
+        surfaceBright = flavor.base,
+        surfaceDim = flavor.crust,
+        // Los contenedores altos se quedan claros: el azul y el rojo de los botones de texto
+        // de los diálogos solo alcanzan un buen contraste sobre base o mantle.
+        surfaceContainerLowest = flavor.base,
+        surfaceContainerLow = flavor.mantle,
+        surfaceContainer = flavor.mantle,
+        surfaceContainerHigh = flavor.base,
+        surfaceContainerHighest = flavor.mantle,
     )
 
-private val DamPrepDarkColorScheme: ColorScheme =
+private fun macchiatoColorScheme(flavor: CatppuccinFlavor): ColorScheme =
     darkColorScheme(
-        primary = CatppuccinMacchiato.blue,
-        onPrimary = CatppuccinMacchiato.crust,
-        primaryContainer = CatppuccinMacchiato.surface0,
-        onPrimaryContainer = CatppuccinMacchiato.blue,
-        secondary = CatppuccinMacchiato.mauve,
-        onSecondary = CatppuccinMacchiato.crust,
-        secondaryContainer = CatppuccinMacchiato.surface0,
-        onSecondaryContainer = CatppuccinMacchiato.mauve,
-        tertiary = CatppuccinMacchiato.peach,
-        onTertiary = CatppuccinMacchiato.crust,
-        tertiaryContainer = CatppuccinMacchiato.surface0,
-        onTertiaryContainer = CatppuccinMacchiato.peach,
-        error = CatppuccinMacchiato.red,
-        onError = CatppuccinMacchiato.crust,
-        errorContainer = CatppuccinMacchiato.surface0,
-        onErrorContainer = CatppuccinMacchiato.red,
-        background = CatppuccinMacchiato.base,
-        onBackground = CatppuccinMacchiato.text,
-        surface = CatppuccinMacchiato.base,
-        onSurface = CatppuccinMacchiato.text,
-        surfaceVariant = CatppuccinMacchiato.mantle,
-        onSurfaceVariant = CatppuccinMacchiato.subtext0,
-        outline = CatppuccinMacchiato.overlay0,
-        outlineVariant = CatppuccinMacchiato.surface1,
-        inverseSurface = CatppuccinMacchiato.text,
-        inverseOnSurface = CatppuccinMacchiato.base,
-        inversePrimary = CatppuccinMacchiato.blue,
-        surfaceTint = CatppuccinMacchiato.blue,
+        primary = flavor.blue,
+        onPrimary = flavor.crust,
+        primaryContainer = flavor.tinted(flavor.blue),
+        onPrimaryContainer = flavor.text,
+        secondary = flavor.mauve,
+        onSecondary = flavor.crust,
+        secondaryContainer = flavor.tinted(flavor.mauve),
+        onSecondaryContainer = flavor.text,
+        tertiary = flavor.peach,
+        onTertiary = flavor.crust,
+        tertiaryContainer = flavor.tinted(flavor.peach),
+        onTertiaryContainer = flavor.text,
+        error = flavor.red,
+        onError = flavor.crust,
+        errorContainer = flavor.tinted(flavor.red),
+        onErrorContainer = flavor.text,
+        background = flavor.base,
+        onBackground = flavor.text,
+        surface = flavor.base,
+        onSurface = flavor.text,
+        surfaceVariant = flavor.surface0,
+        onSurfaceVariant = flavor.subtext0,
+        outline = flavor.overlay0,
+        outlineVariant = flavor.surface1,
+        inverseSurface = flavor.text,
+        inverseOnSurface = flavor.base,
+        inversePrimary = flavor.blue,
+        surfaceTint = flavor.blue,
+        scrim = flavor.crust,
+        surfaceBright = flavor.surface1,
+        surfaceDim = flavor.crust,
+        surfaceContainerLowest = flavor.crust,
+        surfaceContainerLow = flavor.mantle,
+        surfaceContainer = flavor.base,
+        surfaceContainerHigh = flavor.surface0,
+        surfaceContainerHighest = flavor.surface1,
     )
+
+internal val DamPrepLightColorScheme: ColorScheme = latteColorScheme(CatppuccinLatte)
+internal val DamPrepDarkColorScheme: ColorScheme = macchiatoColorScheme(CatppuccinMacchiato)
+
+/** Paleta Catppuccin del tema activo, para colores de acento que Material 3 no modela (código, etiquetas, capturas). */
+val LocalCatppuccinFlavor = staticCompositionLocalOf { CatppuccinMacchiato }
 
 @Composable
 fun DamPrepTheme(
@@ -84,9 +117,13 @@ fun DamPrepTheme(
             ThemePreference.Dark -> true
         }
 
-    MaterialTheme(
-        colorScheme = if (useDarkTheme) DamPrepDarkColorScheme else DamPrepLightColorScheme,
-        typography = DamPrepTypography,
-        content = content,
-    )
+    CompositionLocalProvider(
+        LocalCatppuccinFlavor provides if (useDarkTheme) CatppuccinMacchiato else CatppuccinLatte,
+    ) {
+        MaterialTheme(
+            colorScheme = if (useDarkTheme) DamPrepDarkColorScheme else DamPrepLightColorScheme,
+            typography = DamPrepTypography,
+            content = content,
+        )
+    }
 }

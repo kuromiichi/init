@@ -37,6 +37,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonExplanationBlock
 import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonRichText
 import dev.kuromiichi.damprep.data.lessons.LessonTextSpanStyle
+import dev.kuromiichi.damprep.data.lessons.kotlinCode
 import dev.kuromiichi.damprep.ui.common.CodeExamplesVisual
 import dev.kuromiichi.damprep.ui.common.LearningCodeExample
 import dev.kuromiichi.damprep.ui.common.LearningCodeLine
@@ -177,6 +178,10 @@ private fun LessonCallout(callout: LessonExplanationBlock.Callout) {
     }
 }
 
+/** Los bloques de archivos Kotlin se resaltan como en IntelliJ IDEA; terminal y texto plano, no. */
+private val LessonExplanationBlock.Code.isKotlin: Boolean
+    get() = (title.endsWith(".kt") || title.endsWith(".kts")) && lines.none { it.startsWith("<<<<<<<") }
+
 @Composable
 private fun LessonExplanationCode(code: LessonExplanationBlock.Code) {
     CodeExamplesVisual(
@@ -185,10 +190,14 @@ private fun LessonExplanationCode(code: LessonExplanationBlock.Code) {
                 LearningCodeExample(
                     title = code.title,
                     lines =
-                        code.lines.map { line ->
-                            LearningCodeLine(
-                                tokens = listOf(LearningCodeToken(text = line)),
-                            )
+                        if (code.isKotlin) {
+                            kotlinCode(code.lines.joinToString("\n")).map { it.toLearningCodeLine() }
+                        } else {
+                            code.lines.map { line ->
+                                LearningCodeLine(
+                                    tokens = listOf(LearningCodeToken(text = line)),
+                                )
+                            }
                         },
                     note = code.note.toCodeNote(),
                 ),

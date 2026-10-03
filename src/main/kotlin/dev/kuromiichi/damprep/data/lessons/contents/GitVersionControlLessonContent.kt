@@ -291,7 +291,7 @@ val gitVersionControlLessonContent =
                     visual =
                         LessonVisualContent.Screenshot(
                             image = LessonScreenshot.IntellijGitCommit,
-                            description = "Ventana Commit de IntelliJ IDEA con Main.kt marcado en Changes, Resumen.kt en Unversioned Files y, a la derecha, el diff de Main.kt con el comentario KDoc y el texto de la media añadidos.",
+                            description = "Ventana Commit de IntelliJ IDEA con Main.kt marcado en Changes, Resumen.kt en Unversioned Files.",
                         ),
                     links =
                         listOf(

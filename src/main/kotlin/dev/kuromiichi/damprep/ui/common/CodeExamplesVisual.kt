@@ -31,12 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,8 +44,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.kuromiichi.damprep.ui.theme.CatppuccinFlavor
-import dev.kuromiichi.damprep.ui.theme.CatppuccinLatte
-import dev.kuromiichi.damprep.ui.theme.CatppuccinMacchiato
+import dev.kuromiichi.damprep.ui.theme.LocalCatppuccinFlavor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.awt.datatransfer.StringSelection
@@ -99,20 +98,7 @@ private fun CodeExampleCard(example: LearningCodeExample) {
                 CodeLine(
                     number = index + 1,
                     line = line,
-                    colors =
-                        CodeColors(
-                            default = flavor.text,
-                            lineNumber = flavor.overlay1,
-                            keyword = flavor.mauve,
-                            function = flavor.blue,
-                            number = flavor.peach,
-                            operator = flavor.sky,
-                            punctuation = flavor.peach,
-                            stringLiteral = flavor.green,
-                            interpolation = flavor.pink,
-                            comment = flavor.overlay1,
-                            error = flavor.red,
-                        ),
+                    flavor = flavor,
                 )
             }
         }
@@ -167,18 +153,13 @@ private fun CopyCodeButton(
 
 /** Paleta de los bloques de código y consola, acorde con el tema claro u oscuro activo. */
 @Composable
-internal fun codeFlavor(): CatppuccinFlavor =
-    if (MaterialTheme.colorScheme.background.luminance() > 0.5f) {
-        CatppuccinLatte
-    } else {
-        CatppuccinMacchiato
-    }
+internal fun codeFlavor(): CatppuccinFlavor = LocalCatppuccinFlavor.current
 
 @Composable
 private fun CodeLine(
     number: Int,
     line: LearningCodeLine,
-    colors: CodeColors,
+    flavor: CatppuccinFlavor,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -192,7 +173,7 @@ private fun CodeLine(
                     fontSize = 13.sp,
                     lineHeight = 20.sp,
                 ),
-            color = colors.lineNumber,
+            color = flavor.overlay1,
             textAlign = TextAlign.End,
             modifier = Modifier.width(28.dp),
         )
@@ -202,10 +183,13 @@ private fun CodeLine(
                 buildAnnotatedString {
                     line.tokens.forEach { token ->
                         withStyle(
-                            SpanStyle(
-                                color = if (token.hasErrorUnderline) colors.error else colors.colorFor(token.kind),
-                                textDecoration = if (token.hasErrorUnderline) TextDecoration.Underline else null,
-                            ),
+                            token.kind.spanStyle(flavor).let { style ->
+                                if (token.hasErrorUnderline) {
+                                    style.copy(color = flavor.red, textDecoration = TextDecoration.Underline)
+                                } else {
+                                    style
+                                }
+                            },
                         ) {
                             append(token.text)
                         }
@@ -224,29 +208,28 @@ private fun CodeLine(
     }
 }
 
-private data class CodeColors(
-    val default: androidx.compose.ui.graphics.Color,
-    val lineNumber: androidx.compose.ui.graphics.Color,
-    val keyword: androidx.compose.ui.graphics.Color,
-    val function: androidx.compose.ui.graphics.Color,
-    val number: androidx.compose.ui.graphics.Color,
-    val operator: androidx.compose.ui.graphics.Color,
-    val punctuation: androidx.compose.ui.graphics.Color,
-    val stringLiteral: androidx.compose.ui.graphics.Color,
-    val interpolation: androidx.compose.ui.graphics.Color,
-    val comment: androidx.compose.ui.graphics.Color,
-    val error: androidx.compose.ui.graphics.Color,
-) {
-    fun colorFor(kind: LearningCodeTokenKind): androidx.compose.ui.graphics.Color =
-        when (kind) {
-            LearningCodeTokenKind.Plain -> default
-            LearningCodeTokenKind.Keyword -> keyword
-            LearningCodeTokenKind.Function -> function
-            LearningCodeTokenKind.Number -> number
-            LearningCodeTokenKind.Operator -> operator
-            LearningCodeTokenKind.Punctuation -> punctuation
-            LearningCodeTokenKind.StringLiteral -> stringLiteral
-            LearningCodeTokenKind.Interpolation -> interpolation
-            LearningCodeTokenKind.Comment -> comment
-        }
-}
+/**
+ * Colores y cursivas de cada tipo de token, los mismos que aplican los temas Catppuccin de
+ * IntelliJ IDEA al código Kotlin (incluidos los corchetes de colores por nivel de anidamiento).
+ */
+private fun LearningCodeTokenKind.spanStyle(flavor: CatppuccinFlavor): SpanStyle =
+    when (this) {
+        LearningCodeTokenKind.Plain -> SpanStyle(color = flavor.text)
+        LearningCodeTokenKind.Keyword -> SpanStyle(color = flavor.mauve)
+        LearningCodeTokenKind.Function -> SpanStyle(color = flavor.blue, fontStyle = FontStyle.Italic)
+        LearningCodeTokenKind.Number -> SpanStyle(color = flavor.peach)
+        LearningCodeTokenKind.Operator -> SpanStyle(color = flavor.sky)
+        LearningCodeTokenKind.Punctuation -> SpanStyle(color = flavor.overlay2)
+        LearningCodeTokenKind.StringLiteral -> SpanStyle(color = flavor.green)
+        LearningCodeTokenKind.Interpolation -> SpanStyle(color = flavor.pink)
+        LearningCodeTokenKind.Comment -> SpanStyle(color = flavor.overlay2, fontStyle = FontStyle.Italic)
+        LearningCodeTokenKind.ClassName -> SpanStyle(color = flavor.yellow, fontStyle = FontStyle.Italic)
+        LearningCodeTokenKind.Parameter -> SpanStyle(color = flavor.maroon, fontStyle = FontStyle.Italic)
+        LearningCodeTokenKind.Constant -> SpanStyle(color = flavor.peach)
+        LearningCodeTokenKind.MutableVariable -> SpanStyle(color = flavor.text, fontStyle = FontStyle.Italic)
+        LearningCodeTokenKind.LambdaDelimiter, LearningCodeTokenKind.Bracket0 -> SpanStyle(color = flavor.red)
+        LearningCodeTokenKind.Bracket1 -> SpanStyle(color = flavor.peach)
+        LearningCodeTokenKind.Bracket2 -> SpanStyle(color = flavor.yellow)
+        LearningCodeTokenKind.Bracket3 -> SpanStyle(color = flavor.green)
+        LearningCodeTokenKind.Bracket4 -> SpanStyle(color = flavor.sapphire)
+    }

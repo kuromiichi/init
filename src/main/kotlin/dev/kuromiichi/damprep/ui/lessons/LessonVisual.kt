@@ -8,16 +8,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.dam_prep.generated.resources.Res
 import dev.kuromiichi.dam_prep.generated.resources.git
-import dev.kuromiichi.dam_prep.generated.resources.intellij_debug_breakpoint
-import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_panel
-import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_paused
-import dev.kuromiichi.dam_prep.generated.resources.intellij_git_branches
-import dev.kuromiichi.dam_prep.generated.resources.intellij_git_commit
-import dev.kuromiichi.dam_prep.generated.resources.intellij_git_conflicts
-import dev.kuromiichi.dam_prep.generated.resources.intellij_git_log
-import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debug_breakpoint_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debug_breakpoint_light
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_panel_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_panel_light
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_paused_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_debugger_paused_light
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_branches_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_branches_light
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_commit_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_commit_light
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_conflicts_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_conflicts_light
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_log_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_git_log_light
+import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace_light
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
-import dev.kuromiichi.dam_prep.generated.resources.intellij_test_results
+import dev.kuromiichi.dam_prep.generated.resources.intellij_test_results_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_test_results_light
 import dev.kuromiichi.dam_prep.generated.resources.jdk
 import dev.kuromiichi.dam_prep.generated.resources.kotlin
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
@@ -45,6 +54,8 @@ import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
 import dev.kuromiichi.damprep.ui.common.ScreenshotLearningVisual
 import dev.kuromiichi.damprep.ui.common.ToolLogoCards
 import dev.kuromiichi.damprep.ui.common.TraceTableVisual
+import dev.kuromiichi.damprep.ui.theme.CatppuccinMacchiato
+import dev.kuromiichi.damprep.ui.theme.LocalCatppuccinFlavor
 import org.jetbrains.compose.resources.DrawableResource
 
 @Composable
@@ -82,7 +93,7 @@ internal fun LessonVisual(
 
             is LessonVisualContent.Screenshot ->
                 ScreenshotLearningVisual(
-                    image = visual.image.drawableResource,
+                    image = visual.image.drawableResource(isDark = LocalCatppuccinFlavor.current == CatppuccinMacchiato),
                     description = visual.description,
                 )
 
@@ -136,7 +147,7 @@ internal fun LessonConsoleRun.toLearningConsoleRun(): LearningConsoleRun =
         lines = lines.map { line -> LearningConsoleLine(text = line.text, isInput = line.isInput, isError = line.isError) },
     )
 
-private fun LessonCodeLine.toLearningCodeLine(): LearningCodeLine = LearningCodeLine(tokens = tokens.map { it.toLearningCodeToken() })
+internal fun LessonCodeLine.toLearningCodeLine(): LearningCodeLine = LearningCodeLine(tokens = tokens.map { it.toLearningCodeToken() })
 
 private fun LessonCodeToken.toLearningCodeToken(): LearningCodeToken =
     LearningCodeToken(
@@ -156,6 +167,16 @@ private fun LessonCodeTokenKind.toLearningCodeTokenKind(): LearningCodeTokenKind
         LessonCodeTokenKind.StringLiteral -> LearningCodeTokenKind.StringLiteral
         LessonCodeTokenKind.Interpolation -> LearningCodeTokenKind.Interpolation
         LessonCodeTokenKind.Comment -> LearningCodeTokenKind.Comment
+        LessonCodeTokenKind.ClassName -> LearningCodeTokenKind.ClassName
+        LessonCodeTokenKind.Parameter -> LearningCodeTokenKind.Parameter
+        LessonCodeTokenKind.Constant -> LearningCodeTokenKind.Constant
+        LessonCodeTokenKind.MutableVariable -> LearningCodeTokenKind.MutableVariable
+        LessonCodeTokenKind.LambdaDelimiter -> LearningCodeTokenKind.LambdaDelimiter
+        LessonCodeTokenKind.Bracket0 -> LearningCodeTokenKind.Bracket0
+        LessonCodeTokenKind.Bracket1 -> LearningCodeTokenKind.Bracket1
+        LessonCodeTokenKind.Bracket2 -> LearningCodeTokenKind.Bracket2
+        LessonCodeTokenKind.Bracket3 -> LearningCodeTokenKind.Bracket3
+        LessonCodeTokenKind.Bracket4 -> LearningCodeTokenKind.Bracket4
     }
 
 private val LessonToolLogo.drawableResource: DrawableResource
@@ -167,16 +188,16 @@ private val LessonToolLogo.drawableResource: DrawableResource
             LessonToolLogo.Git -> Res.drawable.git
         }
 
-private val LessonScreenshot.drawableResource: DrawableResource
-    get() =
-        when (this) {
-            LessonScreenshot.IntellijIdeWorkspace -> Res.drawable.intellij_ide_workspace
-            LessonScreenshot.IntellijDebugBreakpoint -> Res.drawable.intellij_debug_breakpoint
-            LessonScreenshot.IntellijDebuggerPaused -> Res.drawable.intellij_debugger_paused
-            LessonScreenshot.IntellijDebuggerPanel -> Res.drawable.intellij_debugger_panel
-            LessonScreenshot.IntellijGitCommit -> Res.drawable.intellij_git_commit
-            LessonScreenshot.IntellijGitBranches -> Res.drawable.intellij_git_branches
-            LessonScreenshot.IntellijGitLog -> Res.drawable.intellij_git_log
-            LessonScreenshot.IntellijGitConflicts -> Res.drawable.intellij_git_conflicts
-            LessonScreenshot.IntellijTestResults -> Res.drawable.intellij_test_results
-        }
+/** Las capturas de IntelliJ IDEA existen con el tema Catppuccin claro y oscuro del IDE; se elige la que acompaña al tema de la app. */
+private fun LessonScreenshot.drawableResource(isDark: Boolean): DrawableResource =
+    when (this) {
+        LessonScreenshot.IntellijIdeWorkspace -> if (isDark) Res.drawable.intellij_ide_workspace_dark else Res.drawable.intellij_ide_workspace_light
+        LessonScreenshot.IntellijDebugBreakpoint -> if (isDark) Res.drawable.intellij_debug_breakpoint_dark else Res.drawable.intellij_debug_breakpoint_light
+        LessonScreenshot.IntellijDebuggerPaused -> if (isDark) Res.drawable.intellij_debugger_paused_dark else Res.drawable.intellij_debugger_paused_light
+        LessonScreenshot.IntellijDebuggerPanel -> if (isDark) Res.drawable.intellij_debugger_panel_dark else Res.drawable.intellij_debugger_panel_light
+        LessonScreenshot.IntellijGitCommit -> if (isDark) Res.drawable.intellij_git_commit_dark else Res.drawable.intellij_git_commit_light
+        LessonScreenshot.IntellijGitBranches -> if (isDark) Res.drawable.intellij_git_branches_dark else Res.drawable.intellij_git_branches_light
+        LessonScreenshot.IntellijGitLog -> if (isDark) Res.drawable.intellij_git_log_dark else Res.drawable.intellij_git_log_light
+        LessonScreenshot.IntellijGitConflicts -> if (isDark) Res.drawable.intellij_git_conflicts_dark else Res.drawable.intellij_git_conflicts_light
+        LessonScreenshot.IntellijTestResults -> if (isDark) Res.drawable.intellij_test_results_dark else Res.drawable.intellij_test_results_light
+    }

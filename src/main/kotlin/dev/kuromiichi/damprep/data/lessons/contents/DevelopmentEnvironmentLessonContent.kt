@@ -73,7 +73,7 @@ val developmentEnvironmentLessonContent =
                     visual =
                         LessonVisualContent.Screenshot(
                             image = LessonScreenshot.IntellijIdeWorkspace,
-                            description = "Captura de IntelliJ IDEA con el proyecto, el editor, herramientas de ejecución y panel de Git.",
+                            description = "Captura de IntelliJ IDEA con el árbol del proyecto, el editor con código Kotlin y la ventana Git con el historial de commits.",
                         ),
                 ),
                 LessonStep(

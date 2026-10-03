@@ -1,6 +1,5 @@
 package dev.kuromiichi.damprep.ui.common
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,8 +24,8 @@ fun PlaceholderScreen(
                     .weight(1f)
                     .widthIn(max = AppScreenContentMaxWidth)
                     .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
         ) {
+            Spacer(modifier = Modifier.height(48.dp))
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineLarge,

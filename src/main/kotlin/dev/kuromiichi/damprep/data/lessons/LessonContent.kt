@@ -191,6 +191,16 @@ enum class LessonCodeTokenKind {
     StringLiteral,
     Interpolation,
     Comment,
+    ClassName,
+    Parameter,
+    Constant,
+    MutableVariable,
+    LambdaDelimiter,
+    Bracket0,
+    Bracket1,
+    Bracket2,
+    Bracket3,
+    Bracket4,
 }
 
 data class LessonTool(

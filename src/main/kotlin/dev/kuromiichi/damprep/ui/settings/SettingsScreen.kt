@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import dev.kuromiichi.damprep.ui.common.LoadingScreen
 import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
 import dev.kuromiichi.damprep.ui.common.SettingControlMaxWidth
 import dev.kuromiichi.damprep.ui.common.SettingRow
+import dev.kuromiichi.damprep.ui.common.verticalFadingEdges
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,132 +55,140 @@ fun SettingsScreen(
             onBack()
         },
     ) {
-        Column(
+        val scrollState = rememberScrollState()
+        Box(
             modifier =
                 Modifier
                     .weight(1f)
                     .widthIn(max = AppScreenContentMaxWidth)
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
+                    .verticalFadingEdges(
+                        scrollState = scrollState,
+                        color = MaterialTheme.colorScheme.background,
+                        length = 32.dp,
+                    ),
         ) {
-            Text(
-                text = "Configuración",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Text(
-                text = "Ajusta cómo quieres que la aplicación se dirija a ti, qué instrucciones muestra y cómo se ve mientras estudias.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 12.dp),
-            )
-
             Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(top = 40.dp),
-                verticalArrangement = Arrangement.spacedBy(28.dp),
+                modifier = Modifier.fillMaxWidth().verticalScroll(scrollState),
             ) {
-                SettingRow(
-                    title = "Nombre",
-                    description = "Se usa en saludos y mensajes de progreso.",
-                ) {
-                    OutlinedTextField(
-                        value = uiState.studentNameDraft,
-                        onValueChange = viewModel::updateStudentNameDraft,
-                        modifier =
-                            Modifier
-                                .widthIn(max = SettingControlMaxWidth)
-                                .fillMaxWidth()
-                                .onFocusChanged { focusState ->
-                                    if (!focusState.isFocused) viewModel.commitStudentName()
-                                },
-                        label = { Text("Nombre") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions =
-                            KeyboardActions(
-                                onDone = {
-                                    focusManager.clearFocus()
-                                },
-                            ),
-                    )
-                }
-
-                SettingRow(
-                    title = "Tratamiento",
-                    description = "Define el lenguaje del saludo principal.",
-                ) {
-                    SingleChoiceSegmentedButtonRow(
-                        modifier =
-                            Modifier
-                                .widthIn(max = SettingControlMaxWidth)
-                                .fillMaxWidth(),
-                    ) {
-                        PronounPreference.entries.forEachIndexed { index, preference ->
-                            SegmentedButton(
-                                selected = preference == uiState.pronounPreference,
-                                onClick = { viewModel.setPronounPreference(preference) },
-                                shape =
-                                    SegmentedButtonDefaults.itemShape(
-                                        index = index,
-                                        count = PronounPreference.entries.size,
-                                    ),
-                            ) {
-                                Text(preference.label)
-                            }
-                        }
-                    }
-                }
-
-                SettingRow(
-                    title = "Sistema operativo",
-                    description = "Elige el sistema cuyas instrucciones y comandos quieres seguir.",
-                ) {
-                    OperatingSystemSelector(
-                        selectedOperatingSystem = uiState.targetOperatingSystem,
-                        onOperatingSystemSelected = viewModel::setTargetOperatingSystem,
-                        modifier =
-                            Modifier
-                                .widthIn(max = SettingControlMaxWidth)
-                                .fillMaxWidth(),
-                    )
-                }
-
-                SettingRow(
-                    title = "Tema",
-                    description = "Elige colores claros, oscuros o deja que lo decida el sistema.",
-                ) {
-                    SingleChoiceSegmentedButtonRow(
-                        modifier =
-                            Modifier
-                                .widthIn(max = SettingControlMaxWidth)
-                                .fillMaxWidth(),
-                    ) {
-                        ThemePreference.entries.forEachIndexed { index, preference ->
-                            SegmentedButton(
-                                selected = preference == uiState.themePreference,
-                                onClick = { viewModel.setThemePreference(preference) },
-                                shape =
-                                    SegmentedButtonDefaults.itemShape(
-                                        index = index,
-                                        count = ThemePreference.entries.size,
-                                    ),
-                            ) {
-                                Text(preference.label)
-                            }
-                        }
-                    }
-                }
-
-                AdvancedSettingsSection(
-                    unlockAllLessons = uiState.unlockAllLessons,
-                    hasLessonProgress = uiState.hasLessonProgress,
-                    onUnlockAllLessonsChanged = viewModel::setUnlockAllLessons,
-                    onResetLessonProgress = viewModel::resetLessonProgress,
+                Text(
+                    text = "Configuración",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
+                Text(
+                    text = "Ajusta cómo quieres que la aplicación se dirija a ti, qué instrucciones muestra y cómo se ve mientras estudias.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 12.dp),
+                )
+
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 40.dp),
+                    verticalArrangement = Arrangement.spacedBy(28.dp),
+                ) {
+                    SettingRow(
+                        title = "Nombre",
+                        description = "Se usa en saludos y mensajes de progreso.",
+                    ) {
+                        OutlinedTextField(
+                            value = uiState.studentNameDraft,
+                            onValueChange = viewModel::updateStudentNameDraft,
+                            modifier =
+                                Modifier
+                                    .widthIn(max = SettingControlMaxWidth)
+                                    .fillMaxWidth()
+                                    .onFocusChanged { focusState ->
+                                        if (!focusState.isFocused) viewModel.commitStudentName()
+                                    },
+                            label = { Text("Nombre") },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions =
+                                KeyboardActions(
+                                    onDone = {
+                                        focusManager.clearFocus()
+                                    },
+                                ),
+                        )
+                    }
+
+                    SettingRow(
+                        title = "Tratamiento",
+                        description = "Define el lenguaje del saludo principal.",
+                    ) {
+                        SingleChoiceSegmentedButtonRow(
+                            modifier =
+                                Modifier
+                                    .widthIn(max = SettingControlMaxWidth)
+                                    .fillMaxWidth(),
+                        ) {
+                            PronounPreference.entries.forEachIndexed { index, preference ->
+                                SegmentedButton(
+                                    selected = preference == uiState.pronounPreference,
+                                    onClick = { viewModel.setPronounPreference(preference) },
+                                    shape =
+                                        SegmentedButtonDefaults.itemShape(
+                                            index = index,
+                                            count = PronounPreference.entries.size,
+                                        ),
+                                ) {
+                                    Text(preference.label)
+                                }
+                            }
+                        }
+                    }
+
+                    SettingRow(
+                        title = "Sistema operativo",
+                        description = "Elige el sistema cuyas instrucciones y comandos quieres seguir.",
+                    ) {
+                        OperatingSystemSelector(
+                            selectedOperatingSystem = uiState.targetOperatingSystem,
+                            onOperatingSystemSelected = viewModel::setTargetOperatingSystem,
+                            modifier =
+                                Modifier
+                                    .widthIn(max = SettingControlMaxWidth)
+                                    .fillMaxWidth(),
+                        )
+                    }
+
+                    SettingRow(
+                        title = "Tema",
+                        description = "Elige colores claros, oscuros o deja que lo decida el sistema.",
+                    ) {
+                        SingleChoiceSegmentedButtonRow(
+                            modifier =
+                                Modifier
+                                    .widthIn(max = SettingControlMaxWidth)
+                                    .fillMaxWidth(),
+                        ) {
+                            ThemePreference.entries.forEachIndexed { index, preference ->
+                                SegmentedButton(
+                                    selected = preference == uiState.themePreference,
+                                    onClick = { viewModel.setThemePreference(preference) },
+                                    shape =
+                                        SegmentedButtonDefaults.itemShape(
+                                            index = index,
+                                            count = ThemePreference.entries.size,
+                                        ),
+                                ) {
+                                    Text(preference.label)
+                                }
+                            }
+                        }
+                    }
+
+                    AdvancedSettingsSection(
+                        unlockAllLessons = uiState.unlockAllLessons,
+                        hasLessonProgress = uiState.hasLessonProgress,
+                        onUnlockAllLessonsChanged = viewModel::setUnlockAllLessons,
+                        onResetLessonProgress = viewModel::resetLessonProgress,
+                    )
+                }
             }
         }
     }

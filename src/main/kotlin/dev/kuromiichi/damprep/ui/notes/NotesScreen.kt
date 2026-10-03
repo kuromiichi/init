@@ -7,7 +7,7 @@ import dev.kuromiichi.damprep.ui.common.PlaceholderScreen
 fun NotesScreen(onBack: () -> Unit) {
     PlaceholderScreen(
         title = "Mis apuntes",
-        body = "Aquí podrás tomar apuntes propios dentro de cada tema. En una iteración posterior decidiremos cómo organizarlos y persistirlos.",
+        body = "Aquí podrás escribir tus propios apuntes de cada tema. Esta sección estará disponible próximamente.",
         onBack = onBack,
     )
 }

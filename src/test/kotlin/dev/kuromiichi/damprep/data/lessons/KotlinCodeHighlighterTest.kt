@@ -25,7 +25,7 @@ class KotlinCodeHighlighterTest {
         assertEquals(LessonCodeTokenKind.Function, tokens.kindOf("suma"))
         assertEquals(LessonCodeTokenKind.Number, tokens.kindOf("30"))
         assertEquals(LessonCodeTokenKind.Operator, tokens.kindOf(">="))
-        assertEquals(LessonCodeTokenKind.Punctuation, tokens.kindOf("("))
+        assertEquals(LessonCodeTokenKind.Bracket0, tokens.kindOf("("))
         assertEquals(LessonCodeTokenKind.Plain, tokens.kindOf("total"))
     }
 
@@ -85,7 +85,7 @@ class KotlinCodeHighlighterTest {
                 """.trimIndent(),
             )
 
-        assertEquals(LessonCodeTokenKind.Keyword, lines[0].tokens.single().kind)
+        assertEquals(LessonCodeTokenKind.ClassName, lines[0].tokens.single().kind)
         assertEquals(LessonCodeTokenKind.Function, lines[1].tokens.kindOf("`un 7 es notable`"))
         assertEquals(LessonCodeTokenKind.Keyword, lines[1].tokens.kindOf("fun"))
     }
@@ -97,6 +97,77 @@ class KotlinCodeHighlighterTest {
         listOf("?.", "?:", "!!").forEach { operator ->
             assertEquals(LessonCodeTokenKind.Operator, tokens.single { it.text.trim() == operator }.kind, operator)
         }
+    }
+
+    @Test
+    fun `brackets are coloured by nesting like IntelliJ IDEA`() {
+        val lines =
+            kotlinCode(
+                """
+                fun main() {
+                    for (i in 1..4) {
+                        println(i)
+                    }
+                }
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.Bracket0, lines[0].tokens.kindOf("()"))
+        assertEquals(LessonCodeTokenKind.Bracket0, lines[0].tokens.last { it.text.trim() == "{" }.kind)
+        assertEquals(LessonCodeTokenKind.Bracket1, lines[1].tokens.first { it.text.trim() == "(" }.kind)
+        assertEquals(LessonCodeTokenKind.Bracket2, lines[1].tokens.last { it.text.trim() == "{" }.kind)
+        assertEquals(LessonCodeTokenKind.Bracket3, lines[2].tokens.first { it.text.trim() == "(" }.kind)
+        assertEquals(LessonCodeTokenKind.Bracket2, lines[3].tokens.single { it.text.trim() == "}" }.kind)
+        assertEquals(LessonCodeTokenKind.Bracket0, lines[4].tokens.single().kind)
+    }
+
+    @Test
+    fun `parameters types and mutable variables follow the IDE colour scheme`() {
+        val lines =
+            kotlinCode(
+                """
+                fun calificar(nota: Int): String {
+                    var total = 0
+                    total += nota
+                    return "x"
+                }
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.Parameter, lines[0].tokens.kindOf("nota"))
+        assertEquals(LessonCodeTokenKind.ClassName, lines[0].tokens.kindOf("Int"))
+        assertEquals(LessonCodeTokenKind.ClassName, lines[0].tokens.kindOf("String"))
+        assertEquals(LessonCodeTokenKind.Punctuation, lines[0].tokens.kindOf(":"))
+        assertEquals(LessonCodeTokenKind.MutableVariable, lines[1].tokens.kindOf("total"))
+        assertEquals(LessonCodeTokenKind.MutableVariable, lines[2].tokens.kindOf("total"))
+        assertEquals(LessonCodeTokenKind.Parameter, lines[2].tokens.kindOf("nota"))
+    }
+
+    @Test
+    fun `named arguments and lambda delimiters get their own kinds`() {
+        val named = kotlinCode("assertEquals(expected = 1, actual = suma(3))").single().tokens
+        val lambda = kotlinCode("lista.forEach { println(it) }").single().tokens
+
+        assertEquals(LessonCodeTokenKind.Constant, named.kindOf("expected"))
+        assertEquals(LessonCodeTokenKind.Constant, named.kindOf("actual"))
+        assertEquals(LessonCodeTokenKind.LambdaDelimiter, lambda.kindOf("{"))
+        assertEquals(LessonCodeTokenKind.LambdaDelimiter, lambda.kindOf("}"))
+    }
+
+    @Test
+    fun `error marks underline the marked text and are not part of the code`() {
+        val tokens = kotlinCode("⟦prinln⟧(\"Hola\")").single().tokens
+
+        assertEquals("prinln(\"Hola\")", tokens.joinToString("") { it.text })
+        assertEquals(true, tokens.first().hasErrorUnderline)
+        assertEquals(false, tokens.last().hasErrorUnderline)
+    }
+
+    @Test
+    fun `escapes in strings are separated like template parts`() {
+        val tokens = kotlinCode("""println("a\nb")""").single().tokens
+
+        assertEquals(LessonCodeTokenKind.Interpolation, tokens.kindOf("\\n"))
     }
 
     private fun List<LessonCodeToken>.kindOf(text: String): LessonCodeTokenKind = first { it.text.trim() == text }.kind

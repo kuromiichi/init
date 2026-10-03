@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.lessons.SubjectArea
+import dev.kuromiichi.damprep.ui.theme.LocalCatppuccinFlavor
 
 @Composable
 internal fun SubjectAreaTag(subjectArea: SubjectArea) {
@@ -30,12 +31,14 @@ internal fun SubjectAreaTag(subjectArea: SubjectArea) {
 }
 
 @Composable
-private fun SubjectArea.accentColor(): Color =
-    when (this) {
-        SubjectArea.Mixed -> MaterialTheme.colorScheme.secondary
-        SubjectArea.Programming -> MaterialTheme.colorScheme.tertiary
-        SubjectArea.DevelopmentEnvironments -> MaterialTheme.colorScheme.primary
-        SubjectArea.ComputerSystems -> MaterialTheme.colorScheme.secondary
-        SubjectArea.MarkupLanguages -> MaterialTheme.colorScheme.tertiary
-        SubjectArea.Databases -> MaterialTheme.colorScheme.primary
+private fun SubjectArea.accentColor(): Color {
+    val flavor = LocalCatppuccinFlavor.current
+    return when (this) {
+        SubjectArea.Mixed -> flavor.mauve
+        SubjectArea.Programming -> flavor.peach
+        SubjectArea.DevelopmentEnvironments -> flavor.blue
+        SubjectArea.ComputerSystems -> flavor.teal
+        SubjectArea.MarkupLanguages -> flavor.pink
+        SubjectArea.Databases -> flavor.green
     }
+}

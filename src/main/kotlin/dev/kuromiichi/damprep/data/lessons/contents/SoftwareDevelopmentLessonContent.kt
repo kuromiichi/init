@@ -4,22 +4,15 @@ import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
-import dev.kuromiichi.damprep.data.lessons.codeLine
 import dev.kuromiichi.damprep.data.lessons.emphasis
 import dev.kuromiichi.damprep.data.lessons.explanationCode
-import dev.kuromiichi.damprep.data.lessons.function
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
-import dev.kuromiichi.damprep.data.lessons.keyword
-import dev.kuromiichi.damprep.data.lessons.number
-import dev.kuromiichi.damprep.data.lessons.operator
+import dev.kuromiichi.damprep.data.lessons.kotlinCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.paragraphs
-import dev.kuromiichi.damprep.data.lessons.plain
-import dev.kuromiichi.damprep.data.lessons.punctuation
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
-import dev.kuromiichi.damprep.data.lessons.string
 
 val softwareDevelopmentLessonContent =
     LessonContent(
@@ -153,52 +146,31 @@ val softwareDevelopmentLessonContent =
                                     LessonCodeExample(
                                         title = "Error sintáctico",
                                         lines =
-                                            listOf(
-                                                codeLine(
-                                                    function("println"),
-                                                    punctuation("("),
-                                                    string("\"Hola", hasErrorUnderline = true),
-                                                ),
+                                            kotlinCode(
+                                                """
+                                                println(⟦"Hola⟧
+                                                """.trimIndent(),
                                             ),
                                         note = richText(regular("Faltan comillas y paréntesis de cierre: la frase queda incompleta.")),
                                     ),
                                     LessonCodeExample(
                                         title = "Error de ejecución",
                                         lines =
-                                            listOf(
-                                                codeLine(
-                                                    keyword("val"),
-                                                    plain(" minutos "),
-                                                    operator("="),
-                                                    plain(" "),
-                                                    string("\"hola\"", hasErrorUnderline = true),
-                                                    plain(".toInt()", hasErrorUnderline = true),
-                                                ),
+                                            kotlinCode(
+                                                """
+                                                val minutos = ⟦"hola".toInt()⟧
+                                                """.trimIndent(),
                                             ),
                                         note = richText(regular("Compila, pero al ejecutarse se detiene: "), inlineCode("hola"), regular(" no se puede convertir en número.")),
                                     ),
                                     LessonCodeExample(
                                         title = "Error lógico",
                                         lines =
-                                            listOf(
-                                                codeLine(
-                                                    keyword("val"),
-                                                    plain(" edad "),
-                                                    operator("="),
-                                                    plain(" "),
-                                                    number("16"),
-                                                ),
-                                                codeLine(
-                                                    keyword("val"),
-                                                    plain(" puedeEntrar "),
-                                                    operator("="),
-                                                    plain(" "),
-                                                    plain("edad", hasErrorUnderline = true),
-                                                    plain(" ", hasErrorUnderline = true),
-                                                    operator("<", hasErrorUnderline = true),
-                                                    plain(" ", hasErrorUnderline = true),
-                                                    number("18", hasErrorUnderline = true),
-                                                ),
+                                            kotlinCode(
+                                                """
+                                                val edad = 16
+                                                val puedeEntrar = ⟦edad < 18⟧
+                                                """.trimIndent(),
                                             ),
                                         note = richText(regular("Compila, pero permite entrar justo a quien no debería.")),
                                     ),

@@ -4,9 +4,11 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
+import dev.kuromiichi.damprep.ui.common.verticalFadingEdges
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,26 +54,34 @@ fun LessonListScreen(
     onLessonSelected: (String) -> Unit,
 ) {
     AppScreen(onBack = onBack) {
-        Column(
+        val scrollState = rememberScrollState()
+        Box(
             modifier =
                 Modifier
+                    .weight(1f)
                     .widthIn(max = AppScreenContentMaxWidth)
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
+                    .verticalFadingEdges(
+                        scrollState = scrollState,
+                        color = MaterialTheme.colorScheme.background,
+                        length = 32.dp,
+                    ),
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
-            Text(
-                text = "Todas las lecciones",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            uiState.lessons.forEach { lesson ->
-                LessonListItem(
-                    lesson = lesson,
-                    onClick = { onLessonSelected(lesson.id) },
+            Column(modifier = Modifier.fillMaxWidth().verticalScroll(scrollState)) {
+                Spacer(modifier = Modifier.height(48.dp))
+                Text(
+                    text = "Todas las lecciones",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+                uiState.lessons.forEach { lesson ->
+                    LessonListItem(
+                        lesson = lesson,
+                        onClick = { onLessonSelected(lesson.id) },
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
         }
     }
@@ -178,6 +189,7 @@ private fun LessonListItem(
             shape = MaterialTheme.shapes.medium,
             color = containerColor,
             contentColor = contentColor,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             tonalElevation = tonalElevation,
             interactionSource = interactionSource,
         ) {
@@ -198,6 +210,7 @@ private fun LessonListItem(
                 shape = MaterialTheme.shapes.medium,
                 color = containerColor,
                 contentColor = contentColor,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             ) {
                 itemContent()
             }

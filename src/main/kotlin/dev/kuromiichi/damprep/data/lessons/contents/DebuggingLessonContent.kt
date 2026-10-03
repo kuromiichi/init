@@ -7,7 +7,6 @@ import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonScreenshot
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
-import dev.kuromiichi.damprep.data.lessons.codeLine
 import dev.kuromiichi.damprep.data.lessons.consoleError
 import dev.kuromiichi.damprep.data.lessons.consoleInput
 import dev.kuromiichi.damprep.data.lessons.consoleOutput
@@ -16,16 +15,11 @@ import dev.kuromiichi.damprep.data.lessons.emphasis
 import dev.kuromiichi.damprep.data.lessons.explanationCode
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
-import dev.kuromiichi.damprep.data.lessons.keyword
 import dev.kuromiichi.damprep.data.lessons.kotlinCode
-import dev.kuromiichi.damprep.data.lessons.operator
 import dev.kuromiichi.damprep.data.lessons.paragraph
-import dev.kuromiichi.damprep.data.lessons.plain
-import dev.kuromiichi.damprep.data.lessons.punctuation
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
-import dev.kuromiichi.damprep.data.lessons.string
 
 val debuggingLessonContent =
     LessonContent(
@@ -56,22 +50,11 @@ val debuggingLessonContent =
                                 LessonCodeExample(
                                     title = "Dos errores subrayados",
                                     lines =
-                                        listOf(
-                                            codeLine(
-                                                plain("prinln", hasErrorUnderline = true),
-                                                punctuation("("),
-                                                string("\"Hola\""),
-                                                punctuation(")"),
-                                            ),
-                                            codeLine(
-                                                keyword("val"),
-                                                plain(" edad"),
-                                                operator(":"),
-                                                plain(" Int "),
-                                                operator("="),
-                                                plain(" "),
-                                                string("\"17\"", hasErrorUnderline = true),
-                                            ),
+                                        kotlinCode(
+                                            """
+                                            ⟦prinln⟧("Hola")
+                                            val edad: Int = ⟦"17"⟧
+                                            """.trimIndent(),
                                         ),
                                     note =
                                         richText(
