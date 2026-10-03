@@ -90,6 +90,15 @@ class KotlinCodeHighlighterTest {
         assertEquals(LessonCodeTokenKind.Keyword, lines[1].tokens.kindOf("fun"))
     }
 
+    @Test
+    fun `null safety operators are single operator tokens`() {
+        val tokens = kotlinCode("val n = texto?.length ?: texto!!.length").single().tokens
+
+        listOf("?.", "?:", "!!").forEach { operator ->
+            assertEquals(LessonCodeTokenKind.Operator, tokens.single { it.text.trim() == operator }.kind, operator)
+        }
+    }
+
     private fun List<LessonCodeToken>.kindOf(text: String): LessonCodeTokenKind = first { it.text.trim() == text }.kind
 
     private fun LessonCodeLine.sourceText(): String = tokens.joinToString("") { it.text }

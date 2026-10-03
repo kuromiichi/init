@@ -25,7 +25,7 @@ Actualmente incluye:
 - navegación entre portada, listado y lecciones, con navegación por botones y teclado dentro de cada lección;
 - itinerario lineal provisional de 29 lecciones con desbloqueo secuencial; las lecciones que aún no se pueden abrir explican el motivo;
 - progreso persistente: una lección sin terminar se retoma en el último paso visitado y una lección completada se repasa desde el principio sin alterar el progreso;
-- diez lecciones con contenido:
+- once lecciones con contenido:
     1. Bienvenida y mapa del camino;
     2. Qué es el software y cómo se construye;
     3. Preparar el entorno de trabajo;
@@ -36,6 +36,7 @@ Actualmente incluye:
     8. Funciones y modularidad;
     9. Control de versiones con Git;
     10. Pruebas básicas de software;
+    11. Valores nulos, errores y excepciones;
 - componentes visuales para diagramas, ejemplos de código resaltados, tablas de traza, consola con errores, herramientas y capturas;
 - prácticas guiadas con requisitos, resultado esperado en forma de consola, pistas progresivas y confirmación explícita;
 - pruebas automatizadas de los modelos, preferencias, progreso, base de datos, ViewModels, resaltado de código y reglas del contenido;
@@ -215,7 +216,7 @@ Las pruebas de `LessonContentRulesTest` comprueban reglas generales del contenid
 
 ## Próximos pasos
 
-1. Desarrollar la lección de valores nulos, errores y excepciones, manteniendo la progresión lineal.
+1. Desarrollar la lección de arrays y listas, manteniendo la progresión lineal.
 2. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
 3. Implementar apuntes persistentes sobre la base de datos local.
 4. Completar los metadatos, iconos y pruebas de los instaladores nativos.
