@@ -1,5 +1,6 @@
 package dev.kuromiichi.damprep.ui.common
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -97,7 +98,7 @@ fun CycleDiagram(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
-        if (maxWidth < 480.dp) {
+        if (maxWidth < 500.dp) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -120,8 +121,8 @@ fun CycleDiagram(
             return@BoxWithConstraints
         }
 
-        val diagramSize = 480.dp
-        val nodeRadius = 164.dp
+        val diagramSize = 500.dp
+        val nodeRadius = 176.dp
 
         Box(
             modifier = Modifier.size(diagramSize),
@@ -167,8 +168,9 @@ private fun CycleStepNode(
     Surface(
         modifier = modifier.widthIn(min = 128.dp, max = 140.dp),
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Box(contentAlignment = Alignment.CenterStart) {
             Surface(
@@ -210,8 +212,9 @@ private fun FlowDiagramNode(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
     ) {
         Text(
             text = text,

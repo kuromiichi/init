@@ -6,6 +6,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonScreenshot
 import dev.kuromiichi.damprep.data.lessons.LessonStep
+import dev.kuromiichi.damprep.data.lessons.LessonStepContent
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.callout
 import dev.kuromiichi.damprep.data.lessons.consoleInput
@@ -15,10 +16,12 @@ import dev.kuromiichi.damprep.data.lessons.emphasis
 import dev.kuromiichi.damprep.data.lessons.explanationCode
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
+import dev.kuromiichi.damprep.data.lessons.operatingSystemStep
 import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 
 val gitVersionControlLessonContent =
     LessonContent(
@@ -73,31 +76,45 @@ val gitVersionControlLessonContent =
                             LessonLink("Configurar Git por primera vez (Pro Git)", "https://git-scm.com/book/es/v2/Inicio---Sobre-el-Control-de-Versiones-Configurando-Git-por-primera-vez"),
                         ),
                 ),
-                LessonStep(
-                    title = "Crear un repositorio",
-                    explanation =
-                        listOf(
-                            paragraph(regular("Abre la terminal en la carpeta de tu proyecto y ejecuta "), inlineCode("git init"), regular(". Git crea dentro una carpeta oculta, "), inlineCode(".git"), regular(", donde guarda toda la historia. No la modifiques a mano.")),
-                            paragraph(regular("En IntelliJ IDEA se hace con "), emphasis("VCS › Enable Version Control Integration"), regular(", eligiendo "), emphasis("Git"), regular(". Equivale a "), inlineCode("git init"), regular(" y basta con hacerlo una vez por proyecto.")),
-                            paragraph(regular("Crear el repositorio todavía no guarda nada: los archivos siguen en la carpeta, pero Git aún no los sigue.")),
-                        ),
-                    visual =
-                        LessonVisualContent.Console(
-                            title = "Terminal",
-                            runs =
-                                listOf(
-                                    consoleRun(
-                                        consoleInput("git init"),
-                                        consoleOutput("Initialized empty Git repository in /ruta/a/Notas/.git/"),
+                operatingSystemStep("Crear un repositorio") { system ->
+                    val projectPath =
+                        when (system) {
+                            TargetOperatingSystem.Windows -> "C:/Users/alumno/Notas"
+                            TargetOperatingSystem.MacOS -> "/Users/alumno/Notas"
+                            TargetOperatingSystem.Linux -> "/home/alumno/Notas"
+                            null -> "/ruta/a/Notas"
+                        }
+                    LessonStepContent(
+                        explanation =
+                            listOf(
+                                paragraph(regular("Abre la terminal en la carpeta de tu proyecto y ejecuta "), inlineCode("git init"), regular(". Git crea dentro una carpeta oculta, "), inlineCode(".git"), regular(", donde guarda toda la historia. No la modifiques a mano.")),
+                                paragraph(regular("En IntelliJ IDEA se hace con "), emphasis("VCS › Enable Version Control Integration"), regular(", eligiendo "), emphasis("Git"), regular(". Equivale a "), inlineCode("git init"), regular(" y basta con hacerlo una vez por proyecto.")),
+                                paragraph(regular("Crear el repositorio todavía no guarda nada: los archivos siguen en la carpeta, pero Git aún no los sigue.")),
+                                when (system) {
+                                    TargetOperatingSystem.Windows -> paragraph(regular("En el Explorador de archivos, la carpeta "), inlineCode(".git"), regular(" no se ve hasta que activas "), emphasis("Ver › Mostrar › Elementos ocultos"), regular("."))
+                                    TargetOperatingSystem.MacOS -> paragraph(regular("En el Finder, la carpeta "), inlineCode(".git"), regular(" no se ve hasta que pulsas "), inlineCode("⌘ ⇧ ."), regular(", que muestra y oculta los archivos ocultos."))
+                                    TargetOperatingSystem.Linux -> paragraph(regular("En la terminal la ves con "), inlineCode("ls -a"), regular("; en el gestor de archivos suele bastar con "), inlineCode("Ctrl+H"), regular("."))
+                                    null -> paragraph(regular("Tu explorador de archivos no muestra la carpeta "), inlineCode(".git"), regular(" hasta que activas los archivos ocultos."))
+                                },
+                            ),
+                        visual =
+                            LessonVisualContent.Console(
+                                title = "Terminal",
+                                runs =
+                                    listOf(
+                                        consoleRun(
+                                            consoleInput("git init"),
+                                            consoleOutput("Initialized empty Git repository in $projectPath/.git/"),
+                                        ),
                                     ),
-                                ),
-                        ),
-                    links =
-                        listOf(
-                            LessonLink("Obtener un repositorio (Pro Git)", "https://git-scm.com/book/es/v2/Fundamentos-de-Git-Obteniendo-un-repositorio-Git"),
-                            LessonLink("Crear un repositorio en IntelliJ IDEA", "https://www.jetbrains.com/help/idea/set-up-a-git-repository.html"),
-                        ),
-                ),
+                            ),
+                        links =
+                            listOf(
+                                LessonLink("Obtener un repositorio (Pro Git)", "https://git-scm.com/book/es/v2/Fundamentos-de-Git-Obteniendo-un-repositorio-Git"),
+                                LessonLink("Crear un repositorio en IntelliJ IDEA", "https://www.jetbrains.com/help/idea/set-up-a-git-repository.html"),
+                            ),
+                    )
+                },
                 LessonStep(
                     title = "Los tres estados",
                     explanation =
@@ -171,48 +188,63 @@ val gitVersionControlLessonContent =
                             LessonLink("Guardar cambios en el repositorio (Pro Git)", "https://git-scm.com/book/es/v2/Fundamentos-de-Git-Guardando-cambios-en-el-Repositorio"),
                         ),
                 ),
-                LessonStep(
-                    title = "Lo que no se guarda",
-                    explanation =
-                        listOf(
-                            paragraph(regular("Hay archivos que no deben entrar en el repositorio: lo que se genera al compilar, en "), inlineCode("build/"), regular("; las cachés de Gradle, en "), inlineCode(".gradle/"), regular("; y la configuración personal del IDE, en "), inlineCode(".idea/"), regular(". Se pueden regenerar y solo estorban.")),
-                            paragraph(regular("El archivo "), inlineCode(".gitignore"), regular(", en la raíz del proyecto, indica qué debe ignorar Git: una carpeta, un archivo o un patrón como "), inlineCode("*.log"), regular(" en cada línea. Si tu proyecto no lo tiene, créalo antes del primer commit; un generador o las plantillas de GitHub te dan una base para Gradle e IntelliJ IDEA.")),
-                            explanationCode(
-                                ".gitignore",
-                                richText(regular("La línea que empieza por "), inlineCode("!"), regular(" es una excepción: el Wrapper de Gradle sí debe guardarse.")),
-                                ".gradle",
-                                "build/",
-                                "!gradle/wrapper/gradle-wrapper.jar",
-                                ".idea/",
-                                "*.iml",
-                                ".DS_Store",
-                            ),
-                        ),
-                    visual =
-                        LessonVisualContent.Console(
-                            title = "Terminal",
-                            runs =
-                                listOf(
-                                    consoleRun(
-                                        consoleInput("git status --ignored"),
-                                        consoleOutput("On branch main"),
-                                        consoleOutput("Ignored files:"),
-                                        consoleOutput("  (use \"git add -f <file>...\" to include in what will be committed)"),
-                                        consoleOutput("        .gradle/"),
-                                        consoleOutput("        .idea/"),
-                                        consoleOutput("        build/"),
-                                        consoleOutput(""),
-                                        consoleOutput("nothing to commit, working tree clean"),
-                                    ),
+                operatingSystemStep("Lo que no se guarda") { system ->
+                    val systemFiles =
+                        when (system) {
+                            TargetOperatingSystem.Windows -> listOf("Thumbs.db")
+                            TargetOperatingSystem.MacOS -> listOf(".DS_Store")
+                            TargetOperatingSystem.Linux -> emptyList()
+                            null -> listOf(".DS_Store", "Thumbs.db")
+                        }
+                    val systemFilesNote =
+                        when (system) {
+                            TargetOperatingSystem.Windows -> richText(regular("La línea con "), inlineCode("!"), regular(" es una excepción: el Wrapper de Gradle sí debe guardarse. "), inlineCode("Thumbs.db"), regular(" es la caché de miniaturas que crea Windows."))
+                            TargetOperatingSystem.MacOS -> richText(regular("La línea con "), inlineCode("!"), regular(" es una excepción: el Wrapper de Gradle sí debe guardarse. "), inlineCode(".DS_Store"), regular(" lo crea el Finder en cada carpeta."))
+                            TargetOperatingSystem.Linux -> richText(regular("La línea con "), inlineCode("!"), regular(" es una excepción: el Wrapper de Gradle sí debe guardarse."))
+                            null -> richText(regular("La línea con "), inlineCode("!"), regular(" es una excepción: el Wrapper de Gradle sí debe guardarse. Las dos últimas son archivos que crean macOS y Windows."))
+                        }
+                    LessonStepContent(
+                        explanation =
+                            listOf(
+                                paragraph(regular("Hay archivos que no deben entrar en el repositorio: lo que se genera al compilar, en "), inlineCode("build/"), regular("; las cachés de Gradle, en "), inlineCode(".gradle/"), regular("; y la configuración personal del IDE, en "), inlineCode(".idea/"), regular(". Se pueden regenerar y solo estorban.")),
+                                paragraph(regular("El archivo "), inlineCode(".gitignore"), regular(", en la raíz del proyecto, indica qué debe ignorar Git: una carpeta, un archivo o un patrón como "), inlineCode("*.log"), regular(" en cada línea. Si tu proyecto no lo tiene, créalo antes del primer commit; un generador o las plantillas de GitHub te dan una base para Gradle e IntelliJ IDEA.")),
+                                explanationCode(
+                                    ".gitignore",
+                                    systemFilesNote,
+                                    ".gradle",
+                                    "build/",
+                                    "!gradle/wrapper/gradle-wrapper.jar",
+                                    ".idea/",
+                                    "*.iml",
+                                    *systemFiles.toTypedArray(),
                                 ),
-                        ),
-                    links =
-                        listOf(
-                            LessonLink("Generador de .gitignore", "https://www.toptal.com/developers/gitignore"),
-                            LessonLink("Plantillas de .gitignore de GitHub", "https://github.com/github/gitignore"),
-                            LessonLink("Referencia de .gitignore", "https://git-scm.com/docs/gitignore"),
-                        ),
-                ),
+                            ),
+                        visual =
+                            LessonVisualContent.Console(
+                                title = "Terminal",
+                                runs =
+                                    listOf(
+                                        consoleRun(
+                                            consoleInput("git status --ignored"),
+                                            consoleOutput("On branch main"),
+                                            consoleOutput("Ignored files:"),
+                                            consoleOutput("  (use \"git add -f <file>...\" to include in what will be committed)"),
+                                            consoleOutput("        .gradle/"),
+                                            consoleOutput("        .idea/"),
+                                            consoleOutput("        build/"),
+                                            consoleOutput(""),
+                                            consoleOutput("nothing to commit, working tree clean"),
+                                        ),
+                                    ),
+                            ),
+                        links =
+                            listOf(
+                                LessonLink("Generador de .gitignore", "https://www.toptal.com/developers/gitignore"),
+                                LessonLink("Plantillas de .gitignore de GitHub", "https://github.com/github/gitignore"),
+                                LessonLink("Referencia de .gitignore", "https://git-scm.com/docs/gitignore"),
+                            ),
+                    )
+                },
                 LessonStep(
                     title = "Consultar la historia",
                     explanation =

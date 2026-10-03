@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
@@ -304,7 +305,7 @@ private fun LessonPracticeCard(
                             fontWeight = FontWeight.SemiBold,
                         )
                         Text(
-                            text = extension.toAnnotatedString(),
+                            text = extension.toAnnotatedString(tintedContentColor = LocalContentColor.current),
                             style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
                         )
                     }
@@ -354,7 +355,7 @@ private fun LessonPracticeCard(
                             fontWeight = FontWeight.SemiBold,
                         )
                         Text(
-                            text = practice.confirmation.toAnnotatedString(),
+                            text = practice.confirmation.toAnnotatedString(tintedContentColor = LocalContentColor.current),
                             style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
                         )
                     }

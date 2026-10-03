@@ -1,6 +1,5 @@
 package dev.kuromiichi.damprep.ui.common
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -57,7 +55,7 @@ fun TraceTableVisual(
             modifier
                 .widthIn(max = 500.dp)
                 .fillMaxWidth()
-                .background(color = flavor.base, shape = RoundedCornerShape(8.dp))
+                .codeBlockSurface(flavor)
                 .padding(horizontal = 18.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
@@ -69,16 +67,22 @@ fun TraceTableVisual(
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
             val separatorPx = with(density) { COLUMN_SPACING.roundToPx() }
             val availableCharacters = (constraints.maxWidth - separatorPx * (table.columns.size - 1)) / characterWidth
-            val columnWidths =
-                remember(table, availableCharacters, characterWidth) {
-                    table.columnCharacterWidths(availableCharacters).map { characters -> with(density) { (characters * characterWidth).toDp() } }
+            val characterWidths = remember(table, availableCharacters) { table.columnCharacterWidths(availableCharacters) }
+            val columnWidths = characterWidths.map { characters -> with(density) { (characters * characterWidth).toDp() } }
+            // Si sobra ancho, se reparte entre las columnas para que respiren, sin pasar de un máximo.
+            val spareWidth = with(density) { (availableCharacters - characterWidths.sum()).coerceAtLeast(0).times(characterWidth).toDp() }
+            val columnSpacing =
+                if (table.columns.size > 1) {
+                    (COLUMN_SPACING + spareWidth / (table.columns.size - 1)).coerceAtMost(MAX_COLUMN_SPACING)
+                } else {
+                    COLUMN_SPACING
                 }
 
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                TraceRow(cells = table.columns, widths = columnWidths, style = cellStyle.copy(fontWeight = FontWeight.SemiBold), color = flavor.blue)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                TraceRow(cells = table.columns, widths = columnWidths, spacing = columnSpacing, style = cellStyle.copy(fontWeight = FontWeight.SemiBold), color = flavor.blue)
                 HorizontalDivider(color = flavor.surface1)
                 table.rows.forEach { row ->
-                    TraceRow(cells = row, widths = columnWidths, style = cellStyle, color = flavor.text)
+                    TraceRow(cells = row, widths = columnWidths, spacing = columnSpacing, style = cellStyle, color = flavor.text)
                 }
             }
         }
@@ -89,12 +93,13 @@ fun TraceTableVisual(
 private fun TraceRow(
     cells: List<String>,
     widths: List<Dp>,
+    spacing: Dp,
     style: TextStyle,
     color: Color,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(COLUMN_SPACING),
+        horizontalArrangement = Arrangement.spacedBy(spacing),
     ) {
         cells.forEachIndexed { index, cell ->
             Text(text = cell, style = style, color = color, modifier = Modifier.width(widths[index]))
@@ -128,4 +133,5 @@ internal fun LearningTraceTable.columnCharacterWidths(availableCharacters: Int):
 }
 
 private const val MIN_COLUMN_CHARACTERS = 4
-private val COLUMN_SPACING = 12.dp
+private val COLUMN_SPACING = 16.dp
+private val MAX_COLUMN_SPACING = 36.dp

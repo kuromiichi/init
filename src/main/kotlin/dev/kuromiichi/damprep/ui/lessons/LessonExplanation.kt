@@ -24,7 +24,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -170,7 +172,7 @@ private fun LessonCallout(callout: LessonExplanationBlock.Callout) {
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = callout.text.toAnnotatedString(),
+                    text = callout.text.toAnnotatedString(tintedContentColor = contentColor),
                     style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 22.sp),
                 )
             }
@@ -206,8 +208,18 @@ private fun LessonExplanationCode(code: LessonExplanationBlock.Code) {
 }
 
 @Composable
-internal fun LessonRichText.toAnnotatedString() =
-    buildAnnotatedString {
+internal fun LessonRichText.toAnnotatedString(tintedContentColor: Color? = null): AnnotatedString {
+    // El código en línea usa el color del texto con un fondo translúcido del mismo tono: se distingue
+    // por la fuente y el fondo, y mantiene el contraste en la página y sobre cualquier aviso de color.
+    val codeColor = tintedContentColor ?: MaterialTheme.colorScheme.onSurface
+    val inlineCodeStyle =
+        SpanStyle(
+            background = codeColor.copy(alpha = 0.1f),
+            color = codeColor,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Medium,
+        )
+    return buildAnnotatedString {
         spans.forEach { span ->
             val style =
                 when (span.style) {
@@ -222,12 +234,7 @@ internal fun LessonRichText.toAnnotatedString() =
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold,
                         )
-                    LessonTextSpanStyle.InlineCode ->
-                        SpanStyle(
-                            background = MaterialTheme.colorScheme.surfaceVariant,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontFamily = FontFamily.Monospace,
-                        )
+                    LessonTextSpanStyle.InlineCode -> inlineCodeStyle
                 }
 
             withStyle(style) {
@@ -235,6 +242,7 @@ internal fun LessonRichText.toAnnotatedString() =
             }
         }
     }
+}
 
 /**
  * Versión de [toAnnotatedString] para las notas de los bloques de código: conserva los colores

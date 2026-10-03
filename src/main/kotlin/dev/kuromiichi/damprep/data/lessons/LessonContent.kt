@@ -34,6 +34,24 @@ data class LessonStep(
             )
 }
 
+/**
+ * Paso cuyo contenido cambia según el sistema operativo (comandos, rutas, archivos del sistema).
+ * El contenido con `null` se muestra mientras no hay sistema elegido; el selector aparece solo en estos pasos.
+ */
+internal fun operatingSystemStep(
+    title: String,
+    content: (TargetOperatingSystem?) -> LessonStepContent,
+): LessonStep {
+    val base = content(null)
+    return LessonStep(
+        title = title,
+        explanation = base.explanation,
+        visual = base.visual,
+        links = base.links,
+        operatingSystemContent = TargetOperatingSystem.entries.associateWith(content),
+    )
+}
+
 data class LessonPractice(
     val id: String,
     val objective: LessonRichText,

@@ -39,7 +39,8 @@ class LessonContentRulesTest {
             assertEquals(TargetOperatingSystem.entries.toSet(), step.operatingSystemContent.keys, step.title)
             val variants = TargetOperatingSystem.entries.map(step::contentFor)
             assertTrue(variants.all { it.links.isNotEmpty() }, "Variante sin enlaces: ${step.title}")
-            assertEquals(variants.size, variants.map(LessonStepContent::explanation).toSet().size, "Variantes repetidas: ${step.title}")
+            // Dos sistemas pueden compartir contenido (macOS y Linux suelen coincidir), pero si todos coinciden sobra el selector.
+            assertTrue(variants.toSet().size > 1, "El paso no cambia según el sistema: ${step.title}")
         }
     }
 

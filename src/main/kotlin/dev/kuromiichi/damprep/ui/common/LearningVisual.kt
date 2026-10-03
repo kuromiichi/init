@@ -1,5 +1,6 @@
 package dev.kuromiichi.damprep.ui.common
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,11 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,12 +36,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -113,7 +118,7 @@ fun LearningVisualSurface(
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
     ) {
         Box(
@@ -142,7 +147,8 @@ fun IconTextLearningVisual(
             modifier = Modifier.size(76.dp),
             shape = CircleShape,
             color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            contentColor = MaterialTheme.colorScheme.primary,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
@@ -168,7 +174,10 @@ fun IconTextLearningVisual(
     }
 }
 
-/** Captura que se puede ampliar con un clic (o con Intro si tiene el foco) para leerla a tamaño completo. */
+/**
+ * Captura con el marco ajustado a su proporción, para que borde y esquinas sigan a la imagen.
+ * Un clic la amplía; el visor tampoco reescala más allá de la resolución real de la captura.
+ */
 @Composable
 fun ScreenshotLearningVisual(
     image: DrawableResource,
@@ -176,37 +185,63 @@ fun ScreenshotLearningVisual(
     modifier: Modifier = Modifier,
 ) {
     var isZoomed by remember { mutableStateOf(false) }
-    val shape = RoundedCornerShape(8.dp)
+    val painter = painterResource(image)
+    val aspectRatio = painter.intrinsicSize.width / painter.intrinsicSize.height
+    // Nunca por encima de la resolución real: ampliar una captura la emborrona y descuadra su texto.
+    val nativeSize = with(LocalDensity.current) { painter.intrinsicSize.toDpSize() }
 
-    Image(
-        painter = painterResource(image),
-        contentDescription = description,
-        contentScale = ContentScale.Fit,
-        modifier =
-            modifier
-                .widthIn(max = 720.dp)
-                .fillMaxWidth()
-                .clip(shape)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
-                .pointerHoverIcon(PointerIcon.Hand)
-                .clickable(onClickLabel = "Ampliar captura", role = Role.Button) { isZoomed = true },
-    )
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Image(
+            painter = painter,
+            contentDescription = description,
+            contentScale = ContentScale.Fit,
+            modifier =
+                Modifier
+                    .sizeIn(maxWidth = nativeSize.width, maxHeight = minOf(nativeSize.height, ScreenshotMaxHeight))
+                    .aspectRatio(aspectRatio)
+                    .screenshotFrame()
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .clickable(
+                        interactionSource = null,
+                        indication = null,
+                        onClickLabel = "Ampliar captura",
+                        role = Role.Button,
+                    ) { isZoomed = true },
+        )
+    }
 
     if (isZoomed) {
-        Dialog(onDismissRequest = { isZoomed = false }) {
-            Surface(
-                modifier = Modifier.fillMaxSize(0.94f),
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                onClick = { isZoomed = false },
+        Dialog(
+            onDismissRequest = { isZoomed = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(32.dp)
+                        .clickable(interactionSource = null, indication = null) { isZoomed = false },
+                contentAlignment = Alignment.Center,
             ) {
                 Image(
-                    painter = painterResource(image),
+                    painter = painter,
                     contentDescription = description,
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize().padding(16.dp),
+                    modifier =
+                        Modifier
+                            .sizeIn(maxWidth = nativeSize.width, maxHeight = nativeSize.height)
+                            .aspectRatio(aspectRatio)
+                            .screenshotFrame(),
                 )
             }
         }
     }
+}
+
+private val ScreenshotMaxHeight = 460.dp
+
+@Composable
+private fun Modifier.screenshotFrame(): Modifier {
+    val shape = RoundedCornerShape(10.dp)
+    return clip(shape).border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
 }

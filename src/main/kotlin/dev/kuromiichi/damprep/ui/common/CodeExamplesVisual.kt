@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -76,10 +77,8 @@ private fun CodeExampleCard(example: LearningCodeExample) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .background(
-                    color = flavor.base,
-                    shape = RoundedCornerShape(8.dp),
-                ).padding(horizontal = 18.dp, vertical = 16.dp),
+                .codeBlockSurface(flavor)
+                .padding(horizontal = 18.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -149,6 +148,15 @@ private fun CopyCodeButton(
             style = MaterialTheme.typography.labelMedium,
         )
     }
+}
+
+/**
+ * Fondo de los bloques de código, consola y tablas: el del editor de IntelliJ IDEA con un borde
+ * fino, para que se distingan tanto sobre la página como sobre el panel de un visual.
+ */
+internal fun Modifier.codeBlockSurface(flavor: CatppuccinFlavor): Modifier {
+    val shape = RoundedCornerShape(8.dp)
+    return background(color = flavor.base, shape = shape).border(1.dp, flavor.surface1, shape)
 }
 
 /** Paleta de los bloques de código y consola, acorde con el tema claro u oscuro activo. */

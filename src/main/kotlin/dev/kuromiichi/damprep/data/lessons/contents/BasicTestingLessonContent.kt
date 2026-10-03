@@ -7,6 +7,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonScreenshot
 import dev.kuromiichi.damprep.data.lessons.LessonStep
+import dev.kuromiichi.damprep.data.lessons.LessonStepContent
 import dev.kuromiichi.damprep.data.lessons.LessonTraceTable
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.callout
@@ -19,10 +20,12 @@ import dev.kuromiichi.damprep.data.lessons.explanationCode
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.kotlinCode
+import dev.kuromiichi.damprep.data.lessons.operatingSystemStep
 import dev.kuromiichi.damprep.data.lessons.paragraph
 import dev.kuromiichi.damprep.data.lessons.regular
 import dev.kuromiichi.damprep.data.lessons.richText
 import dev.kuromiichi.damprep.data.lessons.steps
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 
 private val calificarSpecification =
     kotlinCode(
@@ -312,34 +315,39 @@ val basicTestingLessonContent =
                             LessonLink("Ejecutar pruebas en IntelliJ IDEA", "https://www.jetbrains.com/help/idea/performing-tests.html"),
                         ),
                 ),
-                LessonStep(
-                    title = "Leer una prueba que falla",
-                    explanation =
-                        listOf(
-                            paragraph(regular("El mensaje "), inlineCode("expected: <Notable> but was: <Aprobado>"), regular(" se lee así: se esperaba "), inlineCode("Notable"), regular(", pero la función devolvió "), inlineCode("Aprobado"), regular(". La traza indica la línea de la prueba que ha fallado.")),
-                            paragraph(regular("Por eso conviene nombrar los argumentos. Sin nombres, "), inlineCode("assertEquals"), regular(" espera primero el valor esperado y después el obtenido; si los inviertes, la prueba sigue fallando, pero el mensaje dice lo contrario y te despista.")),
-                            paragraph(regular("También puedes ejecutar todas las pruebas desde la terminal con "), inlineCode("./gradlew test"), regular(" ("), inlineCode("gradlew.bat test"), regular(" en Windows). Una prueba que falla hace que falle toda la construcción.")),
-                        ),
-                    visual =
-                        LessonVisualContent.Console(
-                            title = "Terminal",
-                            runs =
-                                listOf(
-                                    consoleRun(
-                                        consoleInput("./gradlew test"),
-                                        consoleOutput("> Task :test FAILED"),
-                                        consoleOutput("CalificarTest > un 7 es notable() FAILED"),
-                                        consoleOutput("    org.opentest4j.AssertionFailedError at CalificarTest.kt:15"),
-                                        consoleOutput("2 tests completed, 1 failed"),
-                                        consoleError("BUILD FAILED in 1s"),
+                operatingSystemStep("Leer una prueba que falla") { system ->
+                    val gradleTest = if (system == TargetOperatingSystem.Windows) ".\\gradlew.bat test" else "./gradlew test"
+                    LessonStepContent(
+                        explanation =
+                            listOf(
+                                paragraph(regular("El mensaje "), inlineCode("expected: <Notable> but was: <Aprobado>"), regular(" se lee así: se esperaba "), inlineCode("Notable"), regular(", pero la función devolvió "), inlineCode("Aprobado"), regular(". La traza indica la línea de la prueba que ha fallado.")),
+                                paragraph(regular("Por eso conviene nombrar los argumentos. Sin nombres, "), inlineCode("assertEquals"), regular(" espera primero el valor esperado y después el obtenido; si los inviertes, la prueba sigue fallando, pero el mensaje dice lo contrario y te despista.")),
+                                when (system) {
+                                    null -> paragraph(regular("También puedes ejecutar todas las pruebas desde la terminal con "), inlineCode("./gradlew test"), regular(" ("), inlineCode(".\\gradlew.bat test"), regular(" en Windows). Una prueba que falla hace que falle toda la construcción."))
+                                    else -> paragraph(regular("También puedes ejecutar todas las pruebas desde la terminal, en la carpeta del proyecto, con "), inlineCode(gradleTest), regular(". Una prueba que falla hace que falle toda la construcción."))
+                                },
+                            ),
+                        visual =
+                            LessonVisualContent.Console(
+                                title = "Terminal",
+                                runs =
+                                    listOf(
+                                        consoleRun(
+                                            consoleInput(gradleTest),
+                                            consoleOutput("> Task :test FAILED"),
+                                            consoleOutput("CalificarTest > un 7 es notable() FAILED"),
+                                            consoleOutput("    org.opentest4j.AssertionFailedError at CalificarTest.kt:15"),
+                                            consoleOutput("2 tests completed, 1 failed"),
+                                            consoleError("BUILD FAILED in 1s"),
+                                        ),
                                     ),
-                                ),
-                        ),
-                    links =
-                        listOf(
-                            LessonLink("Pruebas con Gradle", "https://docs.gradle.org/current/userguide/java_testing.html"),
-                        ),
-                ),
+                            ),
+                        links =
+                            listOf(
+                                LessonLink("Pruebas con Gradle", "https://docs.gradle.org/current/userguide/java_testing.html"),
+                            ),
+                    )
+                },
                 LessonStep(
                     title = "Preparar, actuar y comprobar",
                     explanation =

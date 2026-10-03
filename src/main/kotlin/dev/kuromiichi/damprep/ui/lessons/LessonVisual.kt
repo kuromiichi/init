@@ -63,10 +63,16 @@ internal fun LessonVisual(
     visual: LessonVisualContent,
     modifier: Modifier = Modifier,
 ) {
-    LearningVisualSurface(
-        modifier = modifier,
-        contentPadding = if (visual is LessonVisualContent.Screenshot) 12.dp else 28.dp,
-    ) {
+    if (visual is LessonVisualContent.Screenshot) {
+        ScreenshotLearningVisual(
+            image = visual.image.drawableResource(isDark = LocalCatppuccinFlavor.current == CatppuccinMacchiato),
+            description = visual.description,
+            modifier = modifier,
+        )
+        return
+    }
+
+    LearningVisualSurface(modifier = modifier) {
         when (visual) {
             is LessonVisualContent.CodeExamples ->
                 CodeExamplesVisual(
@@ -91,11 +97,7 @@ internal fun LessonVisual(
                     body = visual.body,
                 )
 
-            is LessonVisualContent.Screenshot ->
-                ScreenshotLearningVisual(
-                    image = visual.image.drawableResource(isDark = LocalCatppuccinFlavor.current == CatppuccinMacchiato),
-                    description = visual.description,
-                )
+            is LessonVisualContent.Screenshot -> Unit
 
             is LessonVisualContent.Trace ->
                 Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {

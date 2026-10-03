@@ -1,11 +1,9 @@
 package dev.kuromiichi.damprep.ui.common
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,7 +31,7 @@ fun ConsoleOutputVisual(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(color = flavor.base, shape = RoundedCornerShape(8.dp))
+                .codeBlockSurface(flavor)
                 .padding(horizontal = 18.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
