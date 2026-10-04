@@ -1,5 +1,6 @@
 package dev.kuromiichi.damprep.data.lessons
 
+import dev.kuromiichi.damprep.data.lessons.contents.arraysListsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.basicTestingLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.debuggingLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
@@ -265,6 +266,7 @@ object LessonContentCatalog {
             gitVersionControlLessonContent,
             basicTestingLessonContent,
             nullabilityExceptionsLessonContent,
+            arraysListsLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }
