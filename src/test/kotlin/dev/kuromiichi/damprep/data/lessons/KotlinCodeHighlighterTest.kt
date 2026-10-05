@@ -69,6 +69,30 @@ class KotlinCodeHighlighterTest {
     }
 
     @Test
+    fun `infix calls are coloured as functions`() {
+        val pair = kotlinCode("""val notas = mapOf("Ana" to 7)""").single().tokens
+        val sets = kotlinCode("println(a union b)").single().tokens
+        val range = kotlinCode("for (i in 3 downTo 0)").single().tokens
+        val step = kotlinCode("for (i in 1..5 step 2)").single().tokens
+
+        assertEquals(LessonCodeTokenKind.Function, pair.kindOf("to"))
+        assertEquals(LessonCodeTokenKind.Function, sets.kindOf("union"))
+        assertEquals(LessonCodeTokenKind.Function, range.kindOf("downTo"))
+        assertEquals(LessonCodeTokenKind.Function, step.kindOf("step"))
+    }
+
+    @Test
+    fun `identifiers that are not infix calls stay plain`() {
+        val declaration = kotlinCode("val total = 3").single().tokens
+        val statements = kotlinCode("var a = 1\nfoo\nbar").flatMap(LessonCodeLine::tokens)
+        val conditional = kotlinCode("val x = if (ok) valor else otro").single().tokens
+
+        assertEquals(LessonCodeTokenKind.Plain, declaration.kindOf("total"))
+        assertEquals(LessonCodeTokenKind.Plain, statements.kindOf("foo"))
+        assertEquals(LessonCodeTokenKind.Plain, conditional.kindOf("valor"))
+    }
+
+    @Test
     fun `keywords inside strings and comments are not highlighted as keywords`() {
         val tokens = kotlinCode("""println("if val") // when""").single().tokens
 

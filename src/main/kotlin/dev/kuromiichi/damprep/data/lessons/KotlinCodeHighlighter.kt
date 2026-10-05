@@ -145,7 +145,7 @@ private class KotlinClassifier(
             Group.Annotation -> add(token.range, LessonCodeTokenKind.ClassName)
             Group.Identifier -> {
                 if (text == "while" && previous == "}" && closedDoBlock) doWhilePending = true
-                add(token.range, identifierKind(text, previous, next))
+                add(token.range, identifierKind(text, previous, next, isInfixCall(position)))
             }
             Group.Operator ->
                 add(
@@ -166,6 +166,7 @@ private class KotlinClassifier(
         text: String,
         previous: String?,
         next: String?,
+        isInfixCall: Boolean,
     ): LessonCodeTokenKind {
         if (text in KotlinKeywords) {
             when (text) {
@@ -182,6 +183,7 @@ private class KotlinClassifier(
             next == "(" && previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
             next == "(" && name.first().isUpperCase() && !afterDot -> LessonCodeTokenKind.Constant
             next == "(" -> LessonCodeTokenKind.Function
+            isInfixCall -> LessonCodeTokenKind.Function
             previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
             name.length > 1 && name.all { it.isUpperCase() || it.isDigit() || it == '_' } -> LessonCodeTokenKind.Constant
             name.first().isUpperCase() -> LessonCodeTokenKind.ClassName
@@ -189,6 +191,38 @@ private class KotlinClassifier(
             name in parameterNames -> LessonCodeTokenKind.Parameter
             name in mutableNames -> LessonCodeTokenKind.MutableVariable
             else -> LessonCodeTokenKind.Plain
+        }
+    }
+
+    /**
+     * Una llamada infija (`"Ana" to 7`, `a union b`, `3 downTo 0`) es un identificador entre dos operandos
+     * y en la misma línea que el izquierdo; IntelliJ IDEA la colorea como cualquier otra llamada a función.
+     */
+    private fun isInfixCall(position: Int): Boolean {
+        val previous = significant.getOrNull(position - 1)?.let(raw::get) ?: return false
+        val next = significant.getOrNull(position + 1)?.let(raw::get) ?: return false
+        val current = raw[significant[position]]
+        if (textOf(previous) == "." || '\n' in source.substring(previous.range.last + 1, current.range.first)) return false
+        return previous.endsOperand() && next.startsOperand()
+    }
+
+    private fun Raw.endsOperand(): Boolean {
+        val text = textOf(this)
+        return when (group) {
+            Group.String, Group.Number -> true
+            Group.Identifier -> text !in KotlinKeywords || text in OperandKeywords
+            Group.Punctuation -> text == ")" || text == "]"
+            else -> false
+        }
+    }
+
+    private fun Raw.startsOperand(): Boolean {
+        val text = textOf(this)
+        return when (group) {
+            Group.String, Group.Number -> true
+            Group.Identifier -> text !in KotlinKeywords || text in OperandKeywords
+            Group.Punctuation -> text == "("
+            else -> false
         }
     }
 
@@ -397,6 +431,8 @@ private val ControlKeywords = setOf("if", "for", "while", "catch")
 private val BlockKeywords = setOf("else", "try", "finally", "do", "init")
 
 private val DeclarationKeywords = setOf("class", "object", "interface")
+
+private val OperandKeywords = setOf("this", "super", "null", "true", "false")
 
 private val KotlinKeywords =
     setOf(
