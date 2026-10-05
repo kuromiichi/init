@@ -129,6 +129,7 @@ class LessonContentRulesTest {
                 "basic-testing" to listOf("""\b(listOf|arrayOf|Array)\b""", """\b(try|catch)\b""", """\bassertFailsWith\b""", """(?i)\bmock"""),
                 "nullability-exceptions" to listOf("""\b(listOf|arrayOf|Array)\b""", """\bclass\b(?! \w+Test)""", """\.(let|also|apply|run)\b""", """\b(lateinit|as\?)"""),
                 "arrays-lists" to listOf("""\b(setOf|mapOf|mutableSetOf|mutableMapOf|emptyList)\b""", """\bclass\b(?! \w+Test)""", """\.(filter|map|forEach|any|all|sortedBy|let|also|apply|run)\b""", """\{ it\b""", """\bArray\(\d"""),
+                "sets-maps" to listOf("""\bclass\b(?! \w+Test)""", """\.(filter|map|forEach|any|all|count|groupBy|sortedBy|getOrPut|getOrElse|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->""", """\b(TreeSet|TreeMap|HashSet|HashMap|Comparator)\b"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 

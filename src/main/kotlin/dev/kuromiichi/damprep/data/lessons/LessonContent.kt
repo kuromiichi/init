@@ -10,6 +10,7 @@ import dev.kuromiichi.damprep.data.lessons.contents.gitVersionControlLessonConte
 import dev.kuromiichi.damprep.data.lessons.contents.inputDecisionsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.loopsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.nullabilityExceptionsLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.setsMapsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.softwareDevelopmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.welcomeRoadmapLessonContent
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
@@ -267,6 +268,7 @@ object LessonContentCatalog {
             basicTestingLessonContent,
             nullabilityExceptionsLessonContent,
             arraysListsLessonContent,
+            setsMapsLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }
