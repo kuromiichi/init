@@ -179,6 +179,68 @@ class KotlinCodeHighlighterTest {
     }
 
     @Test
+    fun `property accessors are keywords or plain text and their braces are blocks`() {
+        val lines =
+            kotlinCode(
+                """
+                var valor = 0
+                    private set
+
+                var nota: Int = 0
+                    set(nueva) {
+                        field = nueva
+                    }
+
+                val aprobado: Boolean
+                    get() = nota >= 5
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.Keyword, lines[1].tokens.kindOf("private"))
+        assertEquals(LessonCodeTokenKind.Keyword, lines[1].tokens.kindOf("set"))
+        assertEquals(LessonCodeTokenKind.Plain, lines[4].tokens.kindOf("set"))
+        assertEquals(LessonCodeTokenKind.Parameter, lines[4].tokens.kindOf("nueva"))
+        assertEquals(LessonCodeTokenKind.Bracket0, lines[4].tokens.kindOf("{"))
+        assertEquals(LessonCodeTokenKind.MutableVariable, lines[5].tokens.kindOf("field"))
+        assertEquals(LessonCodeTokenKind.Parameter, lines[5].tokens.kindOf("nueva"))
+        assertEquals(LessonCodeTokenKind.Plain, lines[9].tokens.kindOf("get"))
+        assertEquals(LessonCodeTokenKind.MutableVariable, lines[9].tokens.kindOf("nota"))
+    }
+
+    @Test
+    fun `properties follow their declaration and constants are plain`() {
+        val lines =
+            kotlinCode(
+                """
+                class Contador(var valor: Int) {
+                    fun reiniciar(valor: Int) {
+                        this.valor = valor
+                    }
+                }
+
+                val prioridad = Prioridad.ALTA
+                println(contador.valor + Int.MAX_VALUE)
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.MutableVariable, lines[0].tokens.kindOf("valor"))
+        assertEquals(LessonCodeTokenKind.MutableVariable, lines[2].tokens.first { it.text == "valor" }.kind)
+        assertEquals(LessonCodeTokenKind.Plain, lines[6].tokens.kindOf("prioridad"))
+        assertEquals(LessonCodeTokenKind.Plain, lines[6].tokens.kindOf("ALTA"))
+        assertEquals(LessonCodeTokenKind.MutableVariable, lines[7].tokens.first { it.text == "valor" }.kind)
+        assertEquals(LessonCodeTokenKind.Plain, lines[7].tokens.kindOf("MAX_VALUE"))
+    }
+
+    @Test
+    fun `named arguments of copy are plain like in IntelliJ IDEA`() {
+        val copy = kotlinCode("val otra = ana.copy(edad = 21)").single().tokens
+        val constructor = kotlinCode("val luis = Alumno(nombre = \"Luis\")").single().tokens
+
+        assertEquals(LessonCodeTokenKind.Plain, copy.kindOf("edad"))
+        assertEquals(LessonCodeTokenKind.Constant, constructor.kindOf("nombre"))
+    }
+
+    @Test
     fun `error marks underline the marked text and are not part of the code`() {
         val tokens = kotlinCode("⟦prinln⟧(\"Hola\")").single().tokens
 

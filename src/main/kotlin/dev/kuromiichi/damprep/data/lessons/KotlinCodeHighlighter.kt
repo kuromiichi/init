@@ -85,6 +85,7 @@ private class Frame(
     val role: Role,
     val bodyOfMarker: Boolean = false,
     val isDoBlock: Boolean = false,
+    val callee: String? = null,
 ) {
     var seenToken = false
 }
@@ -176,18 +177,24 @@ private class KotlinClassifier(
             return LessonCodeTokenKind.Keyword
         }
         val afterDot = previous == "."
-        val isNamedArgument = next == "=" && stack.lastOrNull()?.role == Role.Call && (previous == "(" || previous == ",")
+        val call = stack.lastOrNull()?.takeIf { it.role == Role.Call }
+        val isNamedArgument = next == "=" && call != null && call.callee !in SyntheticCallees && (previous == "(" || previous == ",")
         val name = text.trim('`')
         return when {
+            !afterDot && name in AccessorNames && next == "(" -> LessonCodeTokenKind.Plain
+            !afterDot && name in AccessorNames && previous in VisibilityModifiers -> LessonCodeTokenKind.Keyword
+            !afterDot && name == "field" -> LessonCodeTokenKind.MutableVariable
             isNamedArgument -> LessonCodeTokenKind.Constant
             next == "(" && previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
             next == "(" && name.first().isUpperCase() && !afterDot -> LessonCodeTokenKind.Constant
             next == "(" -> LessonCodeTokenKind.Function
             isInfixCall -> LessonCodeTokenKind.Function
             previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
-            name.length > 1 && name.all { it.isUpperCase() || it.isDigit() || it == '_' } -> LessonCodeTokenKind.Constant
+            name.length > 1 && name.all { it.isUpperCase() || it.isDigit() || it == '_' } -> LessonCodeTokenKind.Plain
             name.first().isUpperCase() -> LessonCodeTokenKind.ClassName
-            afterDot -> LessonCodeTokenKind.Plain
+            afterDot -> if (name in mutableNames) LessonCodeTokenKind.MutableVariable else LessonCodeTokenKind.Plain
+            previous == "val" -> LessonCodeTokenKind.Plain
+            previous == "var" -> LessonCodeTokenKind.MutableVariable
             name in parameterNames -> LessonCodeTokenKind.Parameter
             name in mutableNames -> LessonCodeTokenKind.MutableVariable
             else -> LessonCodeTokenKind.Plain
@@ -235,10 +242,10 @@ private class KotlinClassifier(
         when (text) {
             "(", "[" -> {
                 val kind = bracketKind(stack.size)
-                val role = openingRole(text, previous)
-                if (role == Role.FunParams) funParamsSeen = true
+                val role = if (isAccessorParams(position)) Role.FunParams else openingRole(text, previous)
+                if (role == Role.FunParams && pendingFun) funParamsSeen = true
                 if (previous == "while") doWhilePending = false
-                stack += Frame(role)
+                stack += Frame(role, callee = previous.takeIf { role == Role.Call })
                 kind
             }
             "{" -> {
@@ -271,6 +278,13 @@ private class KotlinClassifier(
             }
             else -> LessonCodeTokenKind.Punctuation
         }
+
+    /** Los paréntesis de `get()` y `set(valor)` en una propiedad abren una cabecera, no una llamada. */
+    private fun isAccessorParams(position: Int): Boolean {
+        val name = significant.getOrNull(position - 1)?.let { textOf(raw[it]) }
+        val beforeName = significant.getOrNull(position - 2)?.let { textOf(raw[it]) }
+        return name in AccessorNames && beforeName != "." && !pendingFun
+    }
 
     private fun openingRole(
         bracket: String,
@@ -359,6 +373,14 @@ private class KotlinClassifier(
     private fun collectParameterNames(): Set<String> {
         val names = mutableSetOf<String>()
         significant.forEachIndexed { position, rawIndex ->
+            if (textOf(raw[rawIndex]) == "set") {
+                val isCall = significant.getOrNull(position - 1)?.let { textOf(raw[it]) } == "."
+                val open = significant.getOrNull(position + 1)?.let { textOf(raw[it]) }
+                val close = significant.getOrNull(position + 3)?.let { textOf(raw[it]) }
+                val parameter = significant.getOrNull(position + 2)?.let { raw[it] }
+                if (!isCall && open == "(" && close == ")" && parameter?.group == Group.Identifier) names += textOf(parameter).trim('`')
+                return@forEachIndexed
+            }
             if (textOf(raw[rawIndex]) != "fun") return@forEachIndexed
             var cursor = position + 1
             while (cursor < significant.size && textOf(raw[significant[cursor]]) !in setOf("(", "{", "=")) cursor++
@@ -429,6 +451,13 @@ private val BlockHeaderRoles = setOf(Role.Header, Role.WhenHeader, Role.FunParam
 private val ControlKeywords = setOf("if", "for", "while", "catch")
 
 private val BlockKeywords = setOf("else", "try", "finally", "do", "init")
+
+private val AccessorNames = setOf("get", "set")
+
+private val VisibilityModifiers = setOf("private", "protected", "internal", "public")
+
+/** `copy` es sintética: IntelliJ IDEA no colorea sus argumentos con nombre. */
+private val SyntheticCallees = setOf("copy")
 
 private val DeclarationKeywords = setOf("class", "object", "interface")
 
