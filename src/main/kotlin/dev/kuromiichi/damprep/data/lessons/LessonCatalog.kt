@@ -61,6 +61,11 @@ object LessonCatalog {
                 subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
+                id = "terminal-file-system",
+                title = "La terminal y el sistema de ficheros",
+                subjectArea = SubjectArea.ComputerSystems,
+            ),
+            LessonSummary(
                 id = "git-version-control",
                 title = "Control de versiones con Git",
                 subjectArea = SubjectArea.DevelopmentEnvironments,
@@ -91,11 +96,6 @@ object LessonCatalog {
                 subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
-                id = "basic-uml",
-                title = "UML mínimo para pensar clases",
-                subjectArea = SubjectArea.DevelopmentEnvironments,
-            ),
-            LessonSummary(
                 id = "oop-relationships",
                 title = "Programación orientada a objetos II: relaciones y composición",
                 subjectArea = SubjectArea.Programming,
@@ -104,6 +104,11 @@ object LessonCatalog {
                 id = "oop-inheritance-interfaces",
                 title = "Programación orientada a objetos III: herencia e interfaces",
                 subjectArea = SubjectArea.Programming,
+            ),
+            LessonSummary(
+                id = "basic-uml",
+                title = "UML mínimo para pensar clases",
+                subjectArea = SubjectArea.DevelopmentEnvironments,
             ),
             LessonSummary(
                 id = "functional-programming",
@@ -116,9 +121,24 @@ object LessonCatalog {
                 subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
+                id = "clean-code-refactoring",
+                title = "Código limpio y refactorización",
+                subjectArea = SubjectArea.DevelopmentEnvironments,
+            ),
+            LessonSummary(
+                id = "solid-patterns-architecture",
+                title = "SOLID, patrones y arquitectura básica",
+                subjectArea = SubjectArea.DevelopmentEnvironments,
+            ),
+            LessonSummary(
+                id = "gradle-dependencies",
+                title = "Gradle y dependencias",
+                subjectArea = SubjectArea.DevelopmentEnvironments,
+            ),
+            LessonSummary(
                 id = "files-directories",
-                title = "Ficheros, directorios y rutas",
-                subjectArea = SubjectArea.ComputerSystems,
+                title = "Leer y escribir ficheros",
+                subjectArea = SubjectArea.Programming,
             ),
             LessonSummary(
                 id = "data-formats",
@@ -127,12 +147,17 @@ object LessonCatalog {
             ),
             LessonSummary(
                 id = "relational-data-modeling",
-                title = "Diseñar datos: tablas, claves y relaciones",
+                title = "Diseñar datos: modelo E/R y normalización",
                 subjectArea = SubjectArea.Databases,
             ),
             LessonSummary(
-                id = "sql",
-                title = "Consultar y modificar datos con SQL",
+                id = "sql-basics",
+                title = "SQL I: crear tablas y manipular datos",
+                subjectArea = SubjectArea.Databases,
+            ),
+            LessonSummary(
+                id = "sql-queries",
+                title = "SQL II: consultas con varias tablas",
                 subjectArea = SubjectArea.Databases,
             ),
             LessonSummary(
@@ -144,16 +169,6 @@ object LessonCatalog {
                 id = "graphical-interfaces",
                 title = "Interfaces gráficas",
                 subjectArea = SubjectArea.Programming,
-            ),
-            LessonSummary(
-                id = "clean-code-refactoring",
-                title = "Código limpio y refactorización",
-                subjectArea = SubjectArea.DevelopmentEnvironments,
-            ),
-            LessonSummary(
-                id = "solid-patterns-architecture",
-                title = "SOLID, patrones y arquitectura básica",
-                subjectArea = SubjectArea.DevelopmentEnvironments,
             ),
             LessonSummary(
                 id = "iterative-development",

@@ -13,6 +13,7 @@ import dev.kuromiichi.damprep.data.lessons.contents.nullabilityExceptionsLessonC
 import dev.kuromiichi.damprep.data.lessons.contents.oopClassesObjectsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.setsMapsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.softwareDevelopmentLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.terminalFileSystemLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.welcomeRoadmapLessonContent
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 
@@ -265,6 +266,7 @@ object LessonContentCatalog {
             loopsLessonContent,
             debuggingLessonContent,
             functionsModularityLessonContent,
+            terminalFileSystemLessonContent,
             gitVersionControlLessonContent,
             basicTestingLessonContent,
             nullabilityExceptionsLessonContent,
