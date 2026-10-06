@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
+import dev.kuromiichi.damprep.data.lessons.LessonConsoleKind
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
@@ -86,7 +87,7 @@ val debuggingLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Consola de IntelliJ IDEA",
+                            kind = LessonConsoleKind.IntelliJRun,
                             runs =
                                 listOf(
                                     consoleRun(

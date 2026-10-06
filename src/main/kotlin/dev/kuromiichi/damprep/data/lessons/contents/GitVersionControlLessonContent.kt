@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCalloutTone
+import dev.kuromiichi.damprep.data.lessons.LessonConsoleKind
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
@@ -14,6 +15,7 @@ import dev.kuromiichi.damprep.data.lessons.consoleOutput
 import dev.kuromiichi.damprep.data.lessons.consoleRun
 import dev.kuromiichi.damprep.data.lessons.emphasis
 import dev.kuromiichi.damprep.data.lessons.explanationCode
+import dev.kuromiichi.damprep.data.lessons.explanationTerminal
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.operatingSystemStep
@@ -48,8 +50,7 @@ val gitVersionControlLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Cada versión que guardas lleva tu nombre y tu correo, así que Git los necesita antes de empezar. Se configuran una sola vez en cada ordenador.")),
-                            explanationCode(
-                                "Terminal",
+                            explanationTerminal(
                                 richText(regular("Con "), inlineCode("--global"), regular(", la configuración sirve para todos tus proyectos.")),
                                 "git config --global user.name \"Tu Nombre\"",
                                 "git config --global user.email \"tu@correo.com\"",
@@ -60,7 +61,7 @@ val gitVersionControlLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -99,7 +100,7 @@ val gitVersionControlLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -136,7 +137,7 @@ val gitVersionControlLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -169,7 +170,7 @@ val gitVersionControlLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -221,7 +222,7 @@ val gitVersionControlLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -255,7 +256,7 @@ val gitVersionControlLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -297,7 +298,7 @@ val gitVersionControlLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -335,8 +336,7 @@ val gitVersionControlLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Una "), highlight("rama"), regular(" es una línea de trabajo independiente. Te permite probar una idea sin tocar "), inlineCode("main"), regular(", que debería tener siempre una versión que funciona.")),
-                            explanationCode(
-                                "Terminal",
+                            explanationTerminal(
                                 richText(inlineCode("git branch"), regular(" lista las ramas y marca con "), inlineCode("*"), regular(" aquella en la que estás.")),
                                 "git switch -c entrada",
                                 "git add .",
@@ -363,8 +363,7 @@ val gitVersionControlLessonContent =
                         listOf(
                             paragraph(regular("Cuando el trabajo de la rama está listo, vuelve a "), inlineCode("main"), regular(" y ejecuta "), inlineCode("git merge entrada"), regular(". Si "), inlineCode("main"), regular(" no ha cambiado desde que creaste la rama, Git solo la adelanta: es un "), emphasis("fast-forward"), regular(".")),
                             paragraph(regular("Si las dos ramas tienen commits nuevos, Git crea un "), highlight("commit de fusión"), regular(" que las une. En la pestaña "), emphasis("Log"), regular(" de la ventana "), emphasis("Git"), regular(" de IntelliJ IDEA lo verás como dos líneas que se juntan.")),
-                            explanationCode(
-                                "Terminal",
+                            explanationTerminal(
                                 richText(regular("Después de fusionar, la rama ya no hace falta: sus commits forman parte de "), inlineCode("main"), regular(".")),
                                 "git switch main",
                                 "git merge entrada",
@@ -403,7 +402,7 @@ val gitVersionControlLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -447,7 +446,7 @@ val gitVersionControlLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -480,7 +479,7 @@ val gitVersionControlLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -547,6 +546,7 @@ val gitVersionControlLessonContent =
                                     richText(regular("Mueve "), inlineCode("leerNota"), regular(" a "), inlineCode("Entrada.kt"), regular(" en una rama llamada "), inlineCode("entrada"), regular(", fusiónala en "), inlineCode("main"), regular(" y borra la rama.")),
                                     richText(regular("Al terminar, "), inlineCode("git status"), regular(" indica "), inlineCode("working tree clean"), regular(".")),
                                 ),
+                            expectedOutputKind = LessonConsoleKind.Terminal,
                             expectedOutput =
                                 listOf(
                                     consoleRun(

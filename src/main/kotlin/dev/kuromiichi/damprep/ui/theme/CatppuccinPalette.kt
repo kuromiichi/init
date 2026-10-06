@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 
 data class CatppuccinFlavor(
     val rosewater: Color,
@@ -89,4 +90,48 @@ val CatppuccinMacchiato =
         base = Color(0xFF24273A),
         mantle = Color(0xFF1E2030),
         crust = Color(0xFF181926),
+    )
+
+/** Solo se usa en la terminal con tema oscuro, la «pantalla negra»; el resto de la app usa Macchiato. */
+val CatppuccinMocha =
+    CatppuccinFlavor(
+        rosewater = Color(0xFFF5E0DC),
+        flamingo = Color(0xFFF2CDCD),
+        pink = Color(0xFFF5C2E7),
+        mauve = Color(0xFFCBA6F7),
+        red = Color(0xFFF38BA8),
+        maroon = Color(0xFFEBA0AC),
+        peach = Color(0xFFFAB387),
+        yellow = Color(0xFFF9E2AF),
+        green = Color(0xFFA6E3A1),
+        teal = Color(0xFF94E2D5),
+        sky = Color(0xFF89DCEB),
+        sapphire = Color(0xFF74C7EC),
+        blue = Color(0xFF89B4FA),
+        lavender = Color(0xFFB4BEFE),
+        text = Color(0xFFCDD6F4),
+        subtext1 = Color(0xFFBAC2DE),
+        subtext0 = Color(0xFFA6ADC8),
+        overlay2 = Color(0xFF9399B2),
+        overlay1 = Color(0xFF7F849C),
+        overlay0 = Color(0xFF6C7086),
+        surface2 = Color(0xFF585B70),
+        surface1 = Color(0xFF45475A),
+        surface0 = Color(0xFF313244),
+        base = Color(0xFF1E1E2E),
+        mantle = Color(0xFF181825),
+        crust = Color(0xFF11111B),
+    )
+
+/**
+ * Latte para la terminal clara. Su fondo es `crust`, más oscuro que el de los bloques de código, y con él el
+ * verde de la entrada y los grises secundarios de Latte no llegan al contraste mínimo: el verde y el rojo se
+ * acercan al texto y los grises secundarios suben a subtext1, sin salir de la paleta.
+ */
+internal val CatppuccinLatteTerminal =
+    CatppuccinLatte.copy(
+        green = lerp(CatppuccinLatte.green, CatppuccinLatte.text, 0.65f),
+        red = lerp(CatppuccinLatte.red, CatppuccinLatte.text, 0.2f),
+        subtext0 = CatppuccinLatte.subtext1,
+        overlay1 = CatppuccinLatte.subtext1,
     )

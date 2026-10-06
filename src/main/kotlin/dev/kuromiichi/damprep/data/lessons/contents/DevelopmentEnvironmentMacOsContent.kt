@@ -6,7 +6,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonStepContent
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.callout
 import dev.kuromiichi.damprep.data.lessons.emphasis
-import dev.kuromiichi.damprep.data.lessons.explanationCode
+import dev.kuromiichi.damprep.data.lessons.explanationTerminal
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
@@ -118,8 +118,7 @@ internal val macOsDevelopmentEnvironmentContent =
                             highlight("Git"),
                             regular(" mediante las herramientas de línea de comandos de Xcode."),
                         ),
-                        explanationCode(
-                            title = "Terminal",
+                        explanationTerminal(
                             note = richText(regular("Si Git no existe, macOS ofrecerá instalarlo. Repite el comando cuando termine.")),
                             "git --version",
                         ),

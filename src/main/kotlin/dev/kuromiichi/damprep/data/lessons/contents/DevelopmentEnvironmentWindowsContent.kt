@@ -6,7 +6,7 @@ import dev.kuromiichi.damprep.data.lessons.LessonStepContent
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.lessons.callout
 import dev.kuromiichi.damprep.data.lessons.emphasis
-import dev.kuromiichi.damprep.data.lessons.explanationCode
+import dev.kuromiichi.damprep.data.lessons.explanationTerminal
 import dev.kuromiichi.damprep.data.lessons.highlight
 import dev.kuromiichi.damprep.data.lessons.inlineCode
 import dev.kuromiichi.damprep.data.lessons.paragraph
@@ -122,10 +122,10 @@ internal val windowsDevelopmentEnvironmentContent =
                             richText("Conserva las opciones recomendadas, incluida la línea de comandos."),
                             richText("Finaliza y abre PowerShell, Windows Terminal o Git Bash."),
                         ),
-                        explanationCode(
-                            title = "Comprueba Git",
+                        explanationTerminal(
                             note = richText(regular("Debe responder con una versión de Git.")),
                             "git --version",
+                            caption = "Comprueba Git",
                         ),
                     ),
                 visual =

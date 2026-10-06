@@ -40,16 +40,19 @@ import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonRichText
 import dev.kuromiichi.damprep.data.lessons.LessonTextSpanStyle
 import dev.kuromiichi.damprep.data.lessons.kotlinCode
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.common.CodeExamplesVisual
 import dev.kuromiichi.damprep.ui.common.LearningCodeExample
 import dev.kuromiichi.damprep.ui.common.LearningCodeLine
 import dev.kuromiichi.damprep.ui.common.LearningCodeToken
+import dev.kuromiichi.damprep.ui.common.TerminalCommandsVisual
 import dev.kuromiichi.damprep.ui.common.hoverScale
 
 @Composable
 internal fun LessonExplanation(
     blocks: List<LessonExplanationBlock>,
     links: List<LessonLink>,
+    targetOperatingSystem: TargetOperatingSystem?,
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
@@ -64,6 +67,13 @@ internal fun LessonExplanation(
                 is LessonExplanationBlock.Code -> LessonExplanationCode(block)
                 is LessonExplanationBlock.Paragraph -> LessonParagraph(block.text)
                 is LessonExplanationBlock.Steps -> LessonSteps(block.items)
+                is LessonExplanationBlock.Terminal ->
+                    TerminalCommandsVisual(
+                        commands = block.commands,
+                        note = block.note.toCodeNote(),
+                        operatingSystem = targetOperatingSystem,
+                        caption = block.caption,
+                    )
             }
         }
 
@@ -190,7 +200,8 @@ private fun LessonExplanationCode(code: LessonExplanationBlock.Code) {
         examples =
             listOf(
                 LearningCodeExample(
-                    title = code.title,
+                    fileName = code.title,
+                    title = null,
                     lines =
                         if (code.isKotlin) {
                             kotlinCode(code.lines.joinToString("\n")).map { it.toLearningCodeLine() }

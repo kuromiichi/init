@@ -63,4 +63,20 @@ class ThemeContrastTest {
             assertTrue(contrast(scheme.outline, scheme.surface) >= 3f, "Tema $name: outline/surface")
         }
     }
+
+    @Test
+    fun `la terminal es legible en ambos temas`() {
+        mapOf("claro" to CatppuccinLatteTerminal, "oscuro" to CatppuccinMocha).forEach { (name, flavor) ->
+            mapOf(
+                "text" to flavor.text,
+                "subtext0" to flavor.subtext0,
+                "overlay1" to flavor.overlay1,
+                "green" to flavor.green,
+                "red" to flavor.red,
+            ).forEach { (color, value) ->
+                assertTrue(contrast(value, flavor.crust) >= 4.3f, "Terminal $name: $color/crust")
+            }
+            assertTrue(contrast(flavor.subtext1, flavor.mantle) >= 4.3f, "Terminal $name: subtext1/mantle")
+        }
+    }
 }

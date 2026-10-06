@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCalloutTone
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
+import dev.kuromiichi.damprep.data.lessons.LessonConsoleKind
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
@@ -205,7 +206,7 @@ val nullabilityExceptionsLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Consola de IntelliJ IDEA",
+                            kind = LessonConsoleKind.IntelliJRun,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -282,7 +283,7 @@ val nullabilityExceptionsLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Consola de IntelliJ IDEA",
+                            kind = LessonConsoleKind.IntelliJRun,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -312,7 +313,8 @@ val nullabilityExceptionsLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Primera línea de cada traza",
+                            kind = LessonConsoleKind.IntelliJRun,
+                            caption = "Primera línea de cada traza",
                             runs =
                                 listOf(
                                     consoleRun(
@@ -473,6 +475,7 @@ val nullabilityExceptionsLessonContent =
                             listOf(
                                 LessonCodeExample(
                                     title = "src/test/kotlin/NotasTest.kt",
+                                    fileName = "NotasTest.kt",
                                     lines =
                                         kotlinCode(
                                             """

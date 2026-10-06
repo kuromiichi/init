@@ -3,11 +3,15 @@ package dev.kuromiichi.damprep.ui.common
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,6 +36,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
@@ -73,41 +82,102 @@ fun CodeExamplesVisual(
 private fun CodeExampleCard(example: LearningCodeExample) {
     val flavor = codeFlavor()
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .codeBlockSurface(flavor)
-                .padding(horizontal = 18.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = example.title,
-                style = MaterialTheme.typography.labelLarge,
-                color = flavor.subtext1,
-                modifier = Modifier.weight(1f),
-            )
-            example.copyText?.let { text ->
-                CopyCodeButton(text = text, color = flavor.subtext1)
-            }
-        }
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            example.lines.forEachIndexed { index, line ->
-                CodeLine(
-                    number = index + 1,
-                    line = line,
-                    flavor = flavor,
+    Column(modifier = Modifier.fillMaxWidth().codeBlockSurface(flavor)) {
+        EditorTabBar(
+            flavor = flavor,
+            tabs = listOf(example.fileName),
+            trailing = {
+                example.copyText?.let { text ->
+                    CopyCodeButton(text = text, color = flavor.subtext1)
+                }
+            },
+        )
+        Column(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            example.title?.let { title ->
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = flavor.subtext1,
                 )
             }
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                example.lines.forEachIndexed { index, line ->
+                    CodeLine(
+                        number = index + 1,
+                        line = line,
+                        flavor = flavor,
+                    )
+                }
+            }
+            Text(
+                text = example.note,
+                style = MaterialTheme.typography.labelMedium,
+                color = flavor.subtext0,
+            )
         }
+    }
+}
+
+/**
+ * Barra de pestañas del editor de IntelliJ IDEA (nueva interfaz): la pestaña activa lleva el fondo del
+ * editor y un subrayado de acento. [leading] y [trailing] añaden contenido antes y después de las pestañas.
+ */
+@Composable
+internal fun EditorTabBar(
+    flavor: CatppuccinFlavor,
+    tabs: List<String>,
+    modifier: Modifier = Modifier,
+    leading: @Composable RowScope.() -> Unit = {},
+    trailing: @Composable RowScope.() -> Unit = {},
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth().background(flavor.mantle).height(EditorTabBarHeight),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            leading()
+            tabs.forEach { tab -> EditorTab(label = tab, flavor = flavor, modifier = Modifier.widthIn(max = EditorTabMaxWidth)) }
+            Spacer(modifier = Modifier.weight(1f))
+            trailing()
+        }
+        HorizontalDivider(color = flavor.surface1)
+    }
+}
+
+@Composable
+private fun EditorTab(
+    label: String,
+    flavor: CatppuccinFlavor,
+    modifier: Modifier = Modifier,
+) {
+    val indicatorColor = flavor.blue
+    Box(
+        modifier =
+            modifier
+                .fillMaxHeight()
+                .background(flavor.base)
+                .drawBehind {
+                    val thickness = 2.dp.toPx()
+                    drawRect(indicatorColor, topLeft = Offset(0f, size.height - thickness), size = Size(size.width, thickness))
+                },
+        contentAlignment = Alignment.CenterStart,
+    ) {
         Text(
-            text = example.note,
-            style = MaterialTheme.typography.labelMedium,
-            color = flavor.subtext0,
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            color = flavor.text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
     }
 }
+
+private val EditorTabBarHeight = 40.dp
+private val EditorTabMaxWidth = 260.dp
 
 /** Copia el código al portapapeles y confirma la copia durante unos segundos. */
 @OptIn(ExperimentalComposeUiApi::class)
@@ -152,11 +222,12 @@ private fun CopyCodeButton(
 
 /**
  * Fondo de los bloques de código, consola y tablas: el del editor de IntelliJ IDEA con un borde
- * fino, para que se distingan tanto sobre la página como sobre el panel de un visual.
+ * fino, para que se distingan tanto sobre la página como sobre el panel de un visual. Recorta el
+ * contenido a las esquinas redondeadas para que las barras de cabecera no sobresalgan.
  */
 internal fun Modifier.codeBlockSurface(flavor: CatppuccinFlavor): Modifier {
     val shape = RoundedCornerShape(8.dp)
-    return background(color = flavor.base, shape = shape).border(1.dp, flavor.surface1, shape)
+    return clip(shape).background(color = flavor.base, shape = shape).border(1.dp, flavor.surface1, shape)
 }
 
 /** Paleta de los bloques de código y consola, acorde con el tema claro u oscuro activo. */

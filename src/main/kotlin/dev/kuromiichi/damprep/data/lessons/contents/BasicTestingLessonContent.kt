@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCalloutTone
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
+import dev.kuromiichi.damprep.data.lessons.LessonConsoleKind
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
@@ -262,6 +263,7 @@ val basicTestingLessonContent =
                             listOf(
                                 LessonCodeExample(
                                     title = "src/test/kotlin/CalificarTest.kt",
+                                    fileName = "CalificarTest.kt",
                                     lines =
                                         kotlinCode(
                                             """
@@ -329,7 +331,7 @@ val basicTestingLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -487,6 +489,7 @@ val basicTestingLessonContent =
                                     richText(regular("Ejecuta las pruebas antes de corregir nada y anota cuáles fallan y con qué mensaje.")),
                                     richText(regular("Corrige "), inlineCode("calcularTarifa"), regular(" sin modificar las pruebas hasta que todas pasen.")),
                                 ),
+                            expectedOutputKind = LessonConsoleKind.Terminal,
                             expectedOutput =
                                 listOf(
                                     consoleRun(

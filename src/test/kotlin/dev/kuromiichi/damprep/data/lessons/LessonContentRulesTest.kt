@@ -185,6 +185,7 @@ private fun LessonExplanationBlock.readableText(): String =
     when (this) {
         is LessonExplanationBlock.Callout -> "$title ${text.plainText}"
         is LessonExplanationBlock.Code -> "$title ${lines.joinToString(" ")} ${note.plainText}"
+        is LessonExplanationBlock.Terminal -> "${caption.orEmpty()} ${commands.joinToString(" ")} ${note.plainText}"
         is LessonExplanationBlock.Paragraph -> text.plainText
         is LessonExplanationBlock.Steps -> items.joinToString(" ", transform = LessonRichText::plainText)
     }
@@ -193,7 +194,7 @@ private fun LessonVisualContent.readableText(): String =
     when (this) {
         is LessonVisualContent.CodeExamples -> examples.joinToString(" ", transform = LessonCodeExample::readableText)
         is LessonVisualContent.Trace -> "${example.readableText()} ${table.title} ${table.columns.joinToString(" ")}"
-        is LessonVisualContent.Console -> "$title " + runs.flatMap(LessonConsoleRun::lines).joinToString(" ", transform = LessonConsoleLine::text)
+        is LessonVisualContent.Console -> "${caption.orEmpty()} " + runs.flatMap(LessonConsoleRun::lines).joinToString(" ", transform = LessonConsoleLine::text)
         is LessonVisualContent.Cycle -> steps.joinToString(" ")
         is LessonVisualContent.Flow -> nodes.joinToString(" ")
         is LessonVisualContent.IconText -> "$title $body"

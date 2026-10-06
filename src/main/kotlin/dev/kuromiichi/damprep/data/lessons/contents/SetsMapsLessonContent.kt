@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCalloutTone
 import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
+import dev.kuromiichi.damprep.data.lessons.LessonConsoleKind
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
@@ -275,7 +276,7 @@ val setsMapsLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Consola de IntelliJ IDEA",
+                            kind = LessonConsoleKind.IntelliJRun,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -497,6 +498,7 @@ val setsMapsLessonContent =
                             listOf(
                                 LessonCodeExample(
                                     title = "src/main/kotlin/Conteo.kt",
+                                    fileName = "Conteo.kt",
                                     lines =
                                         kotlinCode(
                                             """
@@ -513,6 +515,7 @@ val setsMapsLessonContent =
                                 ),
                                 LessonCodeExample(
                                     title = "src/test/kotlin/ConteoTest.kt",
+                                    fileName = "ConteoTest.kt",
                                     lines =
                                         kotlinCode(
                                             """

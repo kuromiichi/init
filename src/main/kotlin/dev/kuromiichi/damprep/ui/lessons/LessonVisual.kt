@@ -33,10 +33,12 @@ import dev.kuromiichi.damprep.data.lessons.LessonCodeExample
 import dev.kuromiichi.damprep.data.lessons.LessonCodeLine
 import dev.kuromiichi.damprep.data.lessons.LessonCodeToken
 import dev.kuromiichi.damprep.data.lessons.LessonCodeTokenKind
+import dev.kuromiichi.damprep.data.lessons.LessonConsoleKind
 import dev.kuromiichi.damprep.data.lessons.LessonConsoleRun
 import dev.kuromiichi.damprep.data.lessons.LessonScreenshot
 import dev.kuromiichi.damprep.data.lessons.LessonToolLogo
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
+import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.ui.common.CodeExamplesVisual
 import dev.kuromiichi.damprep.ui.common.ConsoleOutputVisual
 import dev.kuromiichi.damprep.ui.common.CycleDiagram
@@ -52,6 +54,7 @@ import dev.kuromiichi.damprep.ui.common.LearningToolCard
 import dev.kuromiichi.damprep.ui.common.LearningTraceTable
 import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
 import dev.kuromiichi.damprep.ui.common.ScreenshotLearningVisual
+import dev.kuromiichi.damprep.ui.common.TerminalWindowVisual
 import dev.kuromiichi.damprep.ui.common.ToolLogoCards
 import dev.kuromiichi.damprep.ui.common.TraceTableVisual
 import dev.kuromiichi.damprep.ui.theme.CatppuccinMacchiato
@@ -61,6 +64,7 @@ import org.jetbrains.compose.resources.DrawableResource
 @Composable
 internal fun LessonVisual(
     visual: LessonVisualContent,
+    targetOperatingSystem: TargetOperatingSystem?,
     modifier: Modifier = Modifier,
 ) {
     if (visual is LessonVisualContent.Screenshot) {
@@ -80,9 +84,11 @@ internal fun LessonVisual(
                 )
 
             is LessonVisualContent.Console ->
-                ConsoleOutputVisual(
-                    title = visual.title,
+                ConsoleVisual(
+                    kind = visual.kind,
                     runs = visual.runs.map { it.toLearningConsoleRun() },
+                    targetOperatingSystem = targetOperatingSystem,
+                    caption = visual.caption,
                 )
 
             is LessonVisualContent.Cycle ->
@@ -136,9 +142,32 @@ internal val LessonVisualContent.isRich: Boolean
             this is LessonVisualContent.Trace ||
             this is LessonVisualContent.Screenshot
 
+/** La terminal del sistema elegido o la ventana Run de IntelliJ IDEA, según dónde se vería la salida. */
+@Composable
+internal fun ConsoleVisual(
+    kind: LessonConsoleKind,
+    runs: List<LearningConsoleRun>,
+    targetOperatingSystem: TargetOperatingSystem?,
+    modifier: Modifier = Modifier,
+    caption: String? = null,
+) {
+    when (kind) {
+        LessonConsoleKind.Terminal ->
+            TerminalWindowVisual(
+                runs = runs,
+                operatingSystem = targetOperatingSystem,
+                modifier = modifier,
+                caption = caption,
+            )
+
+        LessonConsoleKind.IntelliJRun -> ConsoleOutputVisual(runs = runs, modifier = modifier, caption = caption)
+    }
+}
+
 private fun LessonCodeExample.toLearningCodeExample(): LearningCodeExample =
     LearningCodeExample(
-        title = title,
+        fileName = fileName,
+        title = title.takeUnless { it == fileName },
         lines = lines.map { it.toLearningCodeLine() },
         note = note.toCodeNote(),
         copyText = sourceText.takeIf { isCopyable },

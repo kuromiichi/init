@@ -62,10 +62,17 @@ data class LessonPractice(
     val statement: LessonRichText,
     val requirements: List<LessonRichText>,
     val expectedOutput: List<LessonConsoleRun> = emptyList(),
+    val expectedOutputKind: LessonConsoleKind = LessonConsoleKind.IntelliJRun,
     val hints: List<LessonRichText> = emptyList(),
     val extension: LessonRichText? = null,
     val confirmation: LessonRichText,
 )
+
+/** Dónde se vería una salida: en la terminal del sistema o en la ventana Run de IntelliJ IDEA. */
+enum class LessonConsoleKind {
+    Terminal,
+    IntelliJRun,
+}
 
 /** Una ejecución del programa tal como se vería en la consola. */
 data class LessonConsoleRun(
@@ -99,10 +106,18 @@ sealed interface LessonExplanationBlock {
         val tone: LessonCalloutTone = LessonCalloutTone.Information,
     ) : LessonExplanationBlock
 
+    /** Código o texto de un archivo; el título es el nombre que lleva la pestaña del editor. */
     data class Code(
         val title: String,
         val lines: List<String>,
         val note: LessonRichText,
+    ) : LessonExplanationBlock
+
+    /** Comandos para pegar en la terminal. Las líneas que empiezan por `#` son comentarios. */
+    data class Terminal(
+        val commands: List<String>,
+        val note: LessonRichText,
+        val caption: String? = null,
     ) : LessonExplanationBlock
 }
 
@@ -165,8 +180,9 @@ sealed interface LessonVisualContent {
 
     /** Una o varias ejecuciones tal como se verían en la consola, incluidos los mensajes de error. */
     data class Console(
-        val title: String,
+        val kind: LessonConsoleKind,
         val runs: List<LessonConsoleRun>,
+        val caption: String? = null,
     ) : LessonVisualContent
 
     /** Un ejemplo de código junto a la tabla que sigue sus variables vuelta a vuelta. */
@@ -186,12 +202,16 @@ data class LessonCodeExample(
     val title: String,
     val lines: List<LessonCodeLine>,
     val note: LessonRichText,
+    /** Nombre del archivo que muestra la pestaña del editor. */
+    val fileName: String = DEFAULT_CODE_FILE_NAME,
     /** Muestra un botón para copiar el código, pensado para programas que el alumno debe pegar en su proyecto. */
     val isCopyable: Boolean = false,
 ) {
     val sourceText: String
         get() = lines.joinToString("\n") { line -> line.tokens.joinToString("", transform = LessonCodeToken::text) }
 }
+
+internal const val DEFAULT_CODE_FILE_NAME = "Main.kt"
 
 data class LessonCodeLine(
     val tokens: List<LessonCodeToken>,
@@ -361,6 +381,17 @@ internal fun callout(
         title = title,
         text = text,
         tone = tone,
+    )
+
+internal fun explanationTerminal(
+    note: LessonRichText,
+    vararg commands: String,
+    caption: String? = null,
+): LessonExplanationBlock.Terminal =
+    LessonExplanationBlock.Terminal(
+        commands = commands.toList(),
+        note = note,
+        caption = caption,
     )
 
 internal fun explanationCode(

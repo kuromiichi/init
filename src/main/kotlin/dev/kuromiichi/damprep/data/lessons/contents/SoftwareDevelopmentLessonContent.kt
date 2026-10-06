@@ -67,7 +67,7 @@ val softwareDevelopmentLessonContent =
                                 regular(". Ninguno depende de un lenguaje de programación concreto."),
                             ),
                             explanationCode(
-                                "Pseudocódigo: aplicar un descuento",
+                                "descuento.txt",
                                 richText("El diagrama de esta pantalla representa los mismos pasos."),
                                 "Inicio",
                                 "  Leer precio",

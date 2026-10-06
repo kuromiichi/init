@@ -1,6 +1,7 @@
 package dev.kuromiichi.damprep.data.lessons.contents
 
 import dev.kuromiichi.damprep.data.lessons.LessonCalloutTone
+import dev.kuromiichi.damprep.data.lessons.LessonConsoleKind
 import dev.kuromiichi.damprep.data.lessons.LessonContent
 import dev.kuromiichi.damprep.data.lessons.LessonLink
 import dev.kuromiichi.damprep.data.lessons.LessonPractice
@@ -107,7 +108,8 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "El prompt",
+                                kind = LessonConsoleKind.Terminal,
+                                caption = "El prompt",
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -132,7 +134,8 @@ val terminalFileSystemLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Programa, opciones y argumentos",
+                            kind = LessonConsoleKind.Terminal,
+                            caption = "Programa, opciones y argumentos",
                             runs =
                                 listOf(
                                     consoleRun(
@@ -184,7 +187,7 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -227,7 +230,7 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -259,7 +262,8 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Ruta relativa y ruta absoluta",
+                                kind = LessonConsoleKind.Terminal,
+                                caption = "Ruta relativa y ruta absoluta",
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -296,7 +300,7 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -333,7 +337,7 @@ val terminalFileSystemLessonContent =
                         ),
                     visual =
                         LessonVisualContent.Console(
-                            title = "Terminal",
+                            kind = LessonConsoleKind.Terminal,
                             runs =
                                 listOf(
                                     consoleRun(
@@ -358,7 +362,8 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Notas con un repositorio de Git",
+                                kind = LessonConsoleKind.Terminal,
+                                caption = "Notas con un repositorio de Git",
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -401,7 +406,7 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -449,7 +454,7 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -509,7 +514,7 @@ val terminalFileSystemLessonContent =
                             ),
                         visual =
                             LessonVisualContent.Console(
-                                title = "Terminal",
+                                kind = LessonConsoleKind.Terminal,
                                 runs =
                                     listOf(
                                         consoleRun(
@@ -551,6 +556,7 @@ val terminalFileSystemLessonContent =
                                     richText(regular("Lee "), inlineCode("settings.gradle.kts"), regular(" con "), inlineCode("cat"), regular(" y comprueba que contiene el nombre del proyecto.")),
                                     richText(regular("Lanza "), inlineCode("build"), regular(" con el Wrapper de la copia.")),
                                 ),
+                            expectedOutputKind = LessonConsoleKind.Terminal,
                             expectedOutput =
                                 listOf(
                                     consoleRun(

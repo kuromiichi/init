@@ -41,7 +41,6 @@ import dev.kuromiichi.damprep.data.lessons.LessonPractice
 import dev.kuromiichi.damprep.data.lessons.LessonStep
 import dev.kuromiichi.damprep.data.lessons.LessonVisualContent
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
-import dev.kuromiichi.damprep.ui.common.ConsoleOutputVisual
 
 @Composable
 internal fun LessonStepContent(
@@ -87,9 +86,11 @@ internal fun LessonStepContent(
                     LessonExplanation(
                         blocks = content.explanation,
                         links = content.links,
+                        targetOperatingSystem = targetOperatingSystem,
                     )
                     LessonVisual(
                         visual = content.visual,
+                        targetOperatingSystem = targetOperatingSystem,
                         modifier =
                             Modifier
                                 .widthIn(max = compactVisualMaxWidth)
@@ -106,6 +107,7 @@ internal fun LessonStepContent(
                     LessonExplanation(
                         blocks = content.explanation,
                         links = content.links,
+                        targetOperatingSystem = targetOperatingSystem,
                         modifier =
                             Modifier.weight(
                                 when {
@@ -128,6 +130,7 @@ internal fun LessonStepContent(
                     ) {
                         LessonVisual(
                             visual = content.visual,
+                            targetOperatingSystem = targetOperatingSystem,
                             modifier =
                                 Modifier
                                     .widthIn(max = visualMaxWidth)
@@ -141,6 +144,7 @@ internal fun LessonStepContent(
         step.practice?.let { practice ->
             LessonPracticeCard(
                 practice = practice,
+                targetOperatingSystem = targetOperatingSystem,
                 checked = isPracticeConfirmed,
                 isLessonCompletion = isLastStep,
                 onCheckedChange = onPracticeConfirmationChanged,
@@ -152,6 +156,7 @@ internal fun LessonStepContent(
 @Composable
 private fun LessonPracticeCard(
     practice: LessonPractice,
+    targetOperatingSystem: TargetOperatingSystem?,
     checked: Boolean,
     isLessonCompletion: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -238,10 +243,11 @@ private fun LessonPracticeCard(
             }
 
             if (practice.expectedOutput.isNotEmpty()) {
-                ConsoleOutputVisual(
-                    title = "Resultado esperado",
-                    runs =
-                        practice.expectedOutput.map { it.toLearningConsoleRun() },
+                ConsoleVisual(
+                    kind = practice.expectedOutputKind,
+                    runs = practice.expectedOutput.map { it.toLearningConsoleRun() },
+                    targetOperatingSystem = targetOperatingSystem,
+                    caption = "Resultado esperado",
                 )
             }
 

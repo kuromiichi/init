@@ -54,7 +54,10 @@ data class LearningToolCard(
 )
 
 data class LearningCodeExample(
-    val title: String,
+    /** Nombre del archivo que muestra la pestaña del editor. */
+    val fileName: String,
+    /** Leyenda opcional sobre el código, p. ej. la ruta del archivo o qué ilustra el ejemplo. */
+    val title: String?,
     val lines: List<LearningCodeLine>,
     val note: AnnotatedString,
     /** Texto que copia el botón del ejemplo; si es nulo, el ejemplo no se puede copiar. */
