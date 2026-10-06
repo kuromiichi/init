@@ -182,6 +182,13 @@ fun SettingsScreen(
                         }
                     }
 
+                    BackupSettingsSection(
+                        backupState = uiState.backupState,
+                        onExport = viewModel::exportBackup,
+                        onImport = viewModel::importBackup,
+                        onDismissResult = viewModel::dismissBackupResult,
+                    )
+
                     AdvancedSettingsSection(
                         unlockAllLessons = uiState.unlockAllLessons,
                         hasLessonProgress = uiState.hasLessonProgress,

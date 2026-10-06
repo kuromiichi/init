@@ -1,5 +1,6 @@
 package dev.kuromiichi.damprep.di
 
+import dev.kuromiichi.damprep.data.backup.BackupRepository
 import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
 import dev.kuromiichi.damprep.data.preferences.createUserPreferencesDataStore
 import dev.kuromiichi.damprep.data.progress.DamPrepDatabase
@@ -30,6 +31,7 @@ val dataModule =
         single { createDamPrepDatabase() } onClose { database -> database?.close() }
         single { get<DamPrepDatabase>().lessonProgressDao() }
         single { LessonProgressRepository(get(), get()) }
+        single { BackupRepository(get(), get()) }
     }
 
 val viewModelModule =
@@ -38,7 +40,7 @@ val viewModelModule =
         viewModelOf(::SettingsViewModel)
         viewModel { HomeViewModel(get(), get()) }
         viewModel { LessonListViewModel(get(), get()) }
-        viewModel { OnboardingViewModel(get()) }
+        viewModel { OnboardingViewModel(get(), get()) }
         viewModel { CurrentLessonViewModel(get(), get(), get()) }
     }
 

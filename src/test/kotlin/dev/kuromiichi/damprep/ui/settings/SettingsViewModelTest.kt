@@ -4,11 +4,14 @@ import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.testing.ViewModelTest
+import dev.kuromiichi.damprep.ui.common.BackupOperationState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -82,7 +85,45 @@ class SettingsViewModelTest : ViewModelTest() {
         assertFalse(assertNotNull(viewModel.uiState.value).hasLessonProgress)
     }
 
-    private fun createViewModel() = SettingsViewModel(preferencesRepository, lessonProgressRepository).also { it.uiState.observed() }
+    @Test
+    fun `importing a backup replaces preferences and progress and discards the name draft`() {
+        val file = Files.createTempFile("dam-prep", ".json").toFile().apply { deleteOnExit() }
+        runBlocking {
+            preferencesRepository.completeOnboarding("Emma", PronounPreference.Feminine, TargetOperatingSystem.MacOS)
+            lessonProgressRepository.completeLesson("welcome")
+            backupRepository.exportTo(file)
+            preferencesRepository.setStudentName("Otra persona")
+            lessonProgressRepository.resetProgress()
+        }
+        val viewModel = createViewModel()
+        viewModel.updateStudentNameDraft("Borrador")
+
+        viewModel.importBackup(file)
+
+        val state = assertNotNull(viewModel.uiState.value)
+        assertEquals(BackupOperationState.Imported, state.backupState)
+        assertEquals("Emma", state.studentNameDraft)
+        assertTrue(state.hasLessonProgress)
+    }
+
+    @Test
+    fun `an invalid backup reports the error and keeps the current data`() {
+        val file = Files.createTempFile("dam-prep", ".json").toFile().apply { deleteOnExit() }
+        file.writeText("no es json")
+        runBlocking { preferencesRepository.setStudentName("Emma") }
+        val viewModel = createViewModel()
+
+        viewModel.importBackup(file)
+
+        val state = assertNotNull(viewModel.uiState.value)
+        assertIs<BackupOperationState.Failed>(state.backupState)
+        assertEquals("Emma", state.studentNameDraft)
+
+        viewModel.dismissBackupResult()
+        assertEquals(BackupOperationState.Idle, viewModel.uiState.value?.backupState)
+    }
+
+    private fun createViewModel() = SettingsViewModel(preferencesRepository, lessonProgressRepository, backupRepository).also { it.uiState.observed() }
 
     private fun savedPreferences() = runBlocking { preferencesRepository.preferences.first() }
 }

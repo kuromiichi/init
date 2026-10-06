@@ -84,6 +84,23 @@ class UserPreferencesRepository(
         }
     }
 
+    /** Sustituye todas las preferencias por las de una copia de seguridad y da el onboarding por completado. */
+    suspend fun restore(restored: UserPreferences) {
+        edit { preferences ->
+            preferences[StudentNameKey] = restored.studentName
+            preferences[ThemePreferenceKey] = restored.themePreference.name
+            preferences[PronounPreferenceKey] = restored.pronounPreference.name
+            val targetOperatingSystem = restored.targetOperatingSystem
+            if (targetOperatingSystem != null) {
+                preferences[TargetOperatingSystemKey] = targetOperatingSystem.name
+            } else {
+                preferences.remove(TargetOperatingSystemKey)
+            }
+            preferences[UnlockAllLessonsKey] = restored.unlockAllLessons
+            preferences[OnboardingCompletedKey] = true
+        }
+    }
+
     private suspend fun edit(transform: (MutablePreferences) -> Unit) {
         externalScope.launch { dataStore.edit(transform) }.join()
     }

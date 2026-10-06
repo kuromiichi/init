@@ -1,5 +1,6 @@
 package dev.kuromiichi.damprep.testing
 
+import dev.kuromiichi.damprep.data.backup.BackupRepository
 import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
 import dev.kuromiichi.damprep.data.progress.LessonProgressRepository
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,8 @@ abstract class ViewModelTest {
     protected val lessonProgressDao = FakeLessonProgressDao()
     protected val preferencesRepository = UserPreferencesRepository(InMemoryPreferencesDataStore(), applicationScope)
     protected val lessonProgressRepository = LessonProgressRepository(lessonProgressDao, applicationScope)
+    protected val backupRepository =
+        BackupRepository(preferencesRepository, lessonProgressRepository, ioDispatcher = Dispatchers.Unconfined)
 
     @BeforeTest
     fun setMainDispatcher() {

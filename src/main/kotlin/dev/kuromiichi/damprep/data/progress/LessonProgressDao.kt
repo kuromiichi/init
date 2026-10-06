@@ -16,8 +16,20 @@ interface LessonProgressDao {
     @Query("SELECT * FROM lesson_step_progress")
     fun observeLessonStepProgress(): Flow<List<LessonStepProgressEntity>>
 
+    @Query("SELECT * FROM lesson_progress ORDER BY completed_at")
+    suspend fun getCompletedLessons(): List<CompletedLessonEntity>
+
+    @Query("SELECT * FROM lesson_step_progress")
+    suspend fun getLessonStepProgress(): List<LessonStepProgressEntity>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(completedLesson: CompletedLessonEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCompletedLessons(completedLessons: List<CompletedLessonEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStepProgress(stepProgress: List<LessonStepProgressEntity>)
 
     @Upsert
     suspend fun upsertStepProgress(stepProgress: LessonStepProgressEntity)
@@ -41,5 +53,15 @@ interface LessonProgressDao {
     suspend fun resetProgress() {
         deleteAllCompletedLessons()
         deleteAllStepProgress()
+    }
+
+    @Transaction
+    suspend fun readProgress(): LessonProgressSnapshot = LessonProgressSnapshot(getCompletedLessons(), getLessonStepProgress())
+
+    @Transaction
+    suspend fun replaceProgress(snapshot: LessonProgressSnapshot) {
+        resetProgress()
+        insertCompletedLessons(snapshot.completedLessons)
+        insertStepProgress(snapshot.stepProgress)
     }
 }

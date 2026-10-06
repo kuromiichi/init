@@ -28,9 +28,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -41,15 +45,22 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
+import dev.kuromiichi.damprep.ui.common.BackupFileDialog
+import dev.kuromiichi.damprep.ui.common.BackupFileDialogMode
+import dev.kuromiichi.damprep.ui.common.BackupOperationState
 import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -60,6 +71,7 @@ fun OnboardingScreen(
     viewModel: OnboardingViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showImportDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(uiState.isFinished) {
         if (uiState.isFinished) onFinished()
@@ -131,6 +143,8 @@ fun OnboardingScreen(
                         targetOperatingSystem = uiState.targetOperatingSystem,
                         isTargetOperatingSystemConfirmed = uiState.isTargetOperatingSystemConfirmed,
                         studentName = uiState.studentName,
+                        backupState = uiState.backupState,
+                        onImportRequested = { showImportDialog = true },
                         onThemePreferenceChanged = viewModel::updateThemePreference,
                         onPronounPreferenceChanged = viewModel::updatePronounPreference,
                         onTargetOperatingSystemConfirmed = viewModel::confirmTargetOperatingSystem,
@@ -173,6 +187,17 @@ fun OnboardingScreen(
             )
         }
     }
+
+    if (showImportDialog) {
+        BackupFileDialog(
+            mode = BackupFileDialogMode.Open,
+            title = "Importar datos de DAM Prep",
+            onResult = { file ->
+                showImportDialog = false
+                if (file != null) viewModel.importBackup(file)
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -184,6 +209,8 @@ private fun OnboardingStepContent(
     targetOperatingSystem: TargetOperatingSystem?,
     isTargetOperatingSystemConfirmed: Boolean,
     studentName: String,
+    backupState: BackupOperationState,
+    onImportRequested: () -> Unit,
     onThemePreferenceChanged: (ThemePreference) -> Unit,
     onPronounPreferenceChanged: (PronounPreference) -> Unit,
     onTargetOperatingSystemConfirmed: (TargetOperatingSystem) -> Unit,
@@ -202,6 +229,31 @@ private fun OnboardingStepContent(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+
+        AnimatedVisibility(visible = step.kind == OnboardingStepKind.Import) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Spacer(modifier = Modifier.height(28.dp))
+                OutlinedButton(
+                    onClick = onImportRequested,
+                    enabled = backupState != BackupOperationState.InProgress,
+                ) {
+                    Icon(imageVector = Icons.Filled.FileOpen, contentDescription = null)
+                    Text(text = "Importar copia de seguridad", modifier = Modifier.padding(start = 8.dp))
+                }
+                if (backupState is BackupOperationState.Failed) {
+                    Text(
+                        text = backupState.message,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 12.dp),
+                    )
+                }
+            }
+        }
 
         AnimatedVisibility(visible = step.kind == OnboardingStepKind.Theme) {
             Column {

@@ -8,6 +8,7 @@ data class OnboardingStep(
 
 enum class OnboardingStepKind {
     Info,
+    Import,
     Theme,
     OperatingSystem,
     Personalization,
@@ -18,6 +19,11 @@ val onboardingSteps =
         OnboardingStep(
             title = "Te doy la bienvenida a DAM Prep",
             body = "Esta app te acompañará mientras aprendes los fundamentos de programación desde cero, paso a paso y con calma.",
+        ),
+        OnboardingStep(
+            kind = OnboardingStepKind.Import,
+            title = "¿Ya usabas DAM Prep?",
+            body = "Si tienes una copia de seguridad de otra instalación, impórtala y entrarás directamente con tu nombre, tus ajustes y tu progreso. Si no, pulsa «Siguiente» para empezar desde cero.",
         ),
         OnboardingStep(
             title = "Teoría guiada por pantallas",

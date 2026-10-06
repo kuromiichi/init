@@ -49,6 +49,10 @@ class LessonProgressRepository(
         )
     }
 
+    suspend fun snapshot(): LessonProgressSnapshot = lessonProgressDao.readProgress()
+
+    suspend fun replaceProgress(snapshot: LessonProgressSnapshot) = write { lessonProgressDao.replaceProgress(snapshot) }
+
     suspend fun resetProgress() = write { lessonProgressDao.resetProgress() }
 
     private suspend fun write(block: suspend () -> Unit) {

@@ -2,10 +2,13 @@ package dev.kuromiichi.damprep.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.kuromiichi.damprep.data.backup.BackupImportException
+import dev.kuromiichi.damprep.data.backup.BackupRepository
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
+import dev.kuromiichi.damprep.ui.common.BackupOperationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 
 data class OnboardingCompletion(
     val studentName: String,
@@ -28,6 +32,7 @@ data class OnboardingUiState(
     val themePreference: ThemePreference = ThemePreference.System,
     val targetOperatingSystem: TargetOperatingSystem? = null,
     val isTargetOperatingSystemConfirmed: Boolean = false,
+    val backupState: BackupOperationState = BackupOperationState.Idle,
     val isFinished: Boolean = false,
 ) {
     val currentStep: OnboardingStep = steps[currentStepIndex]
@@ -36,6 +41,7 @@ data class OnboardingUiState(
     val normalizedName: String = studentName.trim()
     val canContinue: Boolean =
         when (currentStep.kind) {
+            OnboardingStepKind.Import -> backupState != BackupOperationState.InProgress
             OnboardingStepKind.OperatingSystem ->
                 targetOperatingSystem != null && isTargetOperatingSystemConfirmed
             OnboardingStepKind.Personalization -> normalizedName.isNotEmpty()
@@ -45,6 +51,7 @@ data class OnboardingUiState(
 
 class OnboardingViewModel(
     private val preferencesRepository: UserPreferencesRepository,
+    private val backupRepository: BackupRepository,
     initialTargetOperatingSystem: TargetOperatingSystem? = TargetOperatingSystem.detect(),
     private val steps: List<OnboardingStep> = onboardingSteps,
 ) : ViewModel() {
@@ -84,6 +91,20 @@ class OnboardingViewModel(
                 targetOperatingSystem = targetOperatingSystem,
                 isTargetOperatingSystemConfirmed = true,
             )
+        }
+    }
+
+    fun importBackup(file: File) {
+        if (_uiState.value.backupState == BackupOperationState.InProgress) return
+        _uiState.update { state -> state.copy(backupState = BackupOperationState.InProgress) }
+
+        viewModelScope.launch {
+            try {
+                backupRepository.importFrom(file)
+                _uiState.update { state -> state.copy(backupState = BackupOperationState.Imported, isFinished = true) }
+            } catch (exception: BackupImportException) {
+                _uiState.update { state -> state.copy(backupState = BackupOperationState.Failed(exception.message.orEmpty())) }
+            }
         }
     }
 

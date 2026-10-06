@@ -2,17 +2,22 @@ package dev.kuromiichi.damprep.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.kuromiichi.damprep.data.backup.BackupImportException
+import dev.kuromiichi.damprep.data.backup.BackupRepository
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.data.preferences.UserPreferencesRepository
 import dev.kuromiichi.damprep.data.progress.LessonProgressRepository
+import dev.kuromiichi.damprep.ui.common.BackupOperationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.IOException
 
 data class SettingsUiState(
     val studentNameDraft: String,
@@ -21,14 +26,18 @@ data class SettingsUiState(
     val themePreference: ThemePreference,
     val unlockAllLessons: Boolean,
     val hasLessonProgress: Boolean,
+    val backupState: BackupOperationState,
 )
 
 class SettingsViewModel(
     private val preferencesRepository: UserPreferencesRepository,
     private val lessonProgressRepository: LessonProgressRepository,
+    private val backupRepository: BackupRepository,
 ) : ViewModel() {
     /** Nombre que se está editando; `null` cuando el campo muestra el nombre guardado. */
     private val studentNameDraft = MutableStateFlow<String?>(null)
+
+    private val backupState = MutableStateFlow<BackupOperationState>(BackupOperationState.Idle)
 
     val uiState: StateFlow<SettingsUiState?> =
         combine(
@@ -36,7 +45,8 @@ class SettingsViewModel(
             lessonProgressRepository.completedLessonIds,
             lessonProgressRepository.lessonStepIndices,
             studentNameDraft,
-        ) { preferences, completedLessonIds, lessonStepIndices, draft ->
+            backupState,
+        ) { preferences, completedLessonIds, lessonStepIndices, draft, backup ->
             SettingsUiState(
                 studentNameDraft = draft ?: preferences.studentName,
                 pronounPreference = preferences.pronounPreference,
@@ -44,6 +54,7 @@ class SettingsViewModel(
                 themePreference = preferences.themePreference,
                 unlockAllLessons = preferences.unlockAllLessons,
                 hasLessonProgress = completedLessonIds.isNotEmpty() || lessonStepIndices.isNotEmpty(),
+                backupState = backup,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
@@ -78,5 +89,41 @@ class SettingsViewModel(
 
     fun resetLessonProgress() {
         viewModelScope.launch { lessonProgressRepository.resetProgress() }
+    }
+
+    fun exportBackup(file: File) {
+        runBackupOperation(onSuccess = BackupOperationState.Exported) { backupRepository.exportTo(file) }
+    }
+
+    fun importBackup(file: File) {
+        runBackupOperation(onSuccess = BackupOperationState.Imported) {
+            backupRepository.importFrom(file)
+            // El nombre importado sustituye cualquier edición sin guardar.
+            studentNameDraft.value = null
+        }
+    }
+
+    fun dismissBackupResult() {
+        backupState.value = BackupOperationState.Idle
+    }
+
+    private fun runBackupOperation(
+        onSuccess: BackupOperationState,
+        operation: suspend () -> Unit,
+    ) {
+        if (backupState.value == BackupOperationState.InProgress) return
+        backupState.value = BackupOperationState.InProgress
+
+        viewModelScope.launch {
+            backupState.value =
+                try {
+                    operation()
+                    onSuccess
+                } catch (exception: BackupImportException) {
+                    BackupOperationState.Failed(exception.message.orEmpty())
+                } catch (exception: IOException) {
+                    BackupOperationState.Failed("No se ha podido escribir el archivo: ${exception.message.orEmpty()}")
+                }
+        }
     }
 }

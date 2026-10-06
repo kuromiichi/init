@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.testing
 
 import dev.kuromiichi.damprep.data.progress.CompletedLessonEntity
 import dev.kuromiichi.damprep.data.progress.LessonProgressDao
+import dev.kuromiichi.damprep.data.progress.LessonProgressSnapshot
 import dev.kuromiichi.damprep.data.progress.LessonStepProgressEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -12,6 +13,19 @@ class FakeLessonProgressDao : LessonProgressDao {
     override fun observeCompletedLessons() = completedLessons
 
     override fun observeLessonStepProgress() = stepProgress
+
+    override suspend fun getCompletedLessons() = completedLessons.value
+
+    override suspend fun getLessonStepProgress() = stepProgress.value
+
+    override suspend fun insertCompletedLessons(completedLessons: List<CompletedLessonEntity>) {
+        this.completedLessons.value =
+            this.completedLessons.value.filterNot { existing -> completedLessons.any { it.lessonId == existing.lessonId } } + completedLessons
+    }
+
+    override suspend fun insertStepProgress(stepProgress: List<LessonStepProgressEntity>) {
+        stepProgress.forEach { upsertStepProgress(it) }
+    }
 
     override suspend fun insert(completedLesson: CompletedLessonEntity) {
         if (completedLessons.value.none { it.lessonId == completedLesson.lessonId }) {
@@ -33,5 +47,12 @@ class FakeLessonProgressDao : LessonProgressDao {
 
     override suspend fun deleteAllStepProgress() {
         stepProgress.value = emptyList()
+    }
+
+    override suspend fun readProgress() = LessonProgressSnapshot(completedLessons.value, stepProgress.value)
+
+    override suspend fun replaceProgress(snapshot: LessonProgressSnapshot) {
+        completedLessons.value = snapshot.completedLessons
+        stepProgress.value = snapshot.stepProgress
     }
 }

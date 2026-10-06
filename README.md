@@ -21,6 +21,7 @@ El proyecto se encuentra en una fase inicial funcional.
 Actualmente incluye:
 
 - onboarding y preferencias persistentes de nombre, tratamiento, sistema operativo y tema;
+- exportación e importación de datos (nombre, ajustes y progreso) en un archivo JSON, desde Configuración y desde el onboarding, para hacer copias de seguridad o cambiar de equipo;
 - temas claro, oscuro y según el sistema;
 - navegación entre portada, listado y lecciones, con navegación por botones y teclado dentro de cada lección;
 - itinerario lineal provisional de 29 lecciones con desbloqueo secuencial; las lecciones que aún no se pueden abrir explican el motivo;

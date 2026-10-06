@@ -3,19 +3,23 @@ package dev.kuromiichi.damprep.ui.onboarding
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 import dev.kuromiichi.damprep.data.preferences.ThemePreference
+import dev.kuromiichi.damprep.data.preferences.UserPreferences
 import dev.kuromiichi.damprep.testing.ViewModelTest
+import dev.kuromiichi.damprep.ui.common.BackupOperationState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class OnboardingViewModelTest : ViewModelTest() {
     @Test
     fun `onboarding starts with the saved theme preference`() {
         runBlocking { preferencesRepository.setThemePreference(ThemePreference.Dark) }
-        val viewModel = OnboardingViewModel(preferencesRepository).also { it.uiState.observed() }
+        val viewModel = OnboardingViewModel(preferencesRepository, backupRepository).also { it.uiState.observed() }
 
         val state = viewModel.uiState.value
 
@@ -30,6 +34,7 @@ class OnboardingViewModelTest : ViewModelTest() {
         val viewModel =
             OnboardingViewModel(
                 preferencesRepository = preferencesRepository,
+                backupRepository = backupRepository,
                 steps =
                     listOf(
                         step(kind = OnboardingStepKind.Personalization),
@@ -53,6 +58,7 @@ class OnboardingViewModelTest : ViewModelTest() {
         val viewModel =
             OnboardingViewModel(
                 preferencesRepository = preferencesRepository,
+                backupRepository = backupRepository,
                 initialTargetOperatingSystem = TargetOperatingSystem.MacOS,
                 steps =
                     listOf(
@@ -80,6 +86,7 @@ class OnboardingViewModelTest : ViewModelTest() {
         val viewModel =
             OnboardingViewModel(
                 preferencesRepository = preferencesRepository,
+                backupRepository = backupRepository,
                 initialTargetOperatingSystem = TargetOperatingSystem.MacOS,
                 steps = listOf(step(kind = OnboardingStepKind.OperatingSystem)),
             ).also { it.uiState.observed() }
@@ -95,6 +102,7 @@ class OnboardingViewModelTest : ViewModelTest() {
         val viewModel =
             OnboardingViewModel(
                 preferencesRepository = preferencesRepository,
+                backupRepository = backupRepository,
                 initialTargetOperatingSystem = TargetOperatingSystem.Linux,
                 steps = listOf(step()),
             ).also { it.uiState.observed() }
@@ -119,6 +127,7 @@ class OnboardingViewModelTest : ViewModelTest() {
         val viewModel =
             OnboardingViewModel(
                 preferencesRepository = preferencesRepository,
+                backupRepository = backupRepository,
                 steps = listOf(step(), step(), step()),
             ).also { it.uiState.observed() }
 
@@ -135,7 +144,7 @@ class OnboardingViewModelTest : ViewModelTest() {
 
     @Test
     fun `theme preference is saved immediately and follows external changes`() {
-        val viewModel = OnboardingViewModel(preferencesRepository).also { it.uiState.observed() }
+        val viewModel = OnboardingViewModel(preferencesRepository, backupRepository).also { it.uiState.observed() }
 
         viewModel.updateThemePreference(ThemePreference.Dark)
         assertEquals(ThemePreference.Dark, viewModel.uiState.value.themePreference)
@@ -144,6 +153,44 @@ class OnboardingViewModelTest : ViewModelTest() {
         runBlocking { preferencesRepository.setThemePreference(ThemePreference.Light) }
         assertEquals(ThemePreference.Light, viewModel.uiState.value.themePreference)
     }
+
+    @Test
+    fun `importing a backup finishes onboarding with the imported data`() {
+        val file = backupFile()
+        runBlocking {
+            preferencesRepository.completeOnboarding("Emma", PronounPreference.Feminine, TargetOperatingSystem.Linux)
+            preferencesRepository.setThemePreference(ThemePreference.Dark)
+            lessonProgressRepository.completeLesson("welcome")
+            backupRepository.exportTo(file)
+            preferencesRepository.restore(UserPreferences())
+            lessonProgressRepository.resetProgress()
+        }
+        val viewModel = OnboardingViewModel(preferencesRepository, backupRepository).also { it.uiState.observed() }
+
+        viewModel.importBackup(file)
+
+        assertTrue(viewModel.uiState.value.isFinished)
+        val saved = savedPreferences()
+        assertEquals("Emma", saved.studentName)
+        assertEquals(ThemePreference.Dark, saved.themePreference)
+        assertTrue(saved.onboardingCompleted)
+        assertEquals(setOf("welcome"), runBlocking { lessonProgressRepository.completedLessonIds.first() })
+    }
+
+    @Test
+    fun `a failed import keeps onboarding open and shows the error`() {
+        val file = backupFile().apply { writeText("{}") }
+        val viewModel = OnboardingViewModel(preferencesRepository, backupRepository).also { it.uiState.observed() }
+
+        viewModel.importBackup(file)
+
+        val state = viewModel.uiState.value
+        assertFalse(state.isFinished)
+        assertIs<BackupOperationState.Failed>(state.backupState)
+        assertFalse(savedPreferences().onboardingCompleted)
+    }
+
+    private fun backupFile() = Files.createTempFile("dam-prep", ".json").toFile().apply { deleteOnExit() }
 
     private fun savedPreferences() = runBlocking { preferencesRepository.preferences.first() }
 
