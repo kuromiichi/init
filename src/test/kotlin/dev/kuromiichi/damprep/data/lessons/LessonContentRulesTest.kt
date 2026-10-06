@@ -131,6 +131,7 @@ class LessonContentRulesTest {
                 "arrays-lists" to listOf("""\b(setOf|mapOf|mutableSetOf|mutableMapOf|emptyList)\b""", """\bclass\b(?! \w+Test)""", """\.(filter|map|forEach|any|all|sortedBy|let|also|apply|run)\b""", """\{ it\b""", """\bArray\(\d"""),
                 "sets-maps" to listOf("""\bclass\b(?! \w+Test)""", """\.(filter|map|forEach|any|all|count|groupBy|sortedBy|getOrPut|getOrElse|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->""", """\b(TreeSet|TreeMap|HashSet|HashMap|Comparator)\b"""),
                 "oop-classes-objects" to listOf("""\b(open|abstract|sealed|interface|protected|inner|lateinit|lazy)\b""", """(?<!companion )\bobject\b""", """\bclass \w+(\([^)]*\))? ?: ?\w""", """\.(filter|map|forEach|any|all|count|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
+                "oop-relationships" to listOf("""\b(open|abstract|sealed|interface|protected|inner|lateinit|lazy)\b""", """(?<!companion )\bobject\b""", """\bclass \w+(\([^)]*\))? ?: ?\w""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 
