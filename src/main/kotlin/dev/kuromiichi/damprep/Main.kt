@@ -8,13 +8,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import dev.kuromiichi.damprep.di.appModules
+import dev.kuromiichi.damprep.ui.common.KeyboardFocusVisibility
 import dev.kuromiichi.damprep.ui.common.LocalAppWindow
+import dev.kuromiichi.damprep.ui.common.LocalKeyboardFocusVisibility
+import dev.kuromiichi.damprep.ui.common.hideKeyboardFocusOnPointer
 import dev.kuromiichi.damprep.ui.window.WindowMetrics
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -74,8 +78,12 @@ fun main() {
                         window.minimumSize = previousMinimumSize
                     }
                 }
-                CompositionLocalProvider(LocalAppWindow provides window) {
-                    Box(modifier = Modifier.fillMaxSize()) {
+                val keyboardFocusVisibility = remember { KeyboardFocusVisibility() }
+                CompositionLocalProvider(
+                    LocalAppWindow provides window,
+                    LocalKeyboardFocusVisibility provides keyboardFocusVisibility,
+                ) {
+                    Box(modifier = Modifier.fillMaxSize().hideKeyboardFocusOnPointer(keyboardFocusVisibility)) {
                         App(titleBarInset = if (IsMacOs) MacTitleBarHeight else 0.dp)
                         if (IsMacOs) {
                             WindowDraggableArea(modifier = Modifier.fillMaxWidth().height(MacTitleBarHeight)) {

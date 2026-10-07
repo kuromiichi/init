@@ -57,6 +57,19 @@ class SettingsViewModelTest : ViewModelTest() {
     }
 
     @Test
+    fun `discarding the name draft keeps the saved name`() {
+        val viewModel = createViewModel()
+        val savedName = savedPreferences().studentName
+
+        viewModel.updateStudentNameDraft("Borrador")
+        viewModel.discardStudentNameDraft()
+        viewModel.commitStudentName()
+
+        assertEquals(savedName, viewModel.uiState.value?.studentNameDraft)
+        assertEquals(savedName, savedPreferences().studentName)
+    }
+
+    @Test
     fun `preference choices are saved`() {
         val viewModel = createViewModel()
 

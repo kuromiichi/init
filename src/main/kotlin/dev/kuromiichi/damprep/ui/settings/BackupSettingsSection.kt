@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -25,6 +26,7 @@ import dev.kuromiichi.damprep.ui.common.BackupFileDialogMode
 import dev.kuromiichi.damprep.ui.common.BackupOperationState
 import dev.kuromiichi.damprep.ui.common.SettingControlMaxWidth
 import dev.kuromiichi.damprep.ui.common.SettingRow
+import dev.kuromiichi.damprep.ui.common.focusHighlight
 import java.io.File
 import java.time.LocalDate
 
@@ -54,7 +56,7 @@ fun BackupSettingsSection(
             OutlinedButton(
                 onClick = { showExportDialog = true },
                 enabled = !isBusy,
-                modifier = Modifier.widthIn(max = SettingControlMaxWidth),
+                modifier = Modifier.widthIn(max = SettingControlMaxWidth).focusHighlight(ButtonDefaults.outlinedShape),
             ) {
                 Icon(imageVector = Icons.Filled.Save, contentDescription = null)
                 Text(text = "Exportar datos", modifier = Modifier.padding(start = 8.dp))
@@ -68,7 +70,7 @@ fun BackupSettingsSection(
             OutlinedButton(
                 onClick = { showImportDialog = true },
                 enabled = !isBusy,
-                modifier = Modifier.widthIn(max = SettingControlMaxWidth),
+                modifier = Modifier.widthIn(max = SettingControlMaxWidth).focusHighlight(ButtonDefaults.outlinedShape),
             ) {
                 Icon(imageVector = Icons.Filled.FileOpen, contentDescription = null)
                 Text(text = "Importar datos", modifier = Modifier.padding(start = 8.dp))

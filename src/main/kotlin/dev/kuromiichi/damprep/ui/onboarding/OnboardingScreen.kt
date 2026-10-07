@@ -14,6 +14,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,8 +32,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -43,16 +46,29 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.kuromiichi.damprep.data.preferences.PronounPreference
@@ -61,7 +77,10 @@ import dev.kuromiichi.damprep.data.preferences.ThemePreference
 import dev.kuromiichi.damprep.ui.common.BackupFileDialog
 import dev.kuromiichi.damprep.ui.common.BackupFileDialogMode
 import dev.kuromiichi.damprep.ui.common.BackupOperationState
+import dev.kuromiichi.damprep.ui.common.KeyboardShortcutsVisual
 import dev.kuromiichi.damprep.ui.common.OperatingSystemSelector
+import dev.kuromiichi.damprep.ui.common.arrowKeyNavigation
+import dev.kuromiichi.damprep.ui.common.focusHighlight
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,114 +96,162 @@ fun OnboardingScreen(
         if (uiState.isFinished) onFinished()
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background,
-    ) {
-        Column(
+    val focusManager = LocalFocusManager.current
+    val rootFocusRequester = remember { FocusRequester() }
+    val continueFocusRequester = remember { FocusRequester() }
+    var hasFocus by remember { mutableStateOf(false) }
+    var isRootFocused by remember { mutableStateOf(false) }
+    var isNameFieldFocused by remember { mutableStateOf(false) }
+
+    // En cada paso el foco empieza en «Siguiente», que Intro pulsa; si aún no se puede continuar (falta elegir el
+    // sistema o escribir el nombre), en la pantalla, y la primera flecha entra al control que falta.
+    LaunchedEffect(uiState.currentStepIndex) {
+        withFrameNanos { }
+        val focused = uiState.canContinue && runCatching { continueFocusRequester.requestFocus() }.getOrDefault(false)
+        if (!focused) runCatching { rootFocusRequester.requestFocus() }
+    }
+    // Sin nada enfocado (al salir del campo con Escape, por ejemplo) las teclas no llegarían: la pantalla lo recupera.
+    LaunchedEffect(hasFocus) {
+        if (!hasFocus) {
+            withFrameNanos { }
+            if (!hasFocus) runCatching { rootFocusRequester.requestFocus() }
+        }
+    }
+
+    // Los controles miden lo que se ve, para que el contorno de foco quede pegado a ellos y no a su área táctil.
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
+        Surface(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 40.dp, vertical = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                    .onPreviewKeyEvent { event ->
+                        if (event.type != KeyEventType.KeyDown || event.key != Key.Escape) return@onPreviewKeyEvent false
+                        when {
+                            // En el campo del nombre, Escape solo sale del campo.
+                            isNameFieldFocused -> focusManager.clearFocus()
+                            !uiState.isFirstStep -> viewModel.goToPreviousStep()
+                        }
+                        true
+                    }.arrowKeyNavigation(
+                        isRootFocused = { isRootFocused },
+                        isEditingText = { isNameFieldFocused },
+                    ).onFocusChanged {
+                        hasFocus = it.hasFocus
+                        isRootFocused = it.isFocused
+                    }.focusRequester(rootFocusRequester)
+                    .focusable(),
+            color = MaterialTheme.colorScheme.background,
         ) {
             Column(
                 modifier =
                     Modifier
-                        .weight(1f)
-                        .widthIn(max = 720.dp)
-                        .fillMaxWidth()
-                        .animateContentSize(
-                            animationSpec =
-                                tween(
-                                    durationMillis = 260,
-                                    easing = FastOutSlowInEasing,
-                                ),
-                        ),
-                verticalArrangement = Arrangement.Center,
+                        .fillMaxSize()
+                        .padding(horizontal = 40.dp, vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                AnimatedContent(
-                    targetState = uiState.currentStepIndex,
-                    transitionSpec = {
-                        val direction = if (targetState > initialState) 1 else -1
-
-                        (
-                            fadeIn(animationSpec = tween(durationMillis = 220)) +
-                                slideInVertically(
-                                    animationSpec =
-                                        tween(
-                                            durationMillis = 260,
-                                            easing = FastOutSlowInEasing,
-                                        ),
-                                    initialOffsetY = { it / 10 * direction },
-                                )
-                        ).togetherWith(
-                            fadeOut(animationSpec = tween(durationMillis = 160)) +
-                                slideOutVertically(
-                                    animationSpec =
-                                        tween(
-                                            durationMillis = 180,
-                                            easing = FastOutSlowInEasing,
-                                        ),
-                                    targetOffsetY = { -it / 10 * direction },
-                                ),
-                        ).using(
-                            SizeTransform(clip = false),
-                        )
-                    },
-                    label = "Onboarding step",
-                ) { animatedStepIndex ->
-                    val animatedStep = uiState.steps[animatedStepIndex]
-
-                    OnboardingStepContent(
-                        step = animatedStep,
-                        themePreference = uiState.themePreference,
-                        pronounPreference = uiState.pronounPreference,
-                        targetOperatingSystem = uiState.targetOperatingSystem,
-                        isTargetOperatingSystemConfirmed = uiState.isTargetOperatingSystemConfirmed,
-                        studentName = uiState.studentName,
-                        backupState = uiState.backupState,
-                        onImportRequested = { showImportDialog = true },
-                        onThemePreferenceChanged = viewModel::updateThemePreference,
-                        onPronounPreferenceChanged = viewModel::updatePronounPreference,
-                        onTargetOperatingSystemConfirmed = viewModel::confirmTargetOperatingSystem,
-                        onStudentNameChanged = viewModel::updateStudentName,
-                        onDone = viewModel::continueOnboarding,
-                    )
-                }
-            }
-
-            Row(
-                modifier =
-                    Modifier
-                        .widthIn(max = 720.dp)
-                        .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (!uiState.isFirstStep) {
-                    TextButton(
-                        onClick = viewModel::goToPreviousStep,
-                    ) {
-                        Text("Atrás")
-                    }
-                } else {
-                    Spacer(modifier = Modifier)
-                }
-
-                Button(
-                    onClick = viewModel::continueOnboarding,
-                    enabled = uiState.canContinue,
+                Column(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .widthIn(max = 720.dp)
+                            .fillMaxWidth()
+                            .animateContentSize(
+                                animationSpec =
+                                    tween(
+                                        durationMillis = 260,
+                                        easing = FastOutSlowInEasing,
+                                    ),
+                            )
+                            // La animación de tamaño recorta: el margen deja sitio al contorno de foco de los controles.
+                            .padding(horizontal = 4.dp),
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    Text(if (uiState.isLastStep) "Entrar" else "Siguiente")
-                }
-            }
+                    AnimatedContent(
+                        targetState = uiState.currentStepIndex,
+                        transitionSpec = {
+                            val direction = if (targetState > initialState) 1 else -1
 
-            Spacer(modifier = Modifier.height(24.dp))
-            OnboardingProgressDots(
-                currentStepIndex = uiState.currentStepIndex,
-                stepCount = uiState.steps.size,
-            )
+                            (
+                                fadeIn(animationSpec = tween(durationMillis = 220)) +
+                                    slideInVertically(
+                                        animationSpec =
+                                            tween(
+                                                durationMillis = 260,
+                                                easing = FastOutSlowInEasing,
+                                            ),
+                                        initialOffsetY = { it / 10 * direction },
+                                    )
+                            ).togetherWith(
+                                fadeOut(animationSpec = tween(durationMillis = 160)) +
+                                    slideOutVertically(
+                                        animationSpec =
+                                            tween(
+                                                durationMillis = 180,
+                                                easing = FastOutSlowInEasing,
+                                            ),
+                                        targetOffsetY = { -it / 10 * direction },
+                                    ),
+                            ).using(
+                                SizeTransform(clip = false),
+                            )
+                        },
+                        label = "Onboarding step",
+                    ) { animatedStepIndex ->
+                        val animatedStep = uiState.steps[animatedStepIndex]
+
+                        OnboardingStepContent(
+                            step = animatedStep,
+                            themePreference = uiState.themePreference,
+                            pronounPreference = uiState.pronounPreference,
+                            targetOperatingSystem = uiState.targetOperatingSystem,
+                            isTargetOperatingSystemConfirmed = uiState.isTargetOperatingSystemConfirmed,
+                            studentName = uiState.studentName,
+                            backupState = uiState.backupState,
+                            onImportRequested = { showImportDialog = true },
+                            onThemePreferenceChanged = viewModel::updateThemePreference,
+                            onPronounPreferenceChanged = viewModel::updatePronounPreference,
+                            onTargetOperatingSystemConfirmed = viewModel::confirmTargetOperatingSystem,
+                            onStudentNameChanged = viewModel::updateStudentName,
+                            onNameFieldFocusChanged = { isNameFieldFocused = it },
+                            onDone = viewModel::continueOnboarding,
+                        )
+                    }
+                }
+
+                Row(
+                    modifier =
+                        Modifier
+                            .widthIn(max = 720.dp)
+                            .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (!uiState.isFirstStep) {
+                        TextButton(
+                            onClick = viewModel::goToPreviousStep,
+                            modifier = Modifier.focusHighlight(ButtonDefaults.textShape),
+                        ) {
+                            Text("Atrás")
+                        }
+                    } else {
+                        Spacer(modifier = Modifier)
+                    }
+
+                    Button(
+                        onClick = viewModel::continueOnboarding,
+                        enabled = uiState.canContinue,
+                        modifier = Modifier.focusRequester(continueFocusRequester).focusHighlight(ButtonDefaults.shape),
+                    ) {
+                        Text(if (uiState.isLastStep) "Entrar" else "Siguiente")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+                OnboardingProgressDots(
+                    currentStepIndex = uiState.currentStepIndex,
+                    stepCount = uiState.steps.size,
+                )
+            }
         }
     }
 
@@ -215,6 +282,7 @@ private fun OnboardingStepContent(
     onPronounPreferenceChanged: (PronounPreference) -> Unit,
     onTargetOperatingSystemConfirmed: (TargetOperatingSystem) -> Unit,
     onStudentNameChanged: (String) -> Unit,
+    onNameFieldFocusChanged: (Boolean) -> Unit,
     onDone: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -238,6 +306,7 @@ private fun OnboardingStepContent(
                 Spacer(modifier = Modifier.height(28.dp))
                 OutlinedButton(
                     onClick = onImportRequested,
+                    modifier = Modifier.focusHighlight(ButtonDefaults.outlinedShape),
                     enabled = backupState != BackupOperationState.InProgress,
                 ) {
                     Icon(imageVector = Icons.Filled.FileOpen, contentDescription = null)
@@ -255,6 +324,13 @@ private fun OnboardingStepContent(
             }
         }
 
+        AnimatedVisibility(visible = step.kind == OnboardingStepKind.Shortcuts) {
+            Column {
+                Spacer(modifier = Modifier.height(24.dp))
+                KeyboardShortcutsVisual()
+            }
+        }
+
         AnimatedVisibility(visible = step.kind == OnboardingStepKind.Theme) {
             Column {
                 Spacer(modifier = Modifier.height(28.dp))
@@ -263,6 +339,7 @@ private fun OnboardingStepContent(
                 ) {
                     ThemePreference.entries.forEachIndexed { index, preference ->
                         SegmentedButton(
+                            modifier = Modifier.focusHighlight(SegmentedButtonDefaults.itemShape(index = index, count = ThemePreference.entries.size), outset = 3.dp),
                             selected = preference == themePreference,
                             onClick = {
                                 onThemePreferenceChanged(preference)
@@ -313,6 +390,7 @@ private fun OnboardingStepContent(
                 ) {
                     PronounPreference.entries.forEachIndexed { index, preference ->
                         SegmentedButton(
+                            modifier = Modifier.focusHighlight(SegmentedButtonDefaults.itemShape(index = index, count = PronounPreference.entries.size), outset = 3.dp),
                             selected = preference == pronounPreference,
                             onClick = {
                                 onPronounPreferenceChanged(preference)
@@ -332,7 +410,7 @@ private fun OnboardingStepContent(
                 OutlinedTextField(
                     value = studentName,
                     onValueChange = onStudentNameChanged,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().onFocusChanged { onNameFieldFocusChanged(it.isFocused) },
                     label = { Text("Nombre") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),

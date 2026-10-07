@@ -1,9 +1,16 @@
 package dev.kuromiichi.damprep.ui.lessons
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.dam_prep.generated.resources.Res
@@ -53,30 +60,57 @@ import dev.kuromiichi.damprep.ui.common.LearningConsoleRun
 import dev.kuromiichi.damprep.ui.common.LearningToolCard
 import dev.kuromiichi.damprep.ui.common.LearningTraceTable
 import dev.kuromiichi.damprep.ui.common.LearningVisualSurface
+import dev.kuromiichi.damprep.ui.common.LearningVisualSurfacePadding
 import dev.kuromiichi.damprep.ui.common.ScreenshotLearningVisual
 import dev.kuromiichi.damprep.ui.common.TerminalWindowVisual
 import dev.kuromiichi.damprep.ui.common.ToolLogoCards
 import dev.kuromiichi.damprep.ui.common.TraceTableVisual
+import dev.kuromiichi.damprep.ui.common.focusOutline
+import dev.kuromiichi.damprep.ui.common.verticalFadingEdges
 import dev.kuromiichi.damprep.ui.theme.CatppuccinMacchiato
 import dev.kuromiichi.damprep.ui.theme.LocalCatppuccinFlavor
 import org.jetbrains.compose.resources.DrawableResource
 
+/** Margen que deja el contorno del visual resaltado fuera de su panel. */
+internal val LessonVisualOutlineOutset = 8.dp
+
+/**
+ * Con [scrollState] el visual se desplaza dentro de su panel, con los bordes difuminados, cuando no cabe en el alto
+ * que se le da; sin él ocupa su alto natural.
+ */
 @Composable
 internal fun LessonVisual(
     visual: LessonVisualContent,
     targetOperatingSystem: TargetOperatingSystem?,
     modifier: Modifier = Modifier,
+    scrollState: ScrollState? = null,
+    isOutlined: Boolean = false,
 ) {
     if (visual is LessonVisualContent.Screenshot) {
-        ScreenshotLearningVisual(
-            image = visual.image.drawableResource(isDark = LocalCatppuccinFlavor.current == CatppuccinMacchiato),
-            description = visual.description,
-            modifier = modifier,
-        )
+        val screenshot: @Composable (Modifier) -> Unit = { screenshotModifier ->
+            ScreenshotLearningVisual(
+                image = visual.image.drawableResource(isDark = LocalCatppuccinFlavor.current == CatppuccinMacchiato),
+                description = visual.description,
+                modifier = screenshotModifier,
+            )
+        }
+        if (scrollState == null) {
+            screenshot(modifier)
+        } else {
+            Box(
+                modifier =
+                    modifier
+                        .focusOutline(isOutlined, LessonVisualOutlineOutset)
+                        .verticalFadingEdges(scrollState, MaterialTheme.colorScheme.background, LessonScrollFadeHeight)
+                        .verticalScroll(scrollState),
+            ) {
+                screenshot(Modifier.fillMaxWidth())
+            }
+        }
         return
     }
 
-    LearningVisualSurface(modifier = modifier) {
+    val content: @Composable () -> Unit = {
         when (visual) {
             is LessonVisualContent.CodeExamples ->
                 CodeExamplesVisual(
@@ -129,6 +163,28 @@ internal fun LessonVisual(
                             )
                         },
                 )
+        }
+    }
+
+    if (scrollState == null) {
+        LearningVisualSurface(modifier = modifier) { content() }
+    } else {
+        // El relleno va dentro del desplazamiento para que el contenido llegue hasta el borde del panel y se difumine con él.
+        LearningVisualSurface(
+            modifier = modifier.focusOutline(isOutlined, LessonVisualOutlineOutset),
+            contentPadding = 0.dp,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalFadingEdges(scrollState, MaterialTheme.colorScheme.surfaceContainerLow, LessonScrollFadeHeight)
+                        .verticalScroll(scrollState)
+                        .padding(LearningVisualSurfacePadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                content()
+            }
         }
     }
 }

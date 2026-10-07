@@ -71,6 +71,11 @@ class SettingsViewModel(
         }
     }
 
+    /** Descarta lo escrito en el nombre y vuelve a mostrar el guardado. */
+    fun discardStudentNameDraft() {
+        studentNameDraft.value = null
+    }
+
     fun setPronounPreference(pronounPreference: PronounPreference) {
         viewModelScope.launch { preferencesRepository.setPronounPreference(pronounPreference) }
     }

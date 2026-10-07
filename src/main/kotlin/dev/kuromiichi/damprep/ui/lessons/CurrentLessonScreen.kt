@@ -11,8 +11,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,16 +39,23 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
+import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.LoadingScreen
+import dev.kuromiichi.damprep.ui.common.LocalKeyboardFocusVisibility
 import dev.kuromiichi.damprep.ui.common.OperatingSystemDropdown
 import dev.kuromiichi.damprep.ui.common.verticalFadingEdges
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -58,7 +67,12 @@ internal val LessonRichVisualMaxWidth = 560.dp
 internal val LessonCompactRichVisualMaxWidth = 560.dp
 internal val LessonScreenshotVisualMaxWidth = 720.dp
 internal val LessonCompactScreenshotVisualMaxWidth = 640.dp
-private val LessonScrollFadeHeight = 48.dp
+internal val LessonScrollFadeHeight = 48.dp
+private val LessonArrowScrollStep = 96.dp
+private val LessonPageScrollStep = 400.dp
+
+/** Lo que tarda en animarse la pista que se acaba de mostrar antes de llevarla a la vista. */
+private const val HINT_REVEAL_DELAY_MILLIS = 220L
 
 @Composable
 fun CurrentLessonScreen(
@@ -99,6 +113,10 @@ fun CurrentLessonScreen(
             rememberScrollState()
         }
 
+    val scrollController = remember { LessonStepScrollController() }
+    val keyboardFocusVisibility = LocalKeyboardFocusVisibility.current
+    val density = LocalDensity.current
+
     LaunchedEffect(lessonContent.lessonId) {
         focusRequester.requestFocus()
     }
@@ -110,6 +128,16 @@ fun CurrentLessonScreen(
                 .onPreviewKeyEvent { event ->
                     if (event.type != KeyEventType.KeyDown) {
                         return@onPreviewKeyEvent false
+                    }
+                    if (event.isCtrlPressed || event.isMetaPressed || event.isAltPressed) {
+                        return@onPreviewKeyEvent false
+                    }
+                    // Tras usar el ratón, la primera tecla que mueve la zona resaltada solo vuelve a mostrarla.
+                    val movesHighlightedSection =
+                        event.key in
+                            setOf(Key.DirectionUp, Key.DirectionDown, Key.PageUp, Key.PageDown, Key.Spacebar, Key.Tab)
+                    if (movesHighlightedSection && !keyboardFocusVisibility.reveal() && scrollController.focusedSection != null) {
+                        return@onPreviewKeyEvent true
                     }
 
                     when (event.key) {
@@ -131,9 +159,79 @@ fun CurrentLessonScreen(
                             }
                         }
 
+                        Key.DirectionUp, Key.DirectionDown, Key.PageUp, Key.PageDown -> {
+                            val distance =
+                                with(density) {
+                                    if (event.key == Key.DirectionUp || event.key == Key.DirectionDown) {
+                                        LessonArrowScrollStep.toPx()
+                                    } else {
+                                        LessonPageScrollStep.toPx()
+                                    }
+                                }
+                            val forward = event.key == Key.DirectionDown || event.key == Key.PageDown
+                            val target = scrollController.scrollTarget(scrollState)
+                            if (target != null) {
+                                coroutineScope.launch { target.animateScrollBy(if (forward) distance else -distance) }
+                            }
+                            true
+                        }
+
+                        // Tab solo alterna entre las zonas que se pueden desplazar; si no hay ninguna, no hace nada.
+                        Key.Tab -> {
+                            scrollController.cycle(backwards = event.isShiftPressed)
+                            true
+                        }
+
+                        // Espacio baja hasta el final de la zona activa o, en los pasos con práctica, hasta su tarjeta.
+                        Key.Spacebar -> {
+                            val target = scrollController.scrollTarget(scrollState)
+                            if (target != null) {
+                                coroutineScope.launch { target.animateScrollTo(target.maxValue) }
+                            }
+                            true
+                        }
+
+                        Key.P -> {
+                            val revealed = scrollController.revealNextHint()
+                            if (revealed) {
+                                coroutineScope.launch {
+                                    delay(HINT_REVEAL_DELAY_MILLIS)
+                                    scrollState.animateScrollTo(scrollState.maxValue)
+                                }
+                            }
+                            revealed
+                        }
+
+                        Key.Enter, Key.NumPadEnter ->
+                            when {
+                                uiState.isCompletionVisible -> {
+                                    viewModel.finishLesson()
+                                    true
+                                }
+
+                                !uiState.isCurrentPracticeConfirmed -> {
+                                    viewModel.setCurrentPracticeConfirmed(true)
+                                    true
+                                }
+
+                                uiState.canShowCompletion -> {
+                                    goToNextStep()
+                                    true
+                                }
+
+                                else -> false
+                            }
+
+                        // Escape sale de la lección aunque se esté en la pantalla final.
+                        Key.Escape -> {
+                            onBack()
+                            true
+                        }
+
                         else -> false
                     }
                 }.focusable(),
+        takesFocus = false,
         onBack =
             if (uiState.isCompletionVisible) {
                 goToPreviousStep
@@ -164,7 +262,7 @@ fun CurrentLessonScreen(
                     .padding(top = 8.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Box(
+            BoxWithConstraints(
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -176,6 +274,8 @@ fun CurrentLessonScreen(
                         ),
                 contentAlignment = Alignment.Center,
             ) {
+                // El alto visible del paso: en el diseño ancho, el texto y el visual no pasan de él y se desplazan por separado.
+                val viewportHeight = (maxHeight - LessonScrollFadeHeight).coerceAtLeast(0.dp)
                 Box(
                     modifier =
                         Modifier
@@ -241,6 +341,8 @@ fun CurrentLessonScreen(
                                         ?: true,
                                 onPracticeConfirmationChanged =
                                     viewModel::setCurrentPracticeConfirmed,
+                                viewportHeight = viewportHeight,
+                                scrollController = scrollController,
                             )
                         }
                     }

@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -34,16 +36,21 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.ui.common.AppScreen
 import dev.kuromiichi.damprep.ui.common.AppScreenContentMaxWidth
+import dev.kuromiichi.damprep.ui.common.focusHighlight
 import dev.kuromiichi.damprep.ui.common.verticalFadingEdges
 import kotlinx.coroutines.launch
 
@@ -53,7 +60,22 @@ fun LessonListScreen(
     onBack: () -> Unit,
     onLessonSelected: (String) -> Unit,
 ) {
-    AppScreen(onBack = onBack) {
+    val initialFocusRequester = remember { FocusRequester() }
+    // El foco empieza en la lección en curso: la primera sin completar o, si no queda ninguna, la primera abierta.
+    val initialLessonId =
+        (
+            uiState.lessons.firstOrNull { it.canOpen && !it.isCompleted }
+                ?: uiState.lessons.firstOrNull { it.canOpen }
+        )?.id
+    LaunchedEffect(initialLessonId) {
+        if (initialLessonId != null) runCatching { initialFocusRequester.requestFocus() }
+    }
+
+    AppScreen(
+        onBack = onBack,
+        arrowKeyNavigation = true,
+        horizontalArrowKeys = false,
+    ) {
         val scrollState = rememberScrollState()
         Box(
             modifier =
@@ -67,7 +89,8 @@ fun LessonListScreen(
                         length = 32.dp,
                     ),
         ) {
-            Column(modifier = Modifier.fillMaxWidth().verticalScroll(scrollState)) {
+            // El margen lateral deja sitio al contorno de la lección enfocada, que si no se cortaría en el borde del desplazamiento.
+            Column(modifier = Modifier.fillMaxWidth().verticalScroll(scrollState).padding(horizontal = 4.dp)) {
                 Spacer(modifier = Modifier.height(48.dp))
                 Text(
                     text = "Todas las lecciones",
@@ -79,6 +102,7 @@ fun LessonListScreen(
                     LessonListItem(
                         lesson = lesson,
                         onClick = { onLessonSelected(lesson.id) },
+                        focusRequester = initialFocusRequester.takeIf { lesson.id == initialLessonId },
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -92,6 +116,7 @@ fun LessonListScreen(
 private fun LessonListItem(
     lesson: LessonListItemUiModel,
     onClick: () -> Unit,
+    focusRequester: FocusRequester? = null,
 ) {
     val canOpen = lesson.canOpen
     val contentColor =
@@ -177,11 +202,19 @@ private fun LessonListItem(
             label = "Lesson item hover elevation",
         )
 
+        val bringIntoViewRequester = remember { BringIntoViewRequester() }
+        val coroutineScope = rememberCoroutineScope()
+
         Surface(
             onClick = onClick,
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    // Con el teclado el elemento enfocado se lleva a la vista, con su contorno incluido.
+                    .onFocusChanged { if (it.hasFocus) coroutineScope.launch { bringIntoViewRequester.bringIntoView() } }
+                    .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
+                    .focusHighlight(shape = MaterialTheme.shapes.medium, outset = 3.dp)
                     .graphicsLayer {
                         scaleX = scale
                         scaleY = scale

@@ -112,10 +112,13 @@ enum class LearningCodeTokenKind {
     Bracket4,
 }
 
+/** Relleno interior del panel de los visuales de las lecciones. */
+val LearningVisualSurfacePadding = 28.dp
+
 @Composable
 fun LearningVisualSurface(
     modifier: Modifier = Modifier,
-    contentPadding: Dp = 28.dp,
+    contentPadding: Dp = LearningVisualSurfacePadding,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Surface(

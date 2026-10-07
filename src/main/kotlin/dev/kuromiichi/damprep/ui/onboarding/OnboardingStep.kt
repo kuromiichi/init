@@ -12,6 +12,7 @@ enum class OnboardingStepKind {
     Theme,
     OperatingSystem,
     Personalization,
+    Shortcuts,
 }
 
 val onboardingSteps =
@@ -32,6 +33,11 @@ val onboardingSteps =
         OnboardingStep(
             title = "Avance progresivo",
             body = "Más adelante, cada lección podrá terminar con ejercicios para desbloquear la siguiente. La app podrá revisar entregas automáticamente o solicitar verificación externa.",
+        ),
+        OnboardingStep(
+            kind = OnboardingStepKind.Shortcuts,
+            title = "Muévete con el teclado",
+            body = "Puedes usar la app solo con el teclado, sin soltarlo mientras lees y practicas. Estos son los atajos; también los encontrarás en Configuración.",
         ),
         OnboardingStep(
             kind = OnboardingStepKind.Theme,

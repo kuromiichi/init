@@ -7,6 +7,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.data.preferences.TargetOperatingSystem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,6 +22,7 @@ fun OperatingSystemSelector(
             SegmentedButton(
                 selected = operatingSystem == selectedOperatingSystem,
                 onClick = { onOperatingSystemSelected(operatingSystem) },
+                modifier = Modifier.focusHighlight(SegmentedButtonDefaults.itemShape(index = index, count = TargetOperatingSystem.entries.size), outset = 3.dp),
                 shape =
                     SegmentedButtonDefaults.itemShape(
                         index = index,

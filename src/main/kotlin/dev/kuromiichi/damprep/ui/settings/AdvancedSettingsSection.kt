@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,15 +27,19 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.damprep.ui.common.SettingControlMaxWidth
 import dev.kuromiichi.damprep.ui.common.SettingRow
+import dev.kuromiichi.damprep.ui.common.focusHighlight
+import dev.kuromiichi.damprep.ui.common.focusOutline
 
 @Composable
 fun AdvancedSettingsSection(
@@ -49,15 +56,20 @@ fun AdvancedSettingsSection(
         label = "Rotación del indicador de configuración avanzada",
     )
 
+    var isHeaderFocused by remember { mutableStateOf(false) }
+
     OutlinedCard(
         modifier =
             modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                // El contorno de foco de la cabecera rodea la tarjeta entera, que es lo que se ve como botón.
+                .focusOutline(active = isHeaderFocused, outset = 3.dp, shape = CardDefaults.outlinedShape),
     ) {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .onFocusChanged { isHeaderFocused = it.hasFocus }
                     .clickable(
                         role = Role.Button,
                         onClick = { isExpanded = !isExpanded },
@@ -105,6 +117,7 @@ fun AdvancedSettingsSection(
                         Switch(
                             checked = unlockAllLessons,
                             onCheckedChange = onUnlockAllLessonsChanged,
+                            modifier = Modifier.focusHighlight(RoundedCornerShape(percent = 50)),
                         )
                     }
 
@@ -115,7 +128,7 @@ fun AdvancedSettingsSection(
                         OutlinedButton(
                             onClick = { showResetConfirmation = true },
                             enabled = hasLessonProgress,
-                            modifier = Modifier.widthIn(max = SettingControlMaxWidth),
+                            modifier = Modifier.widthIn(max = SettingControlMaxWidth).focusHighlight(ButtonDefaults.outlinedShape),
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.DeleteOutline,
