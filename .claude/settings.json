@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__idea__get_file_problems",
+      "mcp__idea__search_symbol",
+      "mcp__idea__get_symbol_info",
+      "mcp__idea__analyze_calls",
+      "mcp__idea__search_text",
+      "mcp__idea__search_regex",
+      "mcp__idea__search_file",
+      "mcp__idea__get_run_configurations",
+      "mcp__idea__list_directory_tree"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/gradle.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/gradle.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

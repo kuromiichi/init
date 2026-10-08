@@ -58,3 +58,5 @@ desktop.ini
 ### Claude Code ###
 .claude/worktrees/
 .claude/settings.local.json
+.claude/logs/
+.claude/qa-home/
