@@ -168,6 +168,23 @@ class KotlinCodeHighlighterTest {
     }
 
     @Test
+    fun `constructor parameters without val are parameters and properties are not`() {
+        val lines =
+            kotlinCode(
+                """
+                class Perro(nombre: String, val raza: String) : Animal(nombre)
+
+                class Pato : Nadador, Volador
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.Parameter, lines[0].tokens.first { it.text.trim() == "nombre" }.kind)
+        assertEquals(LessonCodeTokenKind.Parameter, lines[0].tokens.last { it.text.trim() == "nombre" }.kind)
+        assertEquals(LessonCodeTokenKind.Plain, lines[0].tokens.kindOf("raza"))
+        assertEquals(LessonCodeTokenKind.ClassName, lines[2].tokens.kindOf("Nadador"))
+    }
+
+    @Test
     fun `named arguments and lambda delimiters get their own kinds`() {
         val named = kotlinCode("assertEquals(expected = 1, actual = suma(3))").single().tokens
         val lambda = kotlinCode("lista.forEach { println(it) }").single().tokens

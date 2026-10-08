@@ -381,9 +381,12 @@ private class KotlinClassifier(
                 if (!isCall && open == "(" && close == ")" && parameter?.group == Group.Identifier) names += textOf(parameter).trim('`')
                 return@forEachIndexed
             }
-            if (textOf(raw[rawIndex]) != "fun") return@forEachIndexed
+            // Los parámetros del constructor primario sin `val` ni `var` se colorean como los de una función.
+            val keyword = textOf(raw[rawIndex])
+            if (keyword != "fun" && keyword != "class") return@forEachIndexed
+            val headerEnd = if (keyword == "class") setOf("(", "{", "=", ":") else setOf("(", "{", "=")
             var cursor = position + 1
-            while (cursor < significant.size && textOf(raw[significant[cursor]]) !in setOf("(", "{", "=")) cursor++
+            while (cursor < significant.size && textOf(raw[significant[cursor]]) !in headerEnd) cursor++
             if (cursor >= significant.size || textOf(raw[significant[cursor]]) != "(") return@forEachIndexed
             var depth = 0
             while (cursor < significant.size) {

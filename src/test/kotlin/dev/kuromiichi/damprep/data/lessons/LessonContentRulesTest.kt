@@ -132,6 +132,7 @@ class LessonContentRulesTest {
                 "sets-maps" to listOf("""\bclass\b(?! \w+Test)""", """\.(filter|map|forEach|any|all|count|groupBy|sortedBy|getOrPut|getOrElse|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->""", """\b(TreeSet|TreeMap|HashSet|HashMap|Comparator)\b"""),
                 "oop-classes-objects" to listOf("""\b(open|abstract|sealed|interface|protected|inner|lateinit|lazy)\b""", """(?<!companion )\bobject\b""", """\bclass \w+(\([^)]*\))? ?: ?\w""", """\.(filter|map|forEach|any|all|count|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "oop-relationships" to listOf("""\b(open|abstract|sealed|interface|protected|inner|lateinit|lazy)\b""", """(?<!companion )\bobject\b""", """\bclass \w+(\([^)]*\))? ?: ?\w""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
+                "oop-inheritance-interfaces" to listOf("""\b(lateinit|lazy|inner|by)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 
