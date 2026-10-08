@@ -64,7 +64,8 @@ internal fun LessonExplanation(
         blocks.forEach { block ->
             when (block) {
                 is LessonExplanationBlock.Callout -> LessonCallout(block)
-                is LessonExplanationBlock.Code -> LessonExplanationCode(block)
+                // Los bloques de código tienen un ancho máximo: centrados, no desentonan con los avisos y terminales a todo el ancho.
+                is LessonExplanationBlock.Code -> LessonExplanationCode(code = block, modifier = Modifier.align(Alignment.CenterHorizontally))
                 is LessonExplanationBlock.Paragraph -> LessonParagraph(block.text)
                 is LessonExplanationBlock.Steps -> LessonSteps(block.items)
                 is LessonExplanationBlock.Terminal ->
@@ -195,8 +196,12 @@ private val LessonExplanationBlock.Code.isKotlin: Boolean
     get() = (title.endsWith(".kt") || title.endsWith(".kts")) && lines.none { it.startsWith("<<<<<<<") }
 
 @Composable
-private fun LessonExplanationCode(code: LessonExplanationBlock.Code) {
+private fun LessonExplanationCode(
+    code: LessonExplanationBlock.Code,
+    modifier: Modifier = Modifier,
+) {
     CodeExamplesVisual(
+        modifier = modifier,
         examples =
             listOf(
                 LearningCodeExample(
