@@ -38,6 +38,7 @@ dependencies {
     ksp("androidx.room:room-compiler:2.8.4")
     testImplementation(kotlin("test"))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("org.jetbrains.compose.ui:ui-test:1.11.1")
 }
 
 kotlin {

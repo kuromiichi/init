@@ -25,7 +25,7 @@ Skills del proyecto: `lecciones` (crear o editar lecciones y prácticas, guía v
 
 ## Gradle
 
-- Nunca invocaciones en paralelo (un hook lo bloquea). Un hook resume la salida de `./gradlew`: estado, errores, fallos de pruebas y Ktlint, y la ruta del log completo en `.claude/logs/`. Lanzar Gradle en su propio comando (el resumen sustituye toda la salida) y sin `| tail` ni `| grep`.
+- Nunca invocaciones en paralelo (un hook lo bloquea). Un hook hace pasar cada `./gradlew` por `.claude/hooks/gradle.py run`, que imprime solo un resumen (estado, errores, fallos de pruebas y Ktlint) y guarda el log completo en `.claude/logs/`, tanto si la build pasa como si falla. Lanzar Gradle desde la raíz del proyecto, sin `| tail` ni `| grep` y sin heredocs en el mismo comando (con `<<` no se reescribe).
 - Si se cuelga: `./gradlew --stop` y repetir con `clean` delante.
 - Cambios sustanciales: cerrar con `./gradlew --stop` y `./gradlew --no-daemon clean build` (compilación, KSP, pruebas y Ktlint; la build limpia evita declaraciones `Res` duplicadas).
 - Todo lo de `build/` es salida desechable: nunca editar ni borrar archivos generados sueltos.

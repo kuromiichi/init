@@ -33,12 +33,12 @@ Pedir acceso a `net.java.openjdk.java` («DAM Prep») y usar las herramientas `a
 
 ## Control de pantalla completa (solo cuando un paso lo requiera)
 
-Las teclas, el scroll y los botones segmentados/radio no llegan a Compose en segundo plano. Solo para comprobar navegación con teclado y foco, scroll (incluido el borde superior del panel de práctica) o controles segmentados: pedir `request_full_control`, hacer esas comprobaciones en un único bloque con `computer_batch` y volver con `release_full_control`.
+La lógica del teclado y del foco de la lección, el inicio y la lista ya la cubren las pruebas de interfaz (skill `verificacion`): no repetirla a mano. Las teclas, el scroll y los botones segmentados/radio no llegan a Compose en segundo plano, así que el control total queda para lo que las pruebas no ven: cómo se ve el contorno de foco, cómo se siente el scroll (incluido el borde superior del panel de práctica), pantallas sin pruebas de teclado (Configuración, onboarding) y controles segmentados. En ese caso, pedir `request_full_control`, hacer esas comprobaciones en un único bloque con `computer_batch` y volver con `release_full_control`.
 
 ## Lista de comprobaciones
 
 - Flujos afectados y estados alternativos.
-- Teclado y foco visible, y scroll (pantalla completa).
+- Contorno de foco visible y sensación del scroll (pantalla completa, solo si el cambio les afecta).
 - Redimensionado mínimo y amplio (`qa.py size`).
 - Temas claro y oscuro (relanzar): nada se funde con el fondo y el texto es legible.
 - Accesibilidad y contenido didáctico.

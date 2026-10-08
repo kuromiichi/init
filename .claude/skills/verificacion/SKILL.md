@@ -18,14 +18,22 @@ Tras editar, `mcp__idea__get_file_problems` con `errorsOnly: true` y `projectPat
 
 ## 2. Tareas Gradle focalizadas
 
-Un hook resume la salida (no añadir `| tail`/`| grep`; el log completo queda en `.claude/logs/`). Otro hook rechaza una invocación si ya hay otra en curso.
+Un hook resume la salida, pase o falle la build (no añadir `| tail`/`| grep`; el log completo queda en `.claude/logs/`), y rechaza una invocación si ya hay otra en curso.
 
 - Una clase de prueba: `./gradlew test --tests '*LessonContentRulesTest'`
 - Todas las pruebas: `./gradlew test`
 - Estilo: `./gradlew ktlintFormat` y después `./gradlew ktlintCheck` (combinables: `./gradlew ktlintFormat test`)
 - Solo compilar: `./gradlew compileKotlin compileTestKotlin`
 
-Si el resumen no basta para diagnosticar un fallo, leer el log con `grep -n` o por rangos, no entero.
+Si el resumen no basta para diagnosticar un fallo, leer el log con `grep -n` o por rangos, no entero. Para una aserción de Compose que falla, la línea exacta está en `build/test-results/test/TEST-*.xml` (`grep -o '<Clase>.kt:[0-9]*'`).
+
+## Pruebas de interfaz (teclado y foco)
+
+`ui/home/HomeKeyboardTest`, `ui/lessons/LessonListKeyboardTest` y `ui/lessons/CurrentLessonKeyboardTest` prueban la navegación por teclado sin ventana (`androidx.compose.ui.test.v2.runComposeUiTest`). Si se cambia el teclado o el foco de esas pantallas, actualizarlas o ampliarlas en lugar de comprobarlo a mano.
+
+- Montar el contenido con `setWindowContent` y pulsar con `press` (`testing/WindowContent.kt`): dan a cada prueba su propio estado del resaltado de teclado, como la ventana real. Con `setContent` a secas el estado se comparte entre pruebas y los resultados dependen del orden.
+- La primera flecha, Tab o tecla de desplazamiento solo muestra el resaltado si estaba oculto; las pruebas lo reflejan.
+- Las pantallas reciben el estado (inicio, lista) o el ViewModel con los fakes de `ViewModelTest` (lección).
 
 ## 3. Cierre de cambios sustanciales
 
