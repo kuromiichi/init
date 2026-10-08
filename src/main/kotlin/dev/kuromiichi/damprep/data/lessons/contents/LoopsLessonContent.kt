@@ -40,7 +40,7 @@ val loopsLessonContent =
                     explanation =
                         listOf(
                             paragraph(inlineCode("while"), regular(" repite su bloque mientras la condición entre paréntesis sea verdadera. La comprueba antes de cada vuelta, así que puede no ejecutarse ninguna vez.")),
-                            paragraph(inlineCode("vuelta++"), regular(" suma 1 a la variable; "), inlineCode("--"), regular(" resta 1. Equivale a "), inlineCode("vuelta += 1"), regular(" y a "), inlineCode("vuelta = vuelta + 1"), regular(". Con "), inlineCode("+="), regular(" puedes sumar cualquier valor, y también existen "), inlineCode("-="), regular(" y "), inlineCode("*="), regular(".")),
+                            paragraph(regular("En el ejemplo, "), inlineCode("vuelta++"), regular(" suma 1 a la variable; "), inlineCode("--"), regular(" resta 1. Equivale a "), inlineCode("vuelta += 1"), regular(" y a "), inlineCode("vuelta = vuelta + 1"), regular(". Con "), inlineCode("+="), regular(" puedes sumar cualquier valor, y también existen "), inlineCode("-="), regular(" y "), inlineCode("*="), regular(".")),
                             paragraph(regular("La variable de la condición es "), inlineCode("var"), regular(" porque su valor cambia en cada vuelta.")),
                         ),
                     visual =
@@ -101,7 +101,7 @@ val loopsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Un uso habitual de "), inlineCode("while"), regular(" es insistir hasta recibir un dato correcto. "), inlineCode("readln().toIntOrNull()"), regular(" lee y convierte en una sola línea.")),
-                            paragraph(regular("Se lee una vez antes del bucle para tener algo que comprobar. Mientras "), inlineCode("edad"), regular(" sea "), inlineCode("null"), regular(", se avisa y se vuelve a leer dentro del cuerpo.")),
+                            paragraph(regular("En el ejemplo, se lee una vez antes del bucle para tener algo que comprobar. Mientras "), inlineCode("edad"), regular(" sea "), inlineCode("null"), regular(", se avisa y se vuelve a leer dentro del cuerpo.")),
                             paragraph(regular("Si el primer dato ya es válido, el cuerpo no se ejecuta ninguna vez.")),
                         ),
                     visual =
@@ -132,7 +132,7 @@ val loopsLessonContent =
                         listOf(
                             paragraph(inlineCode("do"), regular("-"), inlineCode("while"), regular(" ejecuta primero el cuerpo y comprueba la condición al final, así que siempre hay al menos una vuelta.")),
                             paragraph(regular("Encaja cuando no puedes decidir nada hasta haber preguntado: no hace falta leer antes del bucle.")),
-                            paragraph(regular("Lo que declaras dentro del cuerpo, como "), inlineCode("respuesta"), regular(", se puede usar en la condición del "), inlineCode("while"), regular(" final.")),
+                            paragraph(regular("Lo que declaras dentro del cuerpo, como "), inlineCode("respuesta"), regular(" en el ejemplo, se puede usar en la condición del "), inlineCode("while"), regular(" final.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(

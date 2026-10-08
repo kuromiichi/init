@@ -42,7 +42,7 @@ val arraysListsLessonContent =
                     title = "Crear un array",
                     explanation =
                         listOf(
-                            paragraph(inlineCode("intArrayOf(7, 4, 9)"), regular(" crea un array de números enteros con esos valores. Para otros tipos, como texto, se usa "), inlineCode("arrayOf"), regular(". Con "), inlineCode("IntArray(5)"), regular(" se crean cinco posiciones, todas a "), inlineCode("0"), regular(".")),
+                            paragraph(regular("En el ejemplo, "), inlineCode("intArrayOf(7, 4, 9)"), regular(" crea un array de números enteros con esos valores. Para otros tipos, como texto, se usa "), inlineCode("arrayOf"), regular(". Con "), inlineCode("IntArray(5)"), regular(" se crean cinco posiciones, todas a "), inlineCode("0"), regular(".")),
                             paragraph(inlineCode("size"), regular(" dice cuántos elementos tiene. El tamaño se fija al crearlo y ya no cambia: no se pueden añadir posiciones a un array.")),
                             paragraph(regular("Mostrar un array con "), inlineCode("println"), regular(" a secas no enseña sus valores. Para verlos se usa "), inlineCode("contentToString()"), regular(".")),
                         ),
@@ -73,7 +73,7 @@ val arraysListsLessonContent =
                     title = "Leer y cambiar por posición",
                     explanation =
                         listOf(
-                            paragraph(regular("Se accede a un elemento con corchetes: "), inlineCode("notas[0]"), regular(" es el primero. Con la misma notación se puede asignar un valor nuevo: "), inlineCode("notas[1] = 6"), regular(" sustituye el segundo.")),
+                            paragraph(regular("Se accede a un elemento con corchetes: en el ejemplo, "), inlineCode("notas[0]"), regular(" es el primero. Con la misma notación se puede asignar un valor nuevo: "), inlineCode("notas[1] = 6"), regular(" sustituye el segundo.")),
                             paragraph(regular("Con "), inlineCode("3"), regular(" elementos los índices válidos son "), inlineCode("0"), regular(", "), inlineCode("1"), regular(" y "), inlineCode("2"), regular(". El último siempre es "), inlineCode("size - 1"), regular(", y "), inlineCode("lastIndex"), regular(" lo da ya calculado.")),
                         ),
                     visual =
@@ -152,7 +152,7 @@ val arraysListsLessonContent =
                         listOf(
                             paragraph(regular("Si solo necesitas los valores, "), inlineCode("for (nota in notas)"), regular(" los entrega uno a uno. Si necesitas la posición, "), inlineCode("indices"), regular(" recorre de "), inlineCode("0"), regular(" hasta el último índice sin que tengas que calcularlo.")),
                             paragraph(regular("Para tener a la vez posición y valor, "), inlineCode("withIndex()"), regular(" entrega cada elemento como un par: su posición y su valor. Cambiar elementos exige siempre el índice.")),
-                            paragraph(regular("Los paréntesis de "), inlineCode("(i, nombre)"), regular(" son una "), highlight("desestructuración"), regular(": abren el par y guardan cada parte en su propia variable, "), inlineCode("i"), regular(" para la posición y "), inlineCode("nombre"), regular(" para el valor.")),
+                            paragraph(regular("En el ejemplo, los paréntesis de "), inlineCode("(i, nombre)"), regular(" son una "), highlight("desestructuración"), regular(": abren el par y guardan cada parte en su propia variable, "), inlineCode("i"), regular(" para la posición y "), inlineCode("nombre"), regular(" para el valor.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -353,7 +353,7 @@ val arraysListsLessonContent =
                     title = "Copiar no es duplicar",
                     explanation =
                         listOf(
-                            paragraph(regular("La variable de un array no contiene los valores, sino dónde está el array. Con "), inlineCode("val alias = original"), regular(" no se copia nada: hay dos nombres para el mismo array y cambiar uno cambia el otro.")),
+                            paragraph(regular("La variable de un array no contiene los valores, sino dónde está el array. En el ejemplo, con "), inlineCode("val alias = original"), regular(" no se copia nada: hay dos nombres para el mismo array y cambiar uno cambia el otro.")),
                             paragraph(inlineCode("copyOf()"), regular(" crea una copia independiente. Y "), inlineCode("=="), regular(" pregunta si es el mismo array, no si tienen los mismos valores: para comparar el contenido se usa "), inlineCode("contentEquals"), regular(".")),
                             explanationCode(
                                 "Main.kt",
@@ -421,7 +421,7 @@ val arraysListsLessonContent =
                     title = "Tablas de dos dimensiones",
                     explanation =
                         listOf(
-                            paragraph(regular("Una tabla, o "), highlight("matriz"), regular(", es un array de arrays: cada fila es un array. Se accede con dos índices, primero la fila y luego la columna: "), inlineCode("notas[1][2]"), regular(" es la fila "), inlineCode("1"), regular(", columna "), inlineCode("2"), regular(", es decir, el "), inlineCode("6"), regular(".")),
+                            paragraph(regular("Una tabla, o "), highlight("matriz"), regular(", es un array de arrays: cada fila es un array. Se accede con dos índices, primero la fila y luego la columna: en el ejemplo, "), inlineCode("notas[1][2]"), regular(" es la fila "), inlineCode("1"), regular(", columna "), inlineCode("2"), regular(", es decir, el "), inlineCode("6"), regular(".")),
                             paragraph(regular("Para recorrerla hace falta un bucle dentro de otro, como en el rectángulo de asteriscos: el de fuera elige la fila y el de dentro recorre sus columnas.")),
                         ),
                     visual =
@@ -467,7 +467,7 @@ val arraysListsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Un "), inlineCode("String"), regular(" es una secuencia de caracteres con índices desde "), inlineCode("0"), regular(", como un array: "), inlineCode("texto[0]"), regular(" es la primera letra y "), inlineCode("length"), regular(" su longitud. Se recorre con "), inlineCode("for (letra in texto)"), regular(".")),
-                            paragraph(inlineCode("letra in \"aeiouáéíóú\""), regular(" pregunta si esa letra aparece en ese texto. Un "), inlineCode("String"), regular(" no se puede modificar: para construir uno letra a letra se usa "), inlineCode("StringBuilder"), regular(" con "), inlineCode("append"), regular(".")),
+                            paragraph(regular("En el ejemplo, "), inlineCode("letra in \"aeiouáéíóú\""), regular(" pregunta si esa letra aparece en ese texto. Un "), inlineCode("String"), regular(" no se puede modificar: para construir uno letra a letra se usa "), inlineCode("StringBuilder"), regular(" con "), inlineCode("append"), regular(".")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -570,7 +570,7 @@ val arraysListsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Usa un array cuando el tamaño es fijo y conocido, como una tabla de 3 filas por 3 columnas. Usa una lista cuando los datos van llegando o se quitan, como las notas que escribe el usuario hasta decir basta. En Kotlin, lo habitual es la lista.")),
-                            paragraph(regular("Las colecciones ya traen operaciones hechas. Fíjate en los vacíos: "), inlineCode("maxOrNull()"), regular(" devuelve "), inlineCode("null"), regular(" porque una lista vacía no tiene máximo, y "), inlineCode("first()"), regular(" lanza una excepción porque pedir el primero de nada es un mal uso.")),
+                            paragraph(regular("Las colecciones ya traen operaciones hechas. Fíjate en los vacíos del ejemplo: "), inlineCode("maxOrNull()"), regular(" devuelve "), inlineCode("null"), regular(" porque una lista vacía no tiene máximo, y "), inlineCode("first()"), regular(" lanza una excepción porque pedir el primero de nada es un mal uso.")),
                             explanationCode(
                                 "Main.kt",
                                 richText(regular("Con datos, todo funciona; con la lista vacía, cada operación falla a su manera.")),

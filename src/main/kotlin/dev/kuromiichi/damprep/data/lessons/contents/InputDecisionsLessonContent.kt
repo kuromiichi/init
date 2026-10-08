@@ -28,7 +28,7 @@ val inputDecisionsLessonContent =
                         listOf(
                             paragraph(inlineCode("print"), regular(" muestra el mensaje sin añadir un salto de línea; así puedes escribir la respuesta a su lado.")),
                             paragraph(inlineCode("readln()"), regular(" detiene el programa hasta que pulsas Intro. Devuelve toda la línea escrita como texto, es decir, un "), inlineCode("String"), regular(".")),
-                            paragraph(regular("El valor leído se guarda en "), inlineCode("nombre"), regular(" y después se usa en el saludo. Prueba con tu propio nombre para observar el cambio.")),
+                            paragraph(regular("En el ejemplo, el valor leído se guarda en "), inlineCode("nombre"), regular(" y después se usa en el saludo. Prueba con tu propio nombre para observar el cambio.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -226,7 +226,7 @@ val inputDecisionsLessonContent =
                     title = "Elegir entre varias opciones",
                     explanation =
                         listOf(
-                            paragraph(regular("Kotlin compara "), inlineCode("opcion"), regular(" con cada valor escrito a la izquierda de "), inlineCode("->"), regular(". Ejecuta la rama que coincida.")),
+                            paragraph(regular("En el ejemplo, Kotlin compara "), inlineCode("opcion"), regular(" con cada valor escrito a la izquierda de "), inlineCode("->"), regular(". Ejecuta la rama que coincida.")),
                             paragraph(regular("El "), inlineCode("else"), regular(" atiende cualquier valor distinto de las opciones previstas. Como la respuesta de "), inlineCode("readln()"), regular(" es texto, las opciones llevan comillas.")),
                             paragraph(regular("Aquí usamos "), inlineCode("when"), regular(" como instrucción. Más adelante podrás usarlo también para producir un valor.")),
                         ),
@@ -257,7 +257,7 @@ val inputDecisionsLessonContent =
                         listOf(
                             paragraph(regular("Comparar directamente la respuesta de "), inlineCode("readln()"), regular(" con un número no sirve: primero hay que convertir el texto. "), inlineCode("toInt()"), regular(" lo convierte, pero si el texto no es un número entero el programa se detiene con un error de ejecución.")),
                             paragraph(inlineCode("toIntOrNull()"), regular(" permite comprobar el resultado antes de usarlo. Si el texto no representa un entero, "), inlineCode("null"), regular(" indica que no se pudo convertir; no es el número cero.")),
-                            paragraph(regular("Tras comprobar que no es "), inlineCode("null"), regular(", Kotlin permite tratar "), inlineCode("minutos"), regular(" como número en el otro bloque. El estudio completo de valores nulos queda para más adelante.")),
+                            paragraph(regular("En el ejemplo, tras comprobar que "), inlineCode("minutos"), regular(" no es "), inlineCode("null"), regular(", Kotlin permite tratarlo como número en el otro bloque. El estudio completo de valores nulos queda para más adelante.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(

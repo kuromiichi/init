@@ -72,7 +72,7 @@ val nullabilityExceptionsLessonContent =
                     title = "Comprobar antes de usar",
                     explanation =
                         listOf(
-                            paragraph(regular("La forma más directa de trabajar con un valor que puede ser nulo es comprobarlo con "), inlineCode("if"), regular(". Dentro del bloque donde ya sabes que "), inlineCode("edad != null"), regular(", Kotlin lo trata como un "), inlineCode("Int"), regular(" normal: es la "), highlight("conversión inteligente"), regular(".")),
+                            paragraph(regular("La forma más directa de trabajar con un valor que puede ser nulo es comprobarlo con "), inlineCode("if"), regular(". En el ejemplo, dentro del bloque donde ya se sabe que "), inlineCode("edad != null"), regular(", Kotlin lo trata como un "), inlineCode("Int"), regular(" normal: es la "), highlight("conversión inteligente"), regular(".")),
                             paragraph(regular("Otra opción es descartar pronto el caso nulo: si es "), inlineCode("null"), regular(", muestras un aviso y terminas la función con "), inlineCode("return"), regular(". Desde ahí hasta el final, el valor ya es seguro.")),
                         ),
                     visual =
@@ -121,7 +121,7 @@ val nullabilityExceptionsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("El operador "), inlineCode("?."), regular(" es la llamada segura: si el valor es "), inlineCode("null"), regular(", no ejecuta la operación y el resultado es "), inlineCode("null"), regular("; si no, funciona como el punto de siempre.")),
-                            paragraph(regular("El resultado de "), inlineCode("a?.length"), regular(" es un "), inlineCode("Int?"), regular(", porque puede faltar. Puedes encadenar varias llamadas seguras: en cuanto una encuentra "), inlineCode("null"), regular(", todo lo que sigue se salta.")),
+                            paragraph(regular("En el ejemplo, el resultado de "), inlineCode("a?.length"), regular(" es un "), inlineCode("Int?"), regular(", porque puede faltar. Puedes encadenar varias llamadas seguras: en cuanto una encuentra "), inlineCode("null"), regular(", todo lo que sigue se salta.")),
                         ),
                     visual =
                         LessonVisualContent.Trace(
@@ -331,7 +331,7 @@ val nullabilityExceptionsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Para gestionar una excepción, pon el código que puede fallar dentro de "), inlineCode("try"), regular(" y, en "), inlineCode("catch"), regular(", indica qué tipo capturas y qué hacer. Si todo va bien, el "), inlineCode("catch"), regular(" se ignora; si falla, se salta el resto del "), inlineCode("try"), regular(" y el programa continúa después.")),
-                            paragraph(regular("Captura el tipo "), emphasis("concreto"), regular(" que esperas, no uno genérico. "), inlineCode("e"), regular(" es la excepción capturada y "), inlineCode("e.message"), regular(" su mensaje, que puede faltar: es un "), inlineCode("String?"), regular(".")),
+                            paragraph(regular("Captura el tipo "), emphasis("concreto"), regular(" que esperas, no uno genérico. En el ejemplo, "), inlineCode("e"), regular(" es la excepción capturada y "), inlineCode("e.message"), regular(" su mensaje, que puede faltar: es un "), inlineCode("String?"), regular(".")),
                         ),
                     visual =
                         LessonVisualContent.Trace(

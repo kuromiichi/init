@@ -74,7 +74,7 @@ val functionsModularityLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Un "), highlight("parámetro"), regular(" es una variable que la función recibe cuando la llamas. Se escribe entre los paréntesis, con su nombre y su tipo, que es obligatorio.")),
-                            paragraph(regular("Los valores que pasas en la llamada son los "), highlight("argumentos"), regular(" y se asignan en orden: "), inlineCode("\"Lucía\""), regular(" va a "), inlineCode("nombre"), regular(" y "), inlineCode("2"), regular(" a "), inlineCode("veces"), regular(". Si el tipo no coincide, el programa no compila.")),
+                            paragraph(regular("Los valores que pasas en la llamada son los "), highlight("argumentos"), regular(" y se asignan en orden. En el ejemplo, "), inlineCode("\"Lucía\""), regular(" va a "), inlineCode("nombre"), regular(" y "), inlineCode("2"), regular(" a "), inlineCode("veces"), regular(". Si el tipo no coincide, el programa no compila.")),
                             paragraph(regular("Así, una misma función sirve para datos distintos. Cuando la cabecera es larga, se suele poner un parámetro por línea; la coma después del último es opcional.")),
                         ),
                     visual =
@@ -110,7 +110,7 @@ val functionsModularityLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Una función también puede calcular un valor y entregárselo a quien la llama. El tipo de ese valor es el "), highlight("tipo de retorno"), regular(" y se escribe después de los parámetros: aquí, "), inlineCode(": Int"), regular(" en la línea 4.")),
-                            paragraph(inlineCode("return"), regular(" entrega el valor y termina la función. En "), inlineCode("main"), regular(", cada llamada a "), inlineCode("calcularMedia"), regular(" se sustituye por el valor devuelto, que puedes guardar en una variable, mostrar o usar en una operación, como en la línea 11.")),
+                            paragraph(inlineCode("return"), regular(" entrega el valor y termina la función. En el "), inlineCode("main"), regular(" del ejemplo, cada llamada a "), inlineCode("calcularMedia"), regular(" se sustituye por el valor devuelto, que puedes guardar en una variable, mostrar o usar en una operación, como en la línea 11.")),
                             paragraph(regular("Además, la fórmula queda en un solo sitio. Si tuviera un error, como olvidar los paréntesis de "), inlineCode("(a + b)"), regular(", bastaría con corregirlo una vez para que todas las llamadas dieran el resultado correcto.")),
                         ),
                     visual =
@@ -146,7 +146,7 @@ val functionsModularityLessonContent =
                         listOf(
                             paragraph(regular("Si no indicas tipo de retorno, la función devuelve "), inlineCode("Unit"), regular(", es decir, no entrega ningún dato: solo hace algo, como mostrar un texto. A veces se las llama "), emphasis("procedimientos"), regular(", aunque en Kotlin todas son funciones.")),
                             paragraph(regular("Conviene separar "), highlight("calcular"), regular(" de "), highlight("mostrar"), regular(". Una función que calcula devuelve el resultado y deja que otra parte del programa decida qué hacer con él. Así podrás reutilizarla aunque no haya consola y, más adelante, probarla automáticamente.")),
-                            paragraph(regular("Si "), inlineCode("calcularArea"), regular(" usara "), inlineCode("println"), regular(" en lugar de "), inlineCode("return"), regular(", el área solo aparecería en pantalla y no podrías usarla para nada más.")),
+                            paragraph(regular("Si "), inlineCode("calcularArea"), regular(", la función del ejemplo, usara "), inlineCode("println"), regular(" en lugar de "), inlineCode("return"), regular(", el área solo aparecería en pantalla y no podrías usarla para nada más.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -184,7 +184,7 @@ val functionsModularityLessonContent =
                         listOf(
                             paragraph(inlineCode("return"), regular(" termina la función en ese mismo momento, aunque esté dentro de un bucle. En la lección de bucles necesitabas una bandera y "), inlineCode("break"), regular(" para saber si un número era primo; ahora basta con devolver "), inlineCode("false"), regular(" en cuanto aparece un divisor.")),
                             paragraph(regular("Si el bucle termina sin encontrar ninguno, se llega al "), inlineCode("return true"), regular(" del final. Una función con tipo de retorno debe devolver un valor en todos los casos; si falta alguno, no compila.")),
-                            paragraph(regular("Cuando todo el cuerpo es una sola expresión, puedes escribirla después de "), inlineCode("="), regular(", sin llaves ni "), inlineCode("return"), regular(", como en "), inlineCode("esPar"), regular(".")),
+                            paragraph(regular("Cuando todo el cuerpo es una sola expresión, puedes escribirla después de "), inlineCode("="), regular(", sin llaves ni "), inlineCode("return"), regular(", como hace "), inlineCode("esPar"), regular(" en el ejemplo.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -221,7 +221,7 @@ val functionsModularityLessonContent =
                         listOf(
                             paragraph(regular("Un parámetro puede tener un "), highlight("valor por defecto"), regular(", que se escribe después de "), inlineCode("="), regular(". Si la llamada no le pasa ningún argumento, se usa ese valor.")),
                             paragraph(regular("Con los "), highlight("argumentos con nombre"), regular(" indicas a qué parámetro corresponde cada valor escribiendo "), inlineCode("nombre = valor"), regular(". Así puedes omitir los que tienen valor por defecto o pasarlos en otro orden.")),
-                            paragraph(regular("También hacen más legibles las llamadas con números: "), inlineCode("trazar(largo = 5)"), regular(" se entiende mejor que "), inlineCode("trazar(5)"), regular(".")),
+                            paragraph(regular("También hacen más legibles las llamadas con números: en el ejemplo, "), inlineCode("trazar(largo = 5)"), regular(" se entiende mejor que "), inlineCode("trazar(5)"), regular(".")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -258,8 +258,8 @@ val functionsModularityLessonContent =
                     title = "Cada función tiene sus variables",
                     explanation =
                         listOf(
-                            paragraph(regular("Las variables que declaras dentro de una función son "), highlight("locales"), regular(": existen mientras la función se ejecuta y desaparecen al terminar. Por eso "), inlineCode("main"), regular(" no puede usar "), inlineCode("resultado"), regular("; el compilador mostraría "), inlineCode("Unresolved reference 'resultado'"), regular(".")),
-                            paragraph(regular("Los parámetros también son locales y, además, de solo lectura, como un "), inlineCode("val"), regular(". Si escribes "), inlineCode("n = n * 2"), regular(" dentro de "), inlineCode("duplicar"), regular(", aparece "), inlineCode("'val' cannot be reassigned"), regular(". Guarda el cálculo en una variable nueva.")),
+                            paragraph(regular("Las variables que declaras dentro de una función son "), highlight("locales"), regular(": existen mientras la función se ejecuta y desaparecen al terminar. Por eso, en el ejemplo, "), inlineCode("main"), regular(" no puede usar "), inlineCode("resultado"), regular("; el compilador mostraría "), inlineCode("Unresolved reference 'resultado'"), regular(".")),
+                            paragraph(regular("Los parámetros también son locales y, además, de solo lectura, como un "), inlineCode("val"), regular(". Si escribes "), inlineCode("n = n * 2"), regular(" dentro de "), inlineCode("duplicar"), regular(", la función del ejemplo, aparece "), inlineCode("'val' cannot be reassigned"), regular(". Guarda el cálculo en una variable nueva.")),
                             callout(
                                 "Evita las variables globales",
                                 richText(regular("Una variable declarada fuera de cualquier función es visible desde todas. Si es "), inlineCode("var"), regular(", cualquiera puede modificarla y cuesta saber quién lo hizo. Pasa los datos como parámetros y devuélvelos con "), inlineCode("return"), regular(".")),

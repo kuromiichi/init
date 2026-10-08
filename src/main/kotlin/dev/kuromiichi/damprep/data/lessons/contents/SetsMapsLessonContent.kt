@@ -262,7 +262,7 @@ val setsMapsLessonContent =
                     title = "Claves que faltan",
                     explanation =
                         listOf(
-                            paragraph(regular("¿Qué pasa si la clave no está? "), inlineCode("notas[\"Pau\"]"), regular(" devuelve "), inlineCode("null"), regular(", así que su tipo es "), inlineCode("Int?"), regular(", no "), inlineCode("Int"), regular(". Ya sabes tratarlo: "), inlineCode("notas[\"Pau\"] ?: 0"), regular(" da un valor por defecto.")),
+                            paragraph(regular("¿Qué pasa si la clave no está? En el ejemplo, "), inlineCode("notas[\"Pau\"]"), regular(" devuelve "), inlineCode("null"), regular(", así que su tipo es "), inlineCode("Int?"), regular(", no "), inlineCode("Int"), regular(". Ya sabes tratarlo: "), inlineCode("notas[\"Pau\"] ?: 0"), regular(" da un valor por defecto.")),
                             paragraph(inlineCode("containsKey"), regular(" pregunta si la clave existe. "), inlineCode("getValue"), regular(" exige que exista y, si no, lanza una "), inlineCode("NoSuchElementException"), regular(": útil cuando la ausencia sería un fallo del programa.")),
                             explanationCode(
                                 "Main.kt",
@@ -341,7 +341,7 @@ val setsMapsLessonContent =
                     title = "Recorrer un mapa",
                     explanation =
                         listOf(
-                            paragraph(regular("Un "), inlineCode("for"), regular(" sobre un mapa entrega cada par, y la desestructuración que viste con "), inlineCode("withIndex()"), regular(" lo separa: "), inlineCode("for ((nombre, nota) in notas)"), regular(" da la clave y el valor en dos variables.")),
+                            paragraph(regular("Un "), inlineCode("for"), regular(" sobre un mapa entrega cada par, y la desestructuración que viste con "), inlineCode("withIndex()"), regular(" lo separa: en el ejemplo, "), inlineCode("for ((nombre, nota) in notas)"), regular(" da la clave y el valor en dos variables.")),
                             paragraph(inlineCode("keys"), regular(" es el conjunto de las claves y "), inlineCode("values"), regular(" la colección de los valores. Recorrer "), inlineCode("values"), regular(" sirve cuando solo interesan los valores, como para sumar notas.")),
                         ),
                     visual =
@@ -389,7 +389,7 @@ val setsMapsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Un uso muy habitual: contar cuántas veces aparece cada valor. La clave es lo que se cuenta y el valor, el contador.")),
-                            paragraph(inlineCode("conteo[palabra] ?: 0"), regular(" da el contador actual, o "), inlineCode("0"), regular(" si es la primera vez. Sumarle "), inlineCode("1"), regular(" y guardarlo con "), inlineCode("conteo[palabra] = …"), regular(" lo crea o lo actualiza, sin comprobar antes si existía.")),
+                            paragraph(regular("En el ejemplo, "), inlineCode("conteo[palabra] ?: 0"), regular(" da el contador actual, o "), inlineCode("0"), regular(" si es la primera vez. Sumarle "), inlineCode("1"), regular(" y guardarlo con "), inlineCode("conteo[palabra] = …"), regular(" lo crea o lo actualiza, sin comprobar antes si existía.")),
                         ),
                     visual =
                         LessonVisualContent.Trace(
@@ -432,7 +432,7 @@ val setsMapsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("El valor de un mapa puede ser cualquier tipo, también una lista. Así se guardan varias notas por alumno: "), inlineCode("MutableMap<String, MutableList<Int>>"), regular(".")),
-                            paragraph(regular("Antes de añadir hay que mirar si la clave ya tiene lista. Si no, se crea y se guarda; si sí, se añade a la que hay. La lista del mapa es una referencia, como el array de «Copiar no es duplicar»: "), inlineCode("lista.add"), regular(" cambia lo que contiene el mapa.")),
+                            paragraph(regular("Antes de añadir hay que mirar si la clave ya tiene lista. Si no, se crea y se guarda; si sí, se añade a la que hay. La lista del mapa es una referencia, como el array de «Copiar no es duplicar»: en el ejemplo, "), inlineCode("lista.add"), regular(" cambia lo que contiene el mapa.")),
                         ),
                     visual =
                         LessonVisualContent.Trace(

@@ -43,7 +43,7 @@ val oopRelationshipsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("La relación «tiene un» se escribe con una propiedad cuyo tipo es otra clase. Se crea primero el objeto que va dentro y se entrega al constructor del que lo contiene.")),
-                            paragraph(regular("Para llegar al dato de la parte se encadenan puntos: "), inlineCode("ana.direccion.ciudad"), regular(" se lee de izquierda a derecha. "), inlineCode("ana.direccion"), regular(" es un objeto "), inlineCode("Direccion"), regular(" y a ese objeto se le pide su "), inlineCode("ciudad"), regular(".")),
+                            paragraph(regular("Para llegar al dato de la parte se encadenan puntos. En el ejemplo, "), inlineCode("ana.direccion.ciudad"), regular(" se lee de izquierda a derecha. "), inlineCode("ana.direccion"), regular(" es un objeto "), inlineCode("Direccion"), regular(" y a ese objeto se le pide su "), inlineCode("ciudad"), regular(".")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -203,7 +203,7 @@ val oopRelationshipsLessonContent =
                             paragraph(regular("La convención de Kotlin es una propiedad privada mutable con guion bajo ("), inlineCode("_alumnos"), regular(") y otra pública de solo lectura con el nombre bueno, que la devuelve como "), inlineCode("List<Alumno>"), regular(". Quien la usa puede leerla, pero no modificarla.")),
                             callout(
                                 "Una vista, no una copia",
-                                richText(inlineCode("alumnos"), regular(" muestra la lista real: si el curso cambia después, lo que se ve también cambia. Para quedarse con una foto de este momento, "), inlineCode("toList()"), regular(" crea una copia independiente.")),
+                                richText(regular("En el ejemplo, "), inlineCode("alumnos"), regular(" muestra la lista real: si el curso cambia después, lo que se ve también cambia. Para quedarse con una foto de este momento, "), inlineCode("toList()"), regular(" crea una copia independiente.")),
                                 LessonCalloutTone.Information,
                             ),
                         ),
@@ -618,7 +618,7 @@ val oopRelationshipsLessonContent =
                     title = "Organizar en paquetes",
                     explanation =
                         listOf(
-                            paragraph(regular("Con varias clases, cada una vive en su propio archivo con su nombre. Para agruparlas se usan los "), highlight("paquetes"), regular(": la primera línea del archivo es "), inlineCode("package escuela"), regular(", y los archivos van en una carpeta con ese nombre, en minúsculas.")),
+                            paragraph(regular("Con varias clases, cada una vive en su propio archivo con su nombre. Para agruparlas se usan los "), highlight("paquetes"), regular(": la primera línea del archivo lo declara, como "), inlineCode("package escuela"), regular(" en el ejemplo, y los archivos van en una carpeta con ese nombre, en minúsculas.")),
                             paragraph(regular("Dentro del mismo paquete las clases se ven entre sí. Para usar una de otro paquete se escribe "), inlineCode("import"), regular(" con su ruta completa. Todo es público por defecto; "), inlineCode("private"), regular(" lo limita a su clase o archivo, e "), inlineCode("internal"), regular(" a todo el módulo.")),
                         ),
                     visual =

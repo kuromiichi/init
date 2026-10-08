@@ -43,7 +43,7 @@ val oopClassesObjectsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Se declara con "), inlineCode("class"), regular(" y un nombre que empieza por mayúscula. Lo que va entre paréntesis es el "), emphasis("constructor"), regular(": los datos que hay que dar para crear un objeto. Con "), inlineCode("val"), regular(" o "), inlineCode("var"), regular(" cada dato se convierte en una "), emphasis("propiedad"), regular(" del objeto.")),
-                            paragraph(regular("Se crea un objeto escribiendo el nombre de la clase como si fuera una función: "), inlineCode("Alumno(\"Ana\", 7)"), regular(". No hace falta nada más. Las propiedades se leen y se cambian con un punto, y una propiedad "), inlineCode("val"), regular(" no se puede reasignar.")),
+                            paragraph(regular("Se crea un objeto escribiendo el nombre de la clase como si fuera una función, como "), inlineCode("Alumno(\"Ana\", 7)"), regular(" en el ejemplo. No hace falta nada más. Las propiedades se leen y se cambian con un punto, y una propiedad "), inlineCode("val"), regular(" no se puede reasignar.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -133,8 +133,8 @@ val oopClassesObjectsLessonContent =
                     title = "Métodos y this",
                     explanation =
                         listOf(
-                            paragraph(regular("Una clase también puede incluir funciones: los "), highlight("métodos"), regular(". Se escriben dentro de las llaves de la clase y se llaman sobre un objeto, como "), inlineCode("luis.subirNota(2)"), regular(". Dentro del método se usan las propiedades de ese objeto por su nombre.")),
-                            paragraph(inlineCode("this"), regular(" es el propio objeto sobre el que se llama al método. Casi nunca hace falta escribirlo; se necesita cuando un parámetro tiene el mismo nombre que una propiedad: "), inlineCode("this.valor"), regular(" es la propiedad y "), inlineCode("valor"), regular(" a secas, el parámetro.")),
+                            paragraph(regular("Una clase también puede incluir funciones: los "), highlight("métodos"), regular(". Se escriben dentro de las llaves de la clase y se llaman sobre un objeto, como "), inlineCode("luis.subirNota(2)"), regular(" en el ejemplo. Dentro del método se usan las propiedades de ese objeto por su nombre.")),
+                            paragraph(inlineCode("this"), regular(" es el propio objeto sobre el que se llama al método. Casi nunca hace falta escribirlo; se necesita cuando un parámetro tiene el mismo nombre que una propiedad. En el ejemplo, "), inlineCode("this.valor"), regular(" es la propiedad y "), inlineCode("valor"), regular(" a secas, el parámetro.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -247,7 +247,7 @@ val oopClassesObjectsLessonContent =
                             paragraph(regular("Lo más habitual es dejar una propiedad legible desde fuera pero modificable solo por la clase, con "), inlineCode("private set"), regular(" justo debajo de la propiedad. Desde fuera se cambia llamando a un método, que puede comprobar antes que el cambio tenga sentido.")),
                             callout(
                                 "Por qué importa",
-                                richText(regular("Si cualquiera puede asignar a "), inlineCode("valor"), regular(", la clase no puede garantizar nada sobre él. Si solo lo cambian sus métodos, basta revisar esos métodos cuando algo falla.")),
+                                richText(regular("Si cualquiera puede asignar a "), inlineCode("valor"), regular(", como en el ejemplo, la clase no puede garantizar nada sobre él. Si solo lo cambian sus métodos, basta revisar esos métodos cuando algo falla.")),
                                 LessonCalloutTone.Tip,
                             ),
                         ),
@@ -304,7 +304,7 @@ val oopClassesObjectsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("Cada propiedad tiene un "), emphasis("getter"), regular(" que la lee y, si es "), inlineCode("var"), regular(", un "), emphasis("setter"), regular(" que la cambia. Kotlin los crea solos, pero puedes escribir los tuyos justo debajo de la propiedad.")),
-                            paragraph(regular("En un setter, "), inlineCode("field"), regular(" es el valor guardado: hay que escribir "), inlineCode("field = nueva"), regular(", porque escribir "), inlineCode("nota = nueva"), regular(" volvería a llamar al setter sin fin. Una propiedad con "), inlineCode("get()"), regular(" y sin "), inlineCode("field"), regular(" no guarda nada: se calcula cada vez.")),
+                            paragraph(regular("En un setter, "), inlineCode("field"), regular(" es el valor guardado. En el ejemplo, hay que escribir "), inlineCode("field = nueva"), regular(", porque escribir "), inlineCode("nota = nueva"), regular(" volvería a llamar al setter sin fin. Una propiedad con "), inlineCode("get()"), regular(" y sin "), inlineCode("field"), regular(" no guarda nada: se calcula cada vez.")),
                             callout(
                                 "El valor inicial no pasa por el setter",
                                 richText(regular("La asignación "), inlineCode("= 0"), regular(" de la propiedad escribe directamente en "), inlineCode("field"), regular(". Solo se valida lo que se asigna después.")),
@@ -492,7 +492,7 @@ val oopClassesObjectsLessonContent =
                     explanation =
                         listOf(
                             paragraph(regular("En una clase de datos conviene que las propiedades sean "), inlineCode("val"), regular(": el objeto no cambia después de crearse y nadie lo modifica por sorpresa. Para obtener una versión distinta, "), inlineCode("copy"), regular(" crea otro objeto, y solo hay que indicar lo que cambia.")),
-                            paragraph(regular("Una clase de datos también se puede desestructurar, como las parejas que recorriste en un mapa: "), inlineCode("val (nombre, nota) = alumno"), regular(" saca las propiedades por orden de declaración.")),
+                            paragraph(regular("Una clase de datos también se puede desestructurar, como las parejas que recorriste en un mapa: en el ejemplo, "), inlineCode("val (nombre, nota) = alumno"), regular(" saca las propiedades por orden de declaración.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
@@ -538,7 +538,7 @@ val oopClassesObjectsLessonContent =
                     title = "Lo que es de la clase",
                     explanation =
                         listOf(
-                            paragraph(regular("Algunos datos pertenecen a la clase entera y no a cada objeto: una constante, o cuántos objetos se han creado. Se declaran dentro de un "), inlineCode("companion object"), regular(" y se usan con el nombre de la clase: "), inlineCode("Alumno.NOTA_MINIMA"), regular(".")),
+                            paragraph(regular("Algunos datos pertenecen a la clase entera y no a cada objeto: una constante, o cuántos objetos se han creado. Se declaran dentro de un "), inlineCode("companion object"), regular(" y se usan con el nombre de la clase, como "), inlineCode("Alumno.NOTA_MINIMA"), regular(" en el ejemplo.")),
                             paragraph(regular("Las constantes fijas se escriben con "), inlineCode("const val"), regular(" y en mayúsculas separadas por guiones bajos. El contador de ejemplo usa "), inlineCode("private set"), regular(" para que solo la clase pueda cambiarlo, y "), inlineCode("init"), regular(" lo incrementa en cada objeto creado.")),
                         ),
                     visual =
@@ -584,7 +584,7 @@ val oopClassesObjectsLessonContent =
                     title = "Enumeraciones",
                     explanation =
                         listOf(
-                            paragraph(regular("Cuando un valor solo puede ser uno de unos pocos conocidos, como una prioridad o un día de la semana, se usa una "), inlineCode("enum class"), regular(". Cada valor es una constante de la clase y se escribe en mayúsculas, sin tildes ni eñes: "), inlineCode("Prioridad.ALTA"), regular(".")),
+                            paragraph(regular("Cuando un valor solo puede ser uno de unos pocos conocidos, como una prioridad o un día de la semana, se usa una "), inlineCode("enum class"), regular(". Cada valor es una constante de la clase y se escribe en mayúsculas, sin tildes ni eñes, como "), inlineCode("Prioridad.ALTA"), regular(" en el ejemplo.")),
                             paragraph(regular("Una enumeración puede llevar propiedades en el constructor, como cualquier clase. Con "), inlineCode("entries"), regular(" se recorren todos los valores, y un "), inlineCode("when"), regular(" sobre ella no necesita "), inlineCode("else"), regular(" si cubre todos: el compilador avisa si falta alguno.")),
                         ),
                     visual =

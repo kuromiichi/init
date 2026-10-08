@@ -109,7 +109,7 @@ val debuggingLessonContent =
                         listOf(
                             paragraph(regular("Un error lógico no avisa: el programa termina con normalidad, pero el resultado no es el esperado. Para detectarlo tienes que saber de antemano qué debería salir.")),
                             paragraph(regular("Aquí la media de "), inlineCode("6"), regular(" y "), inlineCode("9"), regular(" debería dar "), inlineCode("7"), regular(" con enteros, pero sale "), inlineCode("10"), regular(". Una hipótesis: como en matemáticas, la división se calcula antes que la suma.")),
-                            paragraph(regular("Los paréntesis fijan el orden: "), inlineCode("(nota1 + nota2) / 2"), regular(" suma primero y después divide.")),
+                            paragraph(regular("Los paréntesis fijan el orden: en el ejemplo, "), inlineCode("(nota1 + nota2) / 2"), regular(" suma primero y después divide.")),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(
