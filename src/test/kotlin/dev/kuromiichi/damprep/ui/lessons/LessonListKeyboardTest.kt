@@ -52,6 +52,20 @@ class LessonListKeyboardTest {
         }
 
     @Test
+    fun `locked lessons take the focus and enter explains why they cannot be opened`() =
+        runComposeUiTest {
+            showList(lockedAfterCurrent = true)
+
+            press(Key.DirectionDown)
+            press(Key.DirectionDown)
+            onNodeWithText("Bloqueada").assertIsFocused()
+
+            press(Key.Enter)
+            onNodeWithText("Completa «En curso» para desbloquear esta lección.").assertExists()
+            assertEquals(emptyList(), selectedLessons)
+        }
+
+    @Test
     fun `escape goes back`() =
         runComposeUiTest {
             showList()
@@ -60,7 +74,7 @@ class LessonListKeyboardTest {
             assertEquals(true, leftList)
         }
 
-    private fun ComposeUiTest.showList() {
+    private fun ComposeUiTest.showList(lockedAfterCurrent: Boolean = false) {
         setWindowContent {
             LessonListScreen(
                 uiState =
@@ -69,7 +83,11 @@ class LessonListKeyboardTest {
                             listOf(
                                 lesson(0, "completed", "Completada", isCompleted = true),
                                 lesson(1, "current", "En curso"),
-                                lesson(2, "unlocked", "Desbloqueada"),
+                                if (lockedAfterCurrent) {
+                                    lesson(2, "locked", "Bloqueada", isUnlocked = false, previousLessonTitle = "En curso")
+                                } else {
+                                    lesson(2, "unlocked", "Desbloqueada")
+                                },
                             ),
                     ),
                 onBack = { leftList = true },
@@ -82,14 +100,17 @@ class LessonListKeyboardTest {
         index: Int,
         id: String,
         title: String,
+        isUnlocked: Boolean = true,
         isCompleted: Boolean = false,
+        previousLessonTitle: String? = null,
     ) = LessonListItemUiModel(
         index = index,
         id = id,
         title = title,
         subjectArea = SubjectArea.Programming,
-        isUnlocked = true,
+        isUnlocked = isUnlocked,
         isAvailable = true,
         isCompleted = isCompleted,
+        previousLessonTitle = previousLessonTitle,
     )
 }

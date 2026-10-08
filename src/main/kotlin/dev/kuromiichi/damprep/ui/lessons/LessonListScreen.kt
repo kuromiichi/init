@@ -202,19 +202,13 @@ private fun LessonListItem(
             label = "Lesson item hover elevation",
         )
 
-        val bringIntoViewRequester = remember { BringIntoViewRequester() }
-        val coroutineScope = rememberCoroutineScope()
-
         Surface(
             onClick = onClick,
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .bringIntoViewRequester(bringIntoViewRequester)
-                    // Con el teclado el elemento enfocado se lleva a la vista, con su contorno incluido.
-                    .onFocusChanged { if (it.hasFocus) coroutineScope.launch { bringIntoViewRequester.bringIntoView() } }
                     .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier)
-                    .focusHighlight(shape = MaterialTheme.shapes.medium, outset = 3.dp)
+                    .lessonItemKeyboardFocus()
                     .graphicsLayer {
                         scaleX = scale
                         scaleY = scale
@@ -237,9 +231,10 @@ private fun LessonListItem(
             tooltip = { PlainTooltip { Text(lesson.unavailableReason.orEmpty()) } },
             state = tooltipState,
         ) {
+            // También se llega con el teclado: Intro muestra por qué no se puede abrir.
             Surface(
                 onClick = { coroutineScope.launch { tooltipState.show() } },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().lessonItemKeyboardFocus(),
                 shape = MaterialTheme.shapes.medium,
                 color = containerColor,
                 contentColor = contentColor,
@@ -249,4 +244,14 @@ private fun LessonListItem(
             }
         }
     }
+}
+
+/** Con el teclado, el elemento enfocado se lleva a la vista con su contorno incluido y muestra el resaltado. */
+@Composable
+private fun Modifier.lessonItemKeyboardFocus(): Modifier {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+    return bringIntoViewRequester(bringIntoViewRequester)
+        .onFocusChanged { if (it.hasFocus) coroutineScope.launch { bringIntoViewRequester.bringIntoView() } }
+        .focusHighlight(shape = MaterialTheme.shapes.medium, outset = 3.dp)
 }

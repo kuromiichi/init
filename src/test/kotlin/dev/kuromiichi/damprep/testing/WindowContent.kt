@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.pressKey
 import dev.kuromiichi.damprep.ui.common.KeyboardFocusVisibility
@@ -30,9 +30,12 @@ fun ComposeUiTest.setWindowContent(content: @Composable () -> Unit) {
     waitForIdle()
 }
 
-/** Pulsa [key] sobre lo que tenga el foco y espera a que la interfaz se estabilice. */
+/**
+ * Pulsa [key] sobre el elemento enfocado, que es quien la recibe en la ventana real, y espera a que la interfaz se
+ * estabilice. Funciona aunque haya ventanas emergentes abiertas, como un tooltip.
+ */
 @OptIn(ExperimentalTestApi::class)
 fun ComposeUiTest.press(key: Key) {
-    onRoot().performKeyInput { pressKey(key) }
+    onNode(isFocused()).performKeyInput { pressKey(key) }
     waitForIdle()
 }
