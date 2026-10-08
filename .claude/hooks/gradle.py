@@ -1,41 +1,86 @@
 #!/usr/bin/env python3
-"""Hooks de Gradle para Claude Code.
+"""Hook y ejecutor de Gradle para Claude Code.
 
-PreToolUse: bloquea una invocación de Gradle si ya hay otra en curso
-(salvo `./gradlew --stop`).
-PostToolUse: sustituye la salida larga de Gradle por un resumen (estado,
-errores de compilación, fallos de pruebas con su mensaje, infracciones de
-Ktlint) y guarda la salida completa en `.claude/logs/`.
+PreToolUse (Bash): bloquea una invocación de Gradle si ya hay otra en curso (salvo
+`./gradlew --stop`) y reescribe cada `./gradlew` del comando para que pase por
+`gradle.py run`.
+
+`gradle.py run ./gradlew <args>`: ejecuta Gradle, guarda la salida completa en
+`.claude/logs/` e imprime solo un resumen (estado, errores de compilación,
+fallos de pruebas con su mensaje, infracciones de Ktlint). Conserva el código de
+salida, así que el resumen llega igual si la build pasa o falla.
 """
 
 import json
 import os
 import re
+import shlex
+import signal
 import subprocess
 import sys
 import time
 import xml.etree.ElementTree as ElementTree
 from pathlib import Path
 
+SCRIPT = Path(__file__).resolve()
+PROJECT_DIR = SCRIPT.parents[2]
 GRADLE_COMMAND = re.compile(r"(^|[\s;&|(])(\./)?gradlew\b")
+GRADLE_INVOCATION = re.compile(r"(^|&&|\|\||;|\()(\s*)(\./gradlew\b)")
 STOP_ONLY = re.compile(r"^\s*(\./)?gradlew\s+--stop\b")
-MIN_LENGTH_TO_SUMMARIZE = 600
 MAX_LINES_PER_SECTION = 25
 KEPT_LOGS = 10
 
-PROJECT_DIR = Path(os.environ.get("CLAUDE_PROJECT_DIR", os.getcwd()))
-
 
 def main() -> None:
+    if len(sys.argv) > 2 and sys.argv[1] == "run":
+        sys.exit(run(sys.argv[2:]))
     payload = json.load(sys.stdin)
-    command = payload.get("tool_input", {}).get("command", "")
-    if not GRADLE_COMMAND.search(command):
+    if payload.get("hook_event_name") != "PreToolUse":
         return
-    event = payload.get("hook_event_name")
-    if event == "PreToolUse":
-        guard_parallel_gradle(command)
-    elif event == "PostToolUse":
-        summarize(payload)
+    tool_input = payload.get("tool_input", {})
+    command = tool_input.get("command", "")
+    if not GRADLE_COMMAND.search(command) or str(SCRIPT) in command:
+        return
+    guard_parallel_gradle(command)
+    if not only_real_invocations(command):
+        return
+    wrapped = GRADLE_INVOCATION.sub(
+        lambda match: f"{match.group(1)}{match.group(2)}python3 {shlex.quote(str(SCRIPT))} run {match.group(3)}",
+        command,
+    )
+    if wrapped == command:
+        return
+    print(
+        json.dumps(
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "PreToolUse",
+                    "permissionDecision": "allow",
+                    "permissionDecisionReason": "Gradle pasa por el ejecutor que resume la salida",
+                    "updatedInput": {**tool_input, "command": wrapped},
+                }
+            }
+        )
+    )
+
+
+def only_real_invocations(command: str) -> bool:
+    """Si cada `./gradlew` que encontraría la expresión regular es una invocación real y no texto entre comillas."""
+    if "<<" in command:
+        return False
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
+        lexer.whitespace_split = True
+        tokens = list(lexer)
+    except ValueError:
+        return False
+    starts_command = True
+    invocations = 0
+    for token in tokens:
+        if token == "./gradlew" and starts_command:
+            invocations += 1
+        starts_command = token in {"&&", "||", ";", "(", "|"}
+    return invocations == len(GRADLE_INVOCATION.findall(command))
 
 
 def guard_parallel_gradle(command: str) -> None:
@@ -52,40 +97,52 @@ def guard_parallel_gradle(command: str) -> None:
     print(
         "Ya hay una invocación de Gradle en curso; no lances otra en paralelo.\n"
         f"{running[:300]}\n"
-        "Espera a que termine (o cierra la app si es `run`). Si está colgada: "
-        "`./gradlew --stop` y repite con `clean`.",
+        "Espera a que termine (si es la app de QA: `python3 .claude/scripts/qa.py stop`). "
+        "Si está colgada: `./gradlew --stop` y repite con `clean`.",
         file=sys.stderr,
     )
     sys.exit(2)
 
 
-def summarize(payload: dict) -> None:
-    response = payload.get("tool_response")
-    if not isinstance(response, dict) or response.get("interrupted"):
-        return
-    stdout = response.get("stdout") or ""
-    stderr = response.get("stderr") or ""
-    output = stdout + ("\n" + stderr if stderr else "")
-    finished = re.search(r"^BUILD (SUCCESSFUL|FAILED) in (.+)$", output, re.M)
-    if len(output) < MIN_LENGTH_TO_SUMMARIZE or not (finished or "FAILURE:" in output):
-        return
-
+def run(command: list) -> int:
+    started = time.time()
+    try:
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors="replace")
+    except FileNotFoundError:
+        print(f"No existe {command[0]} en {os.getcwd()}; ejecutar desde {PROJECT_DIR}.")
+        return 127
+    signal.signal(signal.SIGTERM, lambda *_: process.terminate())
+    try:
+        output, _ = process.communicate()
+    except KeyboardInterrupt:
+        process.terminate()
+        output, _ = process.communicate()
     log_path = save_log(output)
+    print(summarize(output, started, log_path))
+    return process.returncode
+
+
+def summarize(output: str, started: float, log_path: Path) -> str:
     output = output.replace(str(PROJECT_DIR) + "/", "").replace("file://", "")
     lines = output.splitlines()
-    status = finished.group(0) if finished else "BUILD FAILED"
-    summary = [f"[resumen del hook de Gradle] {status}"]
+    finished = re.search(r"^BUILD (SUCCESSFUL|FAILED) in (.+)$", output, re.M)
+    log = f"Salida completa: {log_path.relative_to(PROJECT_DIR)}"
+    if not finished and "FAILURE:" not in output:
+        # Sin resultado de build (p. ej. `--stop` o `--version`): la salida suele ser corta.
+        tail = lines[-MAX_LINES_PER_SECTION:]
+        return "\n".join([*tail, log])
 
-    tests = None
+    status = finished.group(0) if finished else "BUILD FAILED"
+    summary = [status]
+
+    failures = []
     if re.search(r"^> Task :test( FAILED)?$", output, re.M):
-        tests = test_results(seconds_ago(finished.group(2) if finished else "60s"))
-    if tests:
-        total, failures = tests
-        summary.append(f"Pruebas ejecutadas: {total}, fallidas: {len(failures)}")
-    else:
-        failures = []
-        if re.search(r"^> Task :test (UP-TO-DATE|FROM-CACHE)$", output, re.M):
-            summary.append("Pruebas: al día, no se han vuelto a ejecutar")
+        tests = test_results(started)
+        if tests:
+            total, failures = tests
+            summary.append(f"Pruebas ejecutadas: {total}, fallidas: {len(failures)}")
+    elif re.search(r"^> Task :test (UP-TO-DATE|FROM-CACHE)$", output, re.M):
+        summary.append("Pruebas: al día, no se han vuelto a ejecutar")
 
     compiler_errors = [line for line in lines if line.startswith("e: ")]
     warnings = [line for line in lines if line.startswith("w: ")]
@@ -96,32 +153,13 @@ def summarize(payload: dict) -> None:
     section(summary, "Tareas fallidas", failed_tasks)
     section(summary, "Errores de compilación", compiler_errors)
     section(summary, "Ktlint", ktlint)
-    if failures:
-        section(summary, "Pruebas fallidas", failures)
-    else:
-        section(summary, "Pruebas fallidas", failed_tests)
+    section(summary, "Pruebas fallidas", failures or failed_tests)
     if warnings:
         summary.append(f"Avisos del compilador: {len(warnings)} (ver log)")
-    if status.startswith("BUILD FAILED") and not (
-        failed_tasks or compiler_errors or ktlint or failed_tests
-    ):
+    if status.startswith("BUILD FAILED") and not (failed_tasks or compiler_errors or ktlint or failed_tests):
         section(summary, "Qué ha fallado", what_went_wrong(output))
-    summary.append(f"Salida completa: {log_path.relative_to(PROJECT_DIR)}")
-
-    print(
-        json.dumps(
-            {
-                "hookSpecificOutput": {
-                    "hookEventName": "PostToolUse",
-                    "updatedToolOutput": {
-                        **response,
-                        "stdout": "\n".join(summary),
-                        "stderr": "",
-                    },
-                }
-            }
-        )
-    )
+    summary.append(log)
+    return "\n".join(summary)
 
 
 def section(summary: list, title: str, items: list) -> None:
@@ -136,15 +174,6 @@ def section(summary: list, title: str, items: list) -> None:
 def what_went_wrong(output: str) -> list:
     blocks = re.findall(r"\* What went wrong:\n(.*?)(?:\n\* Try:|\Z)", output, re.S)
     return [line for block in blocks for line in block.strip().splitlines()[:6]]
-
-
-def seconds_ago(duration: str) -> float:
-    units = {"h": 3600, "m": 60, "s": 1, "ms": 0.001}
-    seconds = sum(
-        float(value) * units[unit]
-        for value, unit in re.findall(r"(\d+(?:\.\d+)?)(ms|h|m|s)", duration)
-    )
-    return time.time() - seconds - 10
 
 
 def test_results(since: float):

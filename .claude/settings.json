@@ -24,18 +24,6 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/gradle.py\"",
-            "timeout": 10
-          }
-        ]
-      }
     ]
   }
 }
