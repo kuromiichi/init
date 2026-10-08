@@ -2,6 +2,7 @@ package dev.kuromiichi.damprep.data.lessons
 
 import dev.kuromiichi.damprep.data.lessons.contents.arraysListsLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.basicTestingLessonContent
+import dev.kuromiichi.damprep.data.lessons.contents.basicUmlLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.debuggingLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.developmentEnvironmentLessonContent
 import dev.kuromiichi.damprep.data.lessons.contents.firstProgramsLessonContent
@@ -192,6 +193,13 @@ sealed interface LessonVisualContent {
         val example: LessonCodeExample,
         val table: LessonTraceTable,
     ) : LessonVisualContent
+
+    /** Diagrama UML: cajas colocadas en una rejilla y unidas por relaciones. */
+    data class UmlDiagram(
+        val nodes: List<UmlNode>,
+        val relations: List<UmlRelation> = emptyList(),
+        val caption: String? = null,
+    ) : LessonVisualContent
 }
 
 data class LessonTraceTable(
@@ -270,6 +278,7 @@ enum class LessonScreenshot {
     IntellijGitLog,
     IntellijGitConflicts,
     IntellijTestResults,
+    IntellijMermaidClass,
 }
 
 data class LessonContent(
@@ -297,6 +306,7 @@ object LessonContentCatalog {
             oopClassesObjectsLessonContent,
             oopRelationshipsLessonContent,
             oopInheritanceInterfacesLessonContent,
+            basicUmlLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

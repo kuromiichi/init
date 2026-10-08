@@ -32,6 +32,8 @@ import dev.kuromiichi.dam_prep.generated.resources.intellij_git_log_light
 import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace_dark
 import dev.kuromiichi.dam_prep.generated.resources.intellij_ide_workspace_light
 import dev.kuromiichi.dam_prep.generated.resources.intellij_idea
+import dev.kuromiichi.dam_prep.generated.resources.intellij_mermaid_class_dark
+import dev.kuromiichi.dam_prep.generated.resources.intellij_mermaid_class_light
 import dev.kuromiichi.dam_prep.generated.resources.intellij_test_results_dark
 import dev.kuromiichi.dam_prep.generated.resources.intellij_test_results_light
 import dev.kuromiichi.dam_prep.generated.resources.jdk
@@ -163,6 +165,8 @@ internal fun LessonVisual(
                             )
                         },
                 )
+
+            is LessonVisualContent.UmlDiagram -> UmlDiagramVisual(diagram = visual)
         }
     }
 
@@ -196,6 +200,7 @@ internal val LessonVisualContent.isRich: Boolean
             this is LessonVisualContent.CodeExamples ||
             this is LessonVisualContent.Console ||
             this is LessonVisualContent.Trace ||
+            this is LessonVisualContent.UmlDiagram ||
             this is LessonVisualContent.Screenshot
 
 /** La terminal del sistema elegido o la ventana Run de IntelliJ IDEA, según dónde se vería la salida. */
@@ -287,4 +292,5 @@ private fun LessonScreenshot.drawableResource(isDark: Boolean): DrawableResource
         LessonScreenshot.IntellijGitLog -> if (isDark) Res.drawable.intellij_git_log_dark else Res.drawable.intellij_git_log_light
         LessonScreenshot.IntellijGitConflicts -> if (isDark) Res.drawable.intellij_git_conflicts_dark else Res.drawable.intellij_git_conflicts_light
         LessonScreenshot.IntellijTestResults -> if (isDark) Res.drawable.intellij_test_results_dark else Res.drawable.intellij_test_results_light
+        LessonScreenshot.IntellijMermaidClass -> if (isDark) Res.drawable.intellij_mermaid_class_dark else Res.drawable.intellij_mermaid_class_light
     }

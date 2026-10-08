@@ -107,7 +107,12 @@ object LessonCatalog {
             ),
             LessonSummary(
                 id = "basic-uml",
-                title = "UML mínimo para pensar clases",
+                title = "UML I: diagramas de clases",
+                subjectArea = SubjectArea.DevelopmentEnvironments,
+            ),
+            LessonSummary(
+                id = "uml-behavior",
+                title = "UML II: diagramas de comportamiento",
                 subjectArea = SubjectArea.DevelopmentEnvironments,
             ),
             LessonSummary(

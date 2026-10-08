@@ -107,6 +107,23 @@ class LessonContentRulesTest {
     }
 
     @Test
+    fun `uml diagrams connect existing nodes without overlapping them`() {
+        lessons
+            .flatMap(LessonContent::steps)
+            .flatMap(LessonStep::allContents)
+            .mapNotNull { it.visual as? LessonVisualContent.UmlDiagram }
+            .forEach { diagram ->
+                val ids = diagram.nodes.map(UmlNode::id)
+                assertEquals(ids.size, ids.toSet().size, "Nodos repetidos: $ids")
+                diagram.relations.forEach { relation ->
+                    assertTrue(relation.from in ids && relation.to in ids, "Relación con un nodo que no existe: $relation")
+                }
+                val occupied = diagram.nodes.flatMap { node -> (0 until node.cell.columnSpan).map { node.cell.row to node.cell.column + it } }
+                assertEquals(occupied.size, occupied.toSet().size, "Nodos en la misma celda: $ids")
+            }
+    }
+
+    @Test
     fun `learners never see curricular traceability`() {
         val forbidden = listOf(Regex("""\bRA\d"""), Regex("(?i)resultados? de aprendizaje"), Regex("(?i)currícul"), Regex("(?i)\\bBOE\\b|boe\\.es"))
 
@@ -133,6 +150,7 @@ class LessonContentRulesTest {
                 "oop-classes-objects" to listOf("""\b(open|abstract|sealed|interface|protected|inner|lateinit|lazy)\b""", """(?<!companion )\bobject\b""", """\bclass \w+(\([^)]*\))? ?: ?\w""", """\.(filter|map|forEach|any|all|count|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "oop-relationships" to listOf("""\b(open|abstract|sealed|interface|protected|inner|lateinit|lazy)\b""", """(?<!companion )\bobject\b""", """\bclass \w+(\([^)]*\))? ?: ?\w""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "oop-inheritance-interfaces" to listOf("""\b(lateinit|lazy|inner|by)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
+                "basic-uml" to listOf("""\b(lateinit|lazy|inner|by)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 
@@ -202,6 +220,7 @@ private fun LessonVisualContent.readableText(): String =
         is LessonVisualContent.IconText -> "$title $body"
         is LessonVisualContent.Screenshot -> description
         is LessonVisualContent.ToolCards -> tools.joinToString(" ") { "${it.name} ${it.kind}" }
+        is LessonVisualContent.UmlDiagram -> description
     }
 
 private fun LessonCodeExample.readableText(): String = "$title ${note.plainText} $sourceText"
