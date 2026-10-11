@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,8 +42,16 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.layout.IntrinsicMeasureScope
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.node.LayoutModifierNode
+import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,9 +83,17 @@ internal fun LessonStepContent(
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val useCompactLayout = maxWidth < LessonCompactBreakpoint
         // En el diseño ancho el paso no pasa del alto de la ventana y el texto y el visual se desplazan por separado.
-        // Con práctica, el paso se recorre de una vez hasta su tarjeta, sin desplazamientos anidados.
+        // Con práctica, el paso se recorre de una vez hasta su tarjeta y el visual no pasa del alto del texto: lo que no
+        // cabe se desplaza dentro de su panel.
         val limitToViewport = !useCompactLayout && step.practice == null
-        SideEffect { scrollController.updateSplit(textScrollState, limitToViewport) }
+        val limitVisualToText = !useCompactLayout && step.practice != null
+        val scrollLayout =
+            when {
+                limitToViewport -> LessonStepScrollLayout.Split
+                limitVisualToText -> LessonStepScrollLayout.PageWithVisual
+                else -> LessonStepScrollLayout.Page
+            }
+        SideEffect { scrollController.updateLayout(textScrollState, scrollLayout) }
         val hasRichVisual = content.visual.isRich
         val isScreenshotVisual = content.visual is LessonVisualContent.Screenshot
         val visualMaxWidth =
@@ -130,10 +149,11 @@ internal fun LessonStepContent(
                         Modifier
                             .fillMaxWidth()
                             .then(
-                                if (limitToViewport) {
-                                    Modifier.weight(1f, fill = false).padding(vertical = LessonSectionOutlineMargin)
-                                } else {
-                                    Modifier
+                                when {
+                                    limitToViewport ->
+                                        Modifier.weight(1f, fill = false).padding(vertical = LessonSectionOutlineMargin)
+                                    limitVisualToText -> Modifier.height(IntrinsicSize.Min)
+                                    else -> Modifier
                                 },
                             ),
                     horizontalArrangement = Arrangement.spacedBy(56.dp),
@@ -169,13 +189,17 @@ internal fun LessonStepContent(
                     )
                     Box(
                         modifier =
-                            Modifier.weight(
-                                when {
-                                    isScreenshotVisual -> 1.15f
-                                    hasRichVisual -> 1f
-                                    else -> 0.75f
-                                },
-                            ),
+                            Modifier
+                                .weight(
+                                    when {
+                                        isScreenshotVisual -> 1.15f
+                                        hasRichVisual -> 1f
+                                        else -> 0.75f
+                                    },
+                                ).then(
+                                    // La fila toma el alto del texto y el visual llena ese alto como máximo.
+                                    if (limitVisualToText) Modifier.withoutIntrinsicHeight().fillMaxHeight() else Modifier,
+                                ),
                         contentAlignment = Alignment.Center,
                     ) {
                         LessonVisual(
@@ -185,7 +209,7 @@ internal fun LessonStepContent(
                                 Modifier
                                     .widthIn(max = visualMaxWidth)
                                     .fillMaxWidth(),
-                            scrollState = visualScrollState.takeIf { limitToViewport },
+                            scrollState = visualScrollState.takeIf { limitToViewport || limitVisualToText },
                             isOutlined = scrollController.focusedSection == LessonScrollSection.Visual,
                         )
                     }
@@ -204,6 +228,37 @@ internal fun LessonStepContent(
             }
         }
     }
+}
+
+/** Mide como de costumbre, pero no aporta alto intrínseco: el de la fila lo marcan sus otros hijos. */
+private fun Modifier.withoutIntrinsicHeight(): Modifier = this then WithoutIntrinsicHeightElement
+
+private data object WithoutIntrinsicHeightElement : ModifierNodeElement<WithoutIntrinsicHeightNode>() {
+    override fun create() = WithoutIntrinsicHeightNode()
+
+    override fun update(node: WithoutIntrinsicHeightNode) = Unit
+}
+
+private class WithoutIntrinsicHeightNode :
+    Modifier.Node(),
+    LayoutModifierNode {
+    override fun MeasureScope.measure(
+        measurable: Measurable,
+        constraints: Constraints,
+    ): MeasureResult {
+        val placeable = measurable.measure(constraints)
+        return layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+    }
+
+    override fun IntrinsicMeasureScope.minIntrinsicHeight(
+        measurable: IntrinsicMeasurable,
+        width: Int,
+    ): Int = 0
+
+    override fun IntrinsicMeasureScope.maxIntrinsicHeight(
+        measurable: IntrinsicMeasurable,
+        width: Int,
+    ): Int = 0
 }
 
 /** Margen del paso reservado al contorno de la zona resaltada, que se dibuja hacia fuera de la zona. */

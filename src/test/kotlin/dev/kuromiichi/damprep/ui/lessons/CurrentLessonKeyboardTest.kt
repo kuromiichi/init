@@ -3,6 +3,7 @@ package dev.kuromiichi.damprep.ui.lessons
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -114,6 +115,48 @@ class CurrentLessonKeyboardTest : ViewModelTest() {
             assertTrue(firstParagraphTop() < afterPage, "Espacio debería bajar hasta el final")
         }
 
+    @Test
+    fun `a practice visual is as tall as its text at most and tab toggles scrolling it or the page`() =
+        runComposeUiTest {
+            val lines = (1..80).joinToString("\n") { index -> "Línea $index" }
+            showLesson(
+                steps =
+                    listOf(
+                        step(
+                            "Práctica",
+                            explanation = listOf("Párrafo 1", "Párrafo 2", "Párrafo 3"),
+                            visual = LessonVisualContent.IconText(title = "Código", body = lines),
+                            practice = practice(),
+                        ),
+                    ),
+            )
+
+            fun paragraphTop() = onNodeWithText("Párrafo 1").getUnclippedBoundsInRoot().top
+
+            fun visualTop() = onNodeWithText(lines).getUnclippedBoundsInRoot().top
+
+            val visibleVisualBottom = onNodeWithText(lines).getBoundsInRoot().bottom
+            val textBottom = onNodeWithText("Párrafo 3").getUnclippedBoundsInRoot().bottom
+            assertTrue(visibleVisualBottom <= textBottom, "El visual no debería pasar del alto del texto")
+
+            val initialParagraphTop = paragraphTop()
+            val initialVisualTop = visualTop()
+            press(Key.Tab)
+            press(Key.DirectionDown)
+            assertTrue(visualTop() < initialVisualTop, "Con el visual resaltado, ↓ debería desplazarlo")
+            assertEquals(initialParagraphTop, paragraphTop(), "Con el visual resaltado, la página no debería moverse")
+
+            val visualTopAfterScroll = visualTop()
+            press(Key.Tab)
+            press(Key.DirectionDown)
+            assertTrue(paragraphTop() < initialParagraphTop, "Sin resaltado, ↓ debería desplazar la página")
+            assertEquals(
+                visualTopAfterScroll - initialVisualTop,
+                visualTop() - paragraphTop() - (initialVisualTop - initialParagraphTop),
+                "Sin resaltado, el visual no debería desplazarse por dentro",
+            )
+        }
+
     private fun ComposeUiTest.showLesson(
         steps: List<LessonStep>,
         onBack: () -> Unit = {},
@@ -135,12 +178,13 @@ class CurrentLessonKeyboardTest : ViewModelTest() {
     private fun step(
         title: String,
         explanation: List<String> = listOf("Contenido"),
+        visual: LessonVisualContent = LessonVisualContent.IconText(title = "Visual", body = "Detalle"),
         practice: LessonPractice? = null,
     ): LessonStep =
         LessonStep(
             title = title,
             explanation = paragraphs(*explanation.toTypedArray()),
-            visual = LessonVisualContent.IconText(title = "Visual", body = "Detalle"),
+            visual = visual,
             practice = practice,
         )
 

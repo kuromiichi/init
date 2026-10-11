@@ -9,6 +9,9 @@ import androidx.compose.runtime.setValue
 /** Las dos zonas de un paso que se desplazan por separado en el diseño ancho. */
 internal enum class LessonScrollSection { Text, Visual }
 
+/** Cómo se desplaza un paso: entero, en dos columnas independientes o entero con el visual desplazable por dentro. */
+internal enum class LessonStepScrollLayout { Page, Split, PageWithVisual }
+
 /**
  * Zona que recibe la siguiente pulsación de Tab (o de Mayús+Tab) entre las que se pueden desplazar. Las recorre en
  * bucle: con una sola se queda en ella y sin ninguna no hay nada que enfocar.
@@ -36,7 +39,7 @@ internal class LessonStepScrollController {
     private var owner: Any? = null
     private var text: ScrollState? = null
     private var visual: ScrollState? = null
-    private var isSplit = false
+    private var layout = LessonStepScrollLayout.Page
     private var hintOwner: Any? = null
     private var hintAction: (() -> Boolean)? = null
 
@@ -52,7 +55,7 @@ internal class LessonStepScrollController {
         this.owner = owner
         this.text = text
         this.visual = visual
-        isSplit = false
+        layout = LessonStepScrollLayout.Page
         focusedSection = null
     }
 
@@ -61,19 +64,19 @@ internal class LessonStepScrollController {
             this.owner = null
             text = null
             visual = null
-            isSplit = false
+            layout = LessonStepScrollLayout.Page
             focusedSection = null
         }
     }
 
-    /** Si el paso muestra el texto y el visual en columnas con desplazamiento propio (no en el compacto ni con práctica). */
-    fun updateSplit(
+    /** Cómo se desplaza el paso: en columnas propias en el diseño ancho, entero en el compacto o con práctica. */
+    fun updateLayout(
         owner: Any,
-        isSplit: Boolean,
+        layout: LessonStepScrollLayout,
     ) {
-        if (this.owner === owner) {
-            this.isSplit = isSplit
-            if (!isSplit) focusedSection = null
+        if (this.owner === owner && this.layout != layout) {
+            this.layout = layout
+            focusedSection = null
         }
     }
 
@@ -97,27 +100,42 @@ internal class LessonStepScrollController {
     fun revealNextHint(): Boolean = hintAction?.invoke() ?: false
 
     private fun scrollableSections(): List<LessonScrollSection> =
-        if (isSplit) {
-            listOfNotNull(
-                LessonScrollSection.Text.takeIf { text.canScroll() },
-                LessonScrollSection.Visual.takeIf { visual.canScroll() },
-            )
-        } else {
-            emptyList()
+        when (layout) {
+            LessonStepScrollLayout.Page -> emptyList()
+            LessonStepScrollLayout.Split ->
+                listOfNotNull(
+                    LessonScrollSection.Text.takeIf { text.canScroll() },
+                    LessonScrollSection.Visual.takeIf { visual.canScroll() },
+                )
+            LessonStepScrollLayout.PageWithVisual -> listOfNotNull(LessonScrollSection.Visual.takeIf { visual.canScroll() })
         }
 
-    /** Pasa a la zona siguiente. Sin zonas desplazables no hace nada. */
+    /**
+     * Pasa a la zona siguiente. Sin zonas desplazables no hace nada. Con la página entera y el visual desplazable,
+     * alterna entre resaltar el visual y quitar el resaltado para volver a mover la página.
+     */
     fun cycle(backwards: Boolean) {
-        focusedSection = cycleLessonScrollSection(scrollableSections(), focusedSection, backwards)
+        val sections = scrollableSections()
+        focusedSection =
+            if (layout == LessonStepScrollLayout.PageWithVisual) {
+                sections.firstOrNull()?.takeIf { focusedSection == null }
+            } else {
+                cycleLessonScrollSection(sections, focusedSection, backwards)
+            }
     }
 
     /**
      * La zona que se desplaza con las flechas. En los pasos con columnas independientes, la primera pulsación solo
      * resalta la zona (la primera que se pueda mover) y devuelve `null`; las siguientes la desplazan. En los pasos sin
-     * columnas se mueve la página entera, sin resaltar nada.
+     * columnas se mueve la página entera, sin resaltar nada, salvo que el visual esté resaltado y se pueda desplazar.
      */
     fun scrollTarget(page: ScrollState): ScrollState? {
-        if (!isSplit) return page.takeIf { it.canScroll() }
+        if (layout == LessonStepScrollLayout.Page) return page.takeIf { it.canScroll() }
+        if (layout == LessonStepScrollLayout.PageWithVisual) {
+            if (focusedSection == LessonScrollSection.Visual && visual.canScroll()) return visual
+            focusedSection = null
+            return page.takeIf { it.canScroll() }
+        }
         val sections = scrollableSections()
         val section = focusedSection?.takeIf { it in sections }
         if (section == null) {
