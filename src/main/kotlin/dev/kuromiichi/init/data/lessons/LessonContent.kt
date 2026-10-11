@@ -245,6 +245,7 @@ enum class LessonCodeTokenKind {
     Comment,
     ClassName,
     Parameter,
+    ImplicitParameter,
     Constant,
     MutableVariable,
     LambdaDelimiter,

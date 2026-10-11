@@ -304,6 +304,7 @@ private fun LearningCodeTokenKind.spanStyle(flavor: CatppuccinFlavor): SpanStyle
         LearningCodeTokenKind.Comment -> SpanStyle(color = flavor.overlay2, fontStyle = FontStyle.Italic)
         LearningCodeTokenKind.ClassName -> SpanStyle(color = flavor.yellow, fontStyle = FontStyle.Italic)
         LearningCodeTokenKind.Parameter -> SpanStyle(color = flavor.maroon, fontStyle = FontStyle.Italic)
+        LearningCodeTokenKind.ImplicitParameter -> SpanStyle(color = flavor.maroon)
         LearningCodeTokenKind.Constant -> SpanStyle(color = flavor.peach)
         LearningCodeTokenKind.MutableVariable -> SpanStyle(color = flavor.text, fontStyle = FontStyle.Italic)
         LearningCodeTokenKind.LambdaDelimiter, LearningCodeTokenKind.Bracket0 -> SpanStyle(color = flavor.red)

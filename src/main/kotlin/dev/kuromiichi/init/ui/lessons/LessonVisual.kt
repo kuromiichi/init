@@ -262,6 +262,7 @@ private fun LessonCodeTokenKind.toLearningCodeTokenKind(): LearningCodeTokenKind
         LessonCodeTokenKind.Comment -> LearningCodeTokenKind.Comment
         LessonCodeTokenKind.ClassName -> LearningCodeTokenKind.ClassName
         LessonCodeTokenKind.Parameter -> LearningCodeTokenKind.Parameter
+        LessonCodeTokenKind.ImplicitParameter -> LearningCodeTokenKind.ImplicitParameter
         LessonCodeTokenKind.Constant -> LearningCodeTokenKind.Constant
         LessonCodeTokenKind.MutableVariable -> LearningCodeTokenKind.MutableVariable
         LessonCodeTokenKind.LambdaDelimiter -> LearningCodeTokenKind.LambdaDelimiter

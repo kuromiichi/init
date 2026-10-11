@@ -193,6 +193,37 @@ class KotlinCodeHighlighterTest {
         assertEquals(LessonCodeTokenKind.Constant, named.kindOf("actual"))
         assertEquals(LessonCodeTokenKind.LambdaDelimiter, lambda.kindOf("{"))
         assertEquals(LessonCodeTokenKind.LambdaDelimiter, lambda.kindOf("}"))
+        assertEquals(LessonCodeTokenKind.ImplicitParameter, lambda.kindOf("it"))
+    }
+
+    @Test
+    fun `lambda parameters are parameters but when branches are not`() {
+        val lines =
+            kotlinCode(
+                """
+                val doble = { n: Int -> n * 2 }
+                notas.forEach { (nombre, nota) -> println(nombre) }
+                val texto = when (x) {
+                    a -> "a"
+                    else -> "b"
+                }
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.Parameter, lines[0].tokens.first { it.text.trim() == "n" }.kind)
+        assertEquals(LessonCodeTokenKind.Parameter, lines[0].tokens.last { it.text.trim() == "n" }.kind)
+        assertEquals(LessonCodeTokenKind.ClassName, lines[0].tokens.kindOf("Int"))
+        assertEquals(LessonCodeTokenKind.Parameter, lines[1].tokens.kindOf("nota"))
+        assertEquals(LessonCodeTokenKind.Parameter, lines[1].tokens.last { it.text.trim() == "nombre" }.kind)
+        assertEquals(LessonCodeTokenKind.Plain, lines[3].tokens.kindOf("a"))
+    }
+
+    @Test
+    fun `function references are coloured as functions`() {
+        val tokens = kotlinCode("val pares = numeros.filter(::esPar)").single().tokens
+
+        assertEquals(LessonCodeTokenKind.Punctuation, tokens.kindOf("::"))
+        assertEquals(LessonCodeTokenKind.Function, tokens.kindOf("esPar"))
     }
 
     @Test

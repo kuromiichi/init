@@ -184,6 +184,8 @@ private class KotlinClassifier(
             !afterDot && name in AccessorNames && next == "(" -> LessonCodeTokenKind.Plain
             !afterDot && name in AccessorNames && previous in VisibilityModifiers -> LessonCodeTokenKind.Keyword
             !afterDot && name == "field" -> LessonCodeTokenKind.MutableVariable
+            !afterDot && name == "it" && stack.any { it.role == Role.Lambda } -> LessonCodeTokenKind.ImplicitParameter
+            previous == "::" && name.first().isLowerCase() -> LessonCodeTokenKind.Function
             isNamedArgument -> LessonCodeTokenKind.Constant
             next == "(" && previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
             next == "(" && name.first().isUpperCase() && !afterDot -> LessonCodeTokenKind.Constant
@@ -373,6 +375,10 @@ private class KotlinClassifier(
     private fun collectParameterNames(): Set<String> {
         val names = mutableSetOf<String>()
         significant.forEachIndexed { position, rawIndex ->
+            if (textOf(raw[rawIndex]) == "->") {
+                names += lambdaParameterNames(position)
+                return@forEachIndexed
+            }
             if (textOf(raw[rawIndex]) == "set") {
                 val isCall = significant.getOrNull(position - 1)?.let { textOf(raw[it]) } == "."
                 val open = significant.getOrNull(position + 1)?.let { textOf(raw[it]) }
@@ -407,6 +413,49 @@ private class KotlinClassifier(
             }
         }
         return names
+    }
+
+    /**
+     * Los parámetros de una lambda (`{ n ->`, `{ n: Int ->`, `{ (clave, valor) ->`) son los nombres entre la llave y la flecha,
+     * en la misma línea. Las ramas de un `when` también llevan flecha, pero su llave abre el `when`.
+     */
+    private fun lambdaParameterNames(arrow: Int): List<String> {
+        var cursor = arrow - 1
+        while (cursor >= 0) {
+            val token = raw[significant[cursor]]
+            val text = textOf(token)
+            if (text == "{") break
+            val allowed = (token.group == Group.Identifier && text !in KotlinKeywords) || text in LambdaHeaderSymbols
+            if (!allowed) return emptyList()
+            cursor--
+        }
+        if (cursor < 0) return emptyList()
+        val brace = raw[significant[cursor]]
+        if ('\n' in source.substring(brace.range.last + 1, raw[significant[arrow]].range.first)) return emptyList()
+        if (opensWhen(cursor)) return emptyList()
+        return (cursor + 1 until arrow).mapNotNull { position ->
+            val token = raw[significant[position]]
+            val previous = textOf(raw[significant[position - 1]])
+            val name = textOf(token).trim('`')
+            name.takeIf { token.group == Group.Identifier && previous != ":" && previous != "." && name.first().isLowerCase() }
+        }
+    }
+
+    /** Si la llave en esa posición es la de un `when`, con o sin sujeto entre paréntesis. */
+    private fun opensWhen(bracePosition: Int): Boolean {
+        val before = significant.getOrNull(bracePosition - 1)?.let { textOf(raw[it]) } ?: return false
+        if (before == "when") return true
+        if (before != ")") return false
+        var depth = 0
+        var cursor = bracePosition - 1
+        while (cursor >= 0) {
+            when (textOf(raw[significant[cursor]])) {
+                ")" -> depth++
+                "(" -> if (--depth == 0) break
+            }
+            cursor--
+        }
+        return significant.getOrNull(cursor - 1)?.let { textOf(raw[it]) } == "when"
     }
 
     private fun collectMutableNames(): Set<String> =
@@ -450,6 +499,8 @@ private val StringPartPattern = Regex("""\$\{[^}]*}|\$[A-Za-z_][A-Za-z0-9_]*|\\.
 private val ParenRoles = setOf(Role.Call, Role.Group, Role.FunParams, Role.Header, Role.WhenHeader)
 
 private val BlockHeaderRoles = setOf(Role.Header, Role.WhenHeader, Role.FunParams)
+
+private val LambdaHeaderSymbols = setOf(":", ",", "(", ")", "<", ">", "?")
 
 private val ControlKeywords = setOf("if", "for", "while", "catch")
 

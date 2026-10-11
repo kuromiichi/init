@@ -102,6 +102,7 @@ enum class LearningCodeTokenKind {
     Comment,
     ClassName,
     Parameter,
+    ImplicitParameter,
     Constant,
     MutableVariable,
     LambdaDelimiter,
