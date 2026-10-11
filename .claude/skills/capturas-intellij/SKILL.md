@@ -1,6 +1,6 @@
 ---
 name: capturas-intellij
-description: Hacer o rehacer capturas de IntelliJ IDEA para las lecciones de DAM Prep en pareja claro/oscuro, con computer use limitado a clics - repositorio de muestra reproducible, captura de ventana, cambio de tema en vivo y recorte. Usar al añadir o actualizar capturas del IDE.
+description: Hacer o rehacer capturas de IntelliJ IDEA para las lecciones de init en pareja claro/oscuro, con computer use limitado a clics - repositorio de muestra reproducible, captura de ventana, cambio de tema en vivo y recorte. Usar al añadir o actualizar capturas del IDE.
 ---
 
 # Capturas de IntelliJ IDEA

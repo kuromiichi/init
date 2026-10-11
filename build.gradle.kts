@@ -62,7 +62,7 @@ tasks.test {
 
 compose.desktop {
     application {
-        mainClass = "dev.kuromiichi.damprep.MainKt"
+        mainClass = "dev.kuromiichi.init.MainKt"
         jvmArgs("--enable-native-access=ALL-UNNAMED")
 
         nativeDistributions {
@@ -76,8 +76,8 @@ compose.desktop {
                 TargetFormat.Deb,
                 TargetFormat.Rpm,
             )
-            packageName = "DAM Prep"
-            description = "Preparación interactiva para el ciclo de Desarrollo de Aplicaciones Multiplataforma"
+            packageName = "init"
+            description = "Guía interactiva para aprender a programar desde cero con Kotlin"
             modules("java.instrument", "jdk.unsupported")
         }
     }

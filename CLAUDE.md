@@ -1,6 +1,6 @@
-# DAM Prep
+# init
 
-Aplicación de escritorio en Kotlin/JVM con Compose Multiplatform y Material 3 para preparar la programación de 1º de DAM mediante un itinerario lineal de lecciones guiadas. Responder siempre en español (chat, propuestas y commits).
+Aplicación de escritorio en Kotlin/JVM con Compose Multiplatform y Material 3 para aprender a programar mediante un itinerario lineal de lecciones guiadas, con contenidos seleccionados a partir de la programación de 1º de DAM. Responder siempre en español (chat, propuestas y commits).
 
 ## Flujo de trabajo
 

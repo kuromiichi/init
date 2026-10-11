@@ -1,6 +1,6 @@
-# DAM Prep
+# init
 
-DAM Prep es una aplicación de escritorio de aprendizaje guiado para preparar contenidos de **Desarrollo de Aplicaciones Multiplataforma (DAM)** desde cero.
+init es una aplicación de escritorio de aprendizaje guiado para aprender a programar desde cero. Sus contenidos se seleccionan tomando como referencia la programación de primero de **Desarrollo de Aplicaciones Multiplataforma (DAM)**, sin pretender preparar el ciclo completo.
 
 El proyecto se centra en **Programación** y se apoya, cuando resulta necesario, en contenidos técnicos de Entornos de Desarrollo, Sistemas Informáticos, Bases de Datos y Lenguajes de Marcas. Las explicaciones se presentan en pasos breves, con ejemplos y apoyos visuales, para construir una base sólida antes de avanzar hacia ejercicios y proyectos más completos.
 
@@ -12,7 +12,7 @@ El proyecto se centra en **Programación** y se apoya, cuando resulta necesario,
 - Avanzar de forma progresiva desde los fundamentos hasta la orientación a objetos, las colecciones, las pruebas, las interfaces y un proyecto aplicado.
 - Mantener el contenido relacionado con los resultados de aprendizaje y criterios de evaluación del currículo oficial de DAM.
 
-DAM Prep no pretende reproducir literalmente un temario existente ni seguir necesariamente su mismo orden. Los contenidos se seleccionan, reorganizan y adaptan al formato de tutoría guiada de la aplicación.
+init no pretende reproducir literalmente un temario existente ni seguir necesariamente su mismo orden. Los contenidos se seleccionan, reorganizan y adaptan al formato de tutoría guiada de la aplicación.
 
 ## Estado actual
 
@@ -58,7 +58,7 @@ Cada lección se divide en pantallas cortas. La intención es presentar una idea
 
 Cuando el contenido lo permite, la lección termina con una práctica estructurada que presenta su objetivo, enunciado, requisitos mínimos, resultado esperado, pistas y una ampliación opcional. Las materias de apoyo se integran en un único recorrido: clasifican y contextualizan las lecciones, pero no crean caminos alternativos para el usuario.
 
-El orden de DAM Prep responde a esta progresión didáctica propia. Por ello puede diferir tanto del orden de las fuentes de referencia como de la distribución utilizada por un centro educativo concreto.
+El orden de init responde a esta progresión didáctica propia. Por ello puede diferir tanto del orden de las fuentes de referencia como de la distribución utilizada por un centro educativo concreto.
 
 ## Fuentes y marco curricular
 
@@ -67,7 +67,7 @@ Las referencias didácticas principales del proyecto son:
 - [Programación 1DAM, curso 2022/2023, de José Luis González Sánchez](https://github.com/joseluisgs/Programacion-00-2022-2023).
 - [Entornos de Desarrollo 1DAM, curso 2022/2023, de José Luis González Sánchez](https://github.com/joseluisgs/EntornosDesarrollo-00-2022-2023).
 
-Estos materiales organizan contenidos de Programación y Entornos de Desarrollo para primero de DAM y relacionan el temario con sus resultados de aprendizaje. DAM Prep los utiliza como orientación, pero adapta la selección, la redacción, el orden y la presentación a su propio formato.
+Estos materiales organizan contenidos de Programación y Entornos de Desarrollo para primero de DAM y relacionan el temario con sus resultados de aprendizaje. init los utiliza como orientación, pero adapta la selección, la redacción, el orden y la presentación a su propio formato.
 
 Como marco curricular oficial se consultan:
 
@@ -80,9 +80,9 @@ Para los detalles técnicos se prioriza, cuando corresponde, la documentación o
 
 ### Atribución del material educativo
 
-El repositorio de referencia de José Luis González Sánchez está publicado bajo la licencia [Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es). Los contenidos educativos de DAM Prep que adapten ese material deben conservar la atribución, el uso no comercial y las mismas condiciones de licencia.
+El repositorio de referencia de José Luis González Sánchez está publicado bajo la licencia [Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es). Los contenidos educativos de init que adapten ese material deben conservar la atribución, el uso no comercial y las mismas condiciones de licencia.
 
-El código fuente de DAM Prep no tiene todavía una licencia publicada. Esta distinción deberá conservarse al preparar una distribución pública del proyecto.
+El código fuente de init no tiene todavía una licencia publicada. Esta distinción deberá conservarse al preparar una distribución pública del proyecto.
 
 ## Tecnologías
 
@@ -152,13 +152,13 @@ Compose Desktop no permite generar instaladores para otro sistema operativo: los
 Si macOS rechaza la firma porque la carpeta está gestionada por un servicio de sincronización, el código puede mantenerse en su ubicación y dirigir únicamente los archivos de distribución a una carpeta local:
 
 ```bash
-./gradlew packageDistributionForCurrentOS -PnativeDistributionOutput=/private/tmp/dam-prep-distribution
+./gradlew packageDistributionForCurrentOS -PnativeDistributionOutput=/private/tmp/init-distribution
 ```
 
 ## Estructura principal
 
 ```text
-src/main/kotlin/dev/kuromiichi/damprep/
+src/main/kotlin/dev/kuromiichi/init/
 ├── data/
 │   ├── lessons/       Catálogo, modelos, contenidos y resaltado de ejemplos de Kotlin
 │   ├── local/         Resolución del directorio de datos de la aplicación

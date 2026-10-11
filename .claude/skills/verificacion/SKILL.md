@@ -1,6 +1,6 @@
 ---
 name: verificacion
-description: Verificar cambios de código en DAM Prep con el mínimo coste - diagnóstico con el MCP de IntelliJ, tareas Gradle focalizadas, build limpia final y recuperación de builds colgadas. Usar tras editar código Kotlin y antes de dar un cambio por bueno.
+description: Verificar cambios de código en init con el mínimo coste - diagnóstico con el MCP de IntelliJ, tareas Gradle focalizadas, build limpia final y recuperación de builds colgadas. Usar tras editar código Kotlin y antes de dar un cambio por bueno.
 ---
 
 # Verificación
@@ -34,7 +34,7 @@ Si el resumen no basta para diagnosticar un fallo, leer el log con `grep -n` o p
 - Montar el contenido con `setWindowContent` y pulsar con `press` (`testing/WindowContent.kt`): dan a cada prueba su propio estado del resaltado de teclado, como la ventana real. Con `setContent` a secas el estado se comparte entre pruebas y los resultados dependen del orden.
 - La primera flecha, Tab o tecla de desplazamiento solo muestra el resaltado si estaba oculto; las pruebas lo reflejan.
 - Las pantallas reciben el estado (inicio, lista) o el ViewModel con los fakes de `ViewModelTest` (lección).
-- Para ver cómo queda un estado (contorno de foco, tooltip, tema) sin abrir la app ni pedir control total: una prueba temporal que monte la pantalla dentro de `DamPrepTheme(themePreference = …)`, lleve la interfaz al estado con `press`, avance `mainClock` y guarde `onAllNodes(isRoot()).onFirst().captureToImage().toAwtImage()` como PNG en el scratchpad. Reducir la imagen con `sips -Z 640` antes de mirarla y borrar la prueba después.
+- Para ver cómo queda un estado (contorno de foco, tooltip, tema) sin abrir la app ni pedir control total: una prueba temporal que monte la pantalla dentro de `InitTheme(themePreference = …)`, lleve la interfaz al estado con `press`, avance `mainClock` y guarde `onAllNodes(isRoot()).onFirst().captureToImage().toAwtImage()` como PNG en el scratchpad. Reducir la imagen con `sips -Z 640` antes de mirarla y borrar la prueba después.
 
 ## 3. Cierre de cambios sustanciales
 

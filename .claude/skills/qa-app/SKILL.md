@@ -1,6 +1,6 @@
 ---
 name: qa-app
-description: QA de la experiencia de DAM Prep en la app real - instalación de QA preparada (sin onboarding, todo desbloqueado, tema/SO/lección/paso por parámetro), control en segundo plano por defecto y pocas capturas. Usar cuando cambie la interfaz o una lección.
+description: QA de la experiencia de init en la app real - instalación de QA preparada (sin onboarding, todo desbloqueado, tema/SO/lección/paso por parámetro), control en segundo plano por defecto y pocas capturas. Usar cuando cambie la interfaz o una lección.
 ---
 
 # QA de la experiencia
@@ -23,7 +23,7 @@ python3 .claude/scripts/qa.py stop
 
 ## Computer use en segundo plano (por defecto)
 
-Pedir acceso a `net.java.openjdk.java` («DAM Prep») y usar las herramientas `app_*`.
+Pedir acceso a `net.java.openjdk.java` («init») y usar las herramientas `app_*`.
 
 - El árbol de accesibilidad de Compose se rellena de forma perezosa: la primera `app_screenshot` solo devuelve los botones de la ventana; una segunda ya trae los de la app. Usar `scale: 0.1` cuando la captura solo sirve para refrescar el árbol.
 - «Paso siguiente», «Paso anterior», «Volver», «Ver lecciones»… se pulsan por `element_index`. «Continuar lección» no responde a AXPress: clic por coordenadas en su centro.

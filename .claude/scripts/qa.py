@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Instalación de QA de DAM Prep con datos aislados en `.claude/qa-home`.
+"""Instalación de QA de init con datos aislados en `.claude/qa-home`.
 
   qa.py launch [--theme Light|Dark|System] [--os MacOS|Windows|Linux]
                [--lesson <id> [--step N]] [--clean]
@@ -24,9 +24,9 @@ from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[2]
 QA_HOME = PROJECT / ".claude" / "qa-home"
-DATA_DIR = QA_HOME / "Library" / "Application Support" / "DAM Prep"
+DATA_DIR = QA_HOME / "Library" / "Application Support" / "dev.kuromiichi.init"
 LOG = PROJECT / ".claude" / "logs" / "qa-run.log"
-MAIN_CLASS = "dev.kuromiichi.damprep.MainKt"
+MAIN_CLASS = "dev.kuromiichi.init.MainKt"
 LAUNCH_TIMEOUT = 600
 
 
@@ -170,11 +170,11 @@ def varint(value: int) -> bytes:
 
 def seed_progress(lesson_id: str, step: int) -> None:
     """Marca como completadas las lecciones anteriores y guarda el paso de la indicada."""
-    catalog = (PROJECT / "src/main/kotlin/dev/kuromiichi/damprep/data/lessons/LessonCatalog.kt").read_text()
+    catalog = (PROJECT / "src/main/kotlin/dev/kuromiichi/init/data/lessons/LessonCatalog.kt").read_text()
     lesson_ids = re.findall(r'id = "([^"]+)"', catalog)
     if lesson_id not in lesson_ids:
         sys.exit(f"Lección desconocida: {lesson_id}. Disponibles: {', '.join(lesson_ids)}")
-    database = sqlite3.connect(DATA_DIR / "dam-prep.db")
+    database = sqlite3.connect(DATA_DIR / "init.db")
     create_schema_if_needed(database)
     now = int(time.time() * 1000)
     with database:

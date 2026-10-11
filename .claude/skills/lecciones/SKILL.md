@@ -1,6 +1,6 @@
 ---
 name: lecciones
-description: Crear, editar o revisar lecciones y prácticas de DAM Prep - fuentes y criterio docente, reglas de las prácticas «Ahora te toca», guía visual (paneles, bloques de código, terminales, capturas) y mapa de archivos. Usar antes de tocar contenido de lecciones o sus visuales.
+description: Crear, editar o revisar lecciones y prácticas de init - fuentes y criterio docente, reglas de las prácticas «Ahora te toca», guía visual (paneles, bloques de código, terminales, capturas) y mapa de archivos. Usar antes de tocar contenido de lecciones o sus visuales.
 ---
 
 # Lecciones
