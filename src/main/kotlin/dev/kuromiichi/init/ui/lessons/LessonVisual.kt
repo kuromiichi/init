@@ -225,6 +225,7 @@ internal fun ConsoleVisual(
     }
 }
 
+@Composable
 private fun LessonCodeExample.toLearningCodeExample(): LearningCodeExample =
     LearningCodeExample(
         fileName = fileName,

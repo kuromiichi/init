@@ -14,11 +14,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.kuromiichi.init.ui.theme.CatppuccinFlavor
+import dev.kuromiichi.init.ui.theme.jetBrainsMono
 
 /**
  * Muestra una o varias ejecuciones como aparecerían en la ventana Run de IntelliJ IDEA. Lo que
@@ -100,7 +100,7 @@ internal fun ConsoleRuns(
                         text = line.text,
                         style =
                             MaterialTheme.typography.bodyMedium.copy(
-                                fontFamily = FontFamily.Monospace,
+                                fontFamily = jetBrainsMono(),
                                 fontSize = 15.sp,
                                 lineHeight = 20.sp,
                                 fontWeight = if (line.isInput) FontWeight.SemiBold else null,

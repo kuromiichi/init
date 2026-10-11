@@ -17,12 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.kuromiichi.init.ui.theme.jetBrainsMono
 
 /**
  * Tabla de traza: cada fila muestra el valor de las variables al terminar una vuelta del bucle.
@@ -36,7 +36,7 @@ fun TraceTableVisual(
     val flavor = codeFlavor()
     val cellStyle =
         MaterialTheme.typography.bodyMedium.copy(
-            fontFamily = FontFamily.Monospace,
+            fontFamily = jetBrainsMono(),
             fontSize = 15.sp,
             lineHeight = 20.sp,
         )

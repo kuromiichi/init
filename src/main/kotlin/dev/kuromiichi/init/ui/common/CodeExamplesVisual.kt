@@ -45,7 +45,6 @@ import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -55,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.kuromiichi.init.ui.theme.CatppuccinFlavor
 import dev.kuromiichi.init.ui.theme.LocalCatppuccinFlavor
+import dev.kuromiichi.init.ui.theme.jetBrainsMono
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.awt.datatransfer.StringSelection
@@ -248,7 +248,7 @@ private fun CodeLine(
             text = number.toString(),
             style =
                 MaterialTheme.typography.labelMedium.copy(
-                    fontFamily = FontFamily.Monospace,
+                    fontFamily = jetBrainsMono(),
                     fontSize = 13.sp,
                     lineHeight = 20.sp,
                 ),
@@ -276,7 +276,7 @@ private fun CodeLine(
                 },
             style =
                 MaterialTheme.typography.bodyMedium.copy(
-                    fontFamily = FontFamily.Monospace,
+                    fontFamily = jetBrainsMono(),
                     fontSize = 15.sp,
                     lineHeight = 20.sp,
                 ),

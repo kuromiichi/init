@@ -29,7 +29,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -47,6 +46,7 @@ import dev.kuromiichi.init.ui.common.LearningCodeLine
 import dev.kuromiichi.init.ui.common.LearningCodeToken
 import dev.kuromiichi.init.ui.common.TerminalCommandsVisual
 import dev.kuromiichi.init.ui.common.hoverScale
+import dev.kuromiichi.init.ui.theme.jetBrainsMono
 
 @Composable
 internal fun LessonExplanation(
@@ -232,7 +232,7 @@ internal fun LessonRichText.toAnnotatedString(tintedContentColor: Color? = null)
         SpanStyle(
             background = codeColor.copy(alpha = 0.1f),
             color = codeColor,
-            fontFamily = FontFamily.Monospace,
+            fontFamily = jetBrainsMono(),
             fontWeight = FontWeight.Medium,
         )
     return buildAnnotatedString {
@@ -264,14 +264,16 @@ internal fun LessonRichText.toAnnotatedString(tintedContentColor: Color? = null)
  * Versión de [toAnnotatedString] para las notas de los bloques de código: conserva los colores
  * del bloque y distingue el código con fuente monoespaciada.
  */
-internal fun LessonRichText.toCodeNote() =
-    buildAnnotatedString {
+@Composable
+internal fun LessonRichText.toCodeNote(): AnnotatedString {
+    val codeFontFamily = jetBrainsMono()
+    return buildAnnotatedString {
         spans.forEach { span ->
             val style =
                 when (span.style) {
                     LessonTextSpanStyle.Regular -> SpanStyle()
                     LessonTextSpanStyle.Emphasis, LessonTextSpanStyle.Highlight -> SpanStyle(fontWeight = FontWeight.SemiBold)
-                    LessonTextSpanStyle.InlineCode -> SpanStyle(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
+                    LessonTextSpanStyle.InlineCode -> SpanStyle(fontFamily = codeFontFamily, fontWeight = FontWeight.SemiBold)
                 }
 
             withStyle(style) {
@@ -279,3 +281,4 @@ internal fun LessonRichText.toCodeNote() =
             }
         }
     }
+}

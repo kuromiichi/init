@@ -35,7 +35,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -51,6 +50,7 @@ import dev.kuromiichi.init.data.lessons.UmlMember
 import dev.kuromiichi.init.data.lessons.UmlNode
 import dev.kuromiichi.init.data.lessons.UmlRelationKind
 import dev.kuromiichi.init.data.lessons.description
+import dev.kuromiichi.init.ui.theme.jetBrainsMono
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
@@ -370,9 +370,10 @@ private fun UmlNodeHeader(
     }
 }
 
-private val UmlMemberStyle =
+@Composable
+private fun umlMemberStyle() =
     TextStyle(
-        fontFamily = FontFamily.Monospace,
+        fontFamily = jetBrainsMono(),
         fontSize = 13.sp,
         lineHeight = 19.sp,
     )
@@ -384,7 +385,7 @@ private fun UmlCompartment(members: List<UmlMember>) {
         members.forEach { member ->
             Text(
                 text = member.label,
-                style = UmlMemberStyle,
+                style = umlMemberStyle(),
                 fontStyle = if (member.isAbstract) FontStyle.Italic else FontStyle.Normal,
                 textDecoration = if (member.isStatic) TextDecoration.Underline else null,
             )
