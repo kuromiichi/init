@@ -10,7 +10,7 @@ Subir un tag `vMAJOR.MINOR.PATCH` lanza `.github/workflows/release.yml`: verific
 ## 1. Elegir la versión
 
 - Formato estricto `vMAJOR.MINOR.PATCH`, sin sufijos: el workflow rechaza `-beta.1` y similares (el MSI repetiría versión con la final).
-- Etapa beta (mayor 0): `feat` desde el último tag → subir MINOR (`v0.2.0`); solo `fix` → subir PATCH (`v0.1.1`). `v1.0.0` solo cuando el usuario lo decida.
+- Etapa beta (mayor 0): una lección nueva desde el último tag → subir MINOR (`v0.2.0`); cualquier otro cambio, `feat` incluido → subir PATCH (`v0.2.1`). `v1.0.0` solo cuando el usuario lo decida; entonces se revisa esta regla.
 - Último tag y cambios desde él:
 
 ```sh
