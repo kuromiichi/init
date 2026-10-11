@@ -97,10 +97,10 @@ Tus datos (nombre, ajustes y progreso) se guardan fuera de la instalación y se 
 
 ## Itinerario
 
-Hay contenido disponible hasta la lección 18; el resto del recorrido está planificado y se irá publicando.
+Hay contenido disponible hasta la lección 19; el resto del recorrido está planificado y se irá publicando.
 
 <details>
-<summary><b>Lecciones disponibles (18 de 32)</b></summary>
+<summary><b>Lecciones disponibles (19 de 32)</b></summary>
 
 1. Bienvenida y mapa del camino
 2. Qué es el software y cómo se construye
@@ -120,12 +120,12 @@ Hay contenido disponible hasta la lección 18; el resto del recorrido está plan
 16. Programación orientada a objetos II: relaciones y composición
 17. Programación orientada a objetos III: herencia e interfaces
 18. UML: diagramas de clases
+19. Programación funcional aplicada
 </details>
 
 <details>
 <summary><b>Próximamente</b></summary>
 
-19. Programación funcional aplicada
 20. Genéricos, abstracciones y colecciones avanzadas
 21. Código limpio y refactorización
 22. SOLID, patrones y arquitectura básica
@@ -332,7 +332,7 @@ Las pruebas de `LessonContentRulesTest` comprueban reglas generales del contenid
 
 ## Próximos pasos
 
-1. Desarrollar las lecciones restantes, empezando por programación funcional, manteniendo la progresión lineal.
+1. Desarrollar las lecciones restantes, empezando por genéricos y colecciones avanzadas, manteniendo la progresión lineal.
 2. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
 3. Implementar apuntes persistentes sobre la base de datos local.
 4. Firmar los instaladores de macOS y Windows para evitar los avisos de la primera instalación.

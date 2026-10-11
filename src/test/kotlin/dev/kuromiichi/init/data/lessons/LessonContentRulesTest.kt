@@ -151,6 +151,7 @@ class LessonContentRulesTest {
                 "oop-relationships" to listOf("""\b(open|abstract|sealed|interface|protected|inner|lateinit|lazy)\b""", """(?<!companion )\bobject\b""", """\bclass \w+(\([^)]*\))? ?: ?\w""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "oop-inheritance-interfaces" to listOf("""\b(lateinit|lazy|inner|by)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "basic-uml" to listOf("""\b(lateinit|lazy|inner|by)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
+                "functional-programming" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(groupBy|groupingBy|fold|reduce|flatMap|flatten|partition|zip|associate\w*|asSequence|sortedWith|mapValues|mapKeys)\b""", """\b(sequenceOf|Comparator|compareBy)\b""", """\b(Pair|Triple)\("""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 
