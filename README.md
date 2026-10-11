@@ -1,49 +1,147 @@
+<div align="center">
+
 # init
 
-init es una aplicación de escritorio de aprendizaje guiado para aprender a programar desde cero. Sus contenidos se seleccionan tomando como referencia la programación de primero de **Desarrollo de Aplicaciones Multiplataforma (DAM)**, sin pretender preparar el ciclo completo.
+**Aprende a programar desde cero, paso a paso, con Kotlin.**
 
-El proyecto se centra en **Programación** y se apoya, cuando resulta necesario, en contenidos técnicos de Entornos de Desarrollo, Sistemas Informáticos, Bases de Datos y Lenguajes de Marcas. Las explicaciones se presentan en pasos breves, con ejemplos y apoyos visuales, para construir una base sólida antes de avanzar hacia ejercicios y proyectos más completos.
+Una aplicación de escritorio con un itinerario guiado de lecciones cortas, ejemplos visuales y prácticas,<br>
+inspirada en la programación de primero de Desarrollo de Aplicaciones Multiplataforma (DAM).
 
-## Objetivos
+[![Última versión](https://img.shields.io/github/v/release/kuromiichi/init?label=versi%C3%B3n&color=4c7cf0)](https://github.com/kuromiichi/init/releases/latest)
+[![Verificación](https://github.com/kuromiichi/init/actions/workflows/verify.yml/badge.svg)](https://github.com/kuromiichi/init/actions/workflows/verify.yml)
+![macOS · Windows · Linux](https://img.shields.io/badge/macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-escritorio-6c7086)
+![Kotlin](https://img.shields.io/badge/Kotlin-2.4-7f52ff?logo=kotlin&logoColor=white)
+![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.11-4285f4?logo=jetpackcompose&logoColor=white)
 
-- Introducir la programación sin asumir conocimientos previos.
-- Relacionar cada concepto con las herramientas utilizadas en un entorno de desarrollo real.
-- Aprender Kotlin sobre la JVM utilizando IntelliJ IDEA, Gradle y Git.
-- Avanzar de forma progresiva desde los fundamentos hasta la orientación a objetos, las colecciones, las pruebas, las interfaces y un proyecto aplicado.
-- Mantener el contenido relacionado con los resultados de aprendizaje y criterios de evaluación del currículo oficial de DAM.
+[**Descargar**](#descargar) · [Itinerario](#itinerario) · [Enfoque didáctico](#enfoque-didáctico) · [Desarrollo](#desarrollo)
 
-init no pretende reproducir literalmente un temario existente ni seguir necesariamente su mismo orden. Los contenidos se seleccionan, reorganizan y adaptan al formato de tutoría guiada de la aplicación.
+<img src="docs/screenshots/lesson.png" alt="Una lección de init: explicación de do-while junto a un ejemplo de código resaltado" width="820">
 
-## Estado actual
+</div>
 
-El proyecto se encuentra en una fase inicial funcional.
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/home.png" alt="Portada con el progreso y el botón para continuar la lección"></td>
+    <td width="50%"><img src="docs/screenshots/lessons-dark.png" alt="Listado de lecciones en tema oscuro"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Portada: tu progreso y la siguiente lección</sub></td>
+    <td align="center"><sub>Itinerario lineal, también en tema oscuro</sub></td>
+  </tr>
+</table>
 
-Actualmente incluye:
+## Qué es init
 
-- onboarding y preferencias persistentes de nombre, tratamiento, sistema operativo y tema;
-- exportación e importación de datos (nombre, ajustes y progreso) en un archivo JSON, desde Configuración y desde el onboarding, para hacer copias de seguridad o cambiar de equipo;
-- temas claro, oscuro y según el sistema;
-- navegación entre portada, listado y lecciones, con navegación por botones y teclado dentro de cada lección;
-- itinerario lineal provisional de 29 lecciones con desbloqueo secuencial; las lecciones que aún no se pueden abrir explican el motivo;
-- progreso persistente: una lección sin terminar se retoma en el último paso visitado y una lección completada se repasa desde el principio sin alterar el progreso;
-- once lecciones con contenido:
-    1. Bienvenida y mapa del camino;
-    2. Qué es el software y cómo se construye;
-    3. Preparar el entorno de trabajo;
-    4. Primeros programas;
-    5. Leer datos y tomar decisiones;
-    6. Repetir acciones y construir algoritmos;
-    7. Entender errores y depurar;
-    8. Funciones y modularidad;
-    9. Control de versiones con Git;
-    10. Pruebas básicas de software;
-    11. Valores nulos, errores y excepciones;
-- componentes visuales para diagramas, ejemplos de código resaltados, tablas de traza, consola con errores, herramientas y capturas;
-- prácticas guiadas con requisitos, resultado esperado en forma de consola, pistas progresivas y confirmación explícita;
-- pruebas automatizadas de los modelos, preferencias, progreso, base de datos, ViewModels, resaltado de código y reglas del contenido;
-- verificación automática del formato, las pruebas y la compilación.
+init es una tutoría guiada para aprender a programar sin conocimientos previos. Cada lección se divide en pantallas breves que presentan una idea cada vez, con ejemplos de código, esquemas y prácticas para comprobar lo aprendido.
 
-La pantalla de apuntes todavía está pendiente. Las lecciones futuras permanecen bloqueadas o marcadas como próximas hasta que se complete la anterior y exista contenido disponible.
+Los contenidos se seleccionan tomando como referencia la programación de primero de **DAM**, sin pretender preparar el ciclo completo. El centro es **Programación**, apoyada cuando hace falta en Entornos de Desarrollo, Sistemas Informáticos, Bases de Datos y Lenguajes de Marcas.
+
+- Introduce la programación sin dar nada por sabido.
+- Relaciona cada concepto con las herramientas de un entorno real: Kotlin sobre la JVM, IntelliJ IDEA, Gradle y Git.
+- Avanza desde los fundamentos hasta la orientación a objetos, las colecciones, las pruebas, las interfaces y un proyecto aplicado.
+- Mantiene la relación con los resultados de aprendizaje y criterios de evaluación del currículo oficial de DAM.
+
+init no reproduce literalmente ningún temario ni sigue necesariamente su orden: los contenidos se seleccionan, reorganizan y adaptan al formato de la aplicación.
+
+## Descargar
+
+> [!NOTE]
+> init está en **beta** (versiones `0.x`): puede tener errores y cambiar con frecuencia. La app avisa de cada versión nueva y se actualiza conservando tu progreso.
+
+Descarga el instalador de tu sistema desde la [**última release**](https://github.com/kuromiichi/init/releases/latest):
+
+| Sistema | Archivo |
+| --- | --- |
+| macOS con Apple Silicon (M1 o posterior) | `init-<versión>-macos-arm64.dmg` |
+| macOS con Intel | `init-<versión>-macos-x64.dmg` |
+| Windows 10 u 11 (x64) | `init-<versión>-windows-x64.msi` |
+| Linux x64 (Debian, Ubuntu y derivadas) | `init-<versión>-linux-x64.deb` |
+
+Los instaladores todavía no están firmados, así que la primera vez el sistema pide confirmación:
+
+<details>
+<summary><b>macOS</b></summary>
+
+Abre el `.dmg` y arrastra **init** a *Aplicaciones*. Si al abrirla macOS indica que no puede comprobar el desarrollador, ve a *Ajustes del Sistema → Privacidad y seguridad* y pulsa *Abrir igualmente*. Solo hace falta la primera vez.
+</details>
+
+<details>
+<summary><b>Windows</b></summary>
+
+Ejecuta el `.msi`. Si aparece *Windows protegió su PC*, pulsa *Más información → Ejecutar de todas formas*. Se instala para tu usuario, sin permisos de administrador.
+</details>
+
+<details>
+<summary><b>Linux</b></summary>
+
+Abre el `.deb` con el instalador de software de tu distribución o instálalo desde la terminal:
+
+```bash
+sudo apt install ./init-<versión>-linux-x64.deb
+```
+</details>
+
+Tus datos (nombre, ajustes y progreso) se guardan fuera de la instalación y se mantienen al actualizar. Desde *Configuración* puedes exportarlos a un archivo para hacer una copia o llevarlos a otro equipo.
+
+## Características
+
+- **Itinerario lineal** de 32 lecciones con desbloqueo secuencial; las que aún no se pueden abrir explican por qué.
+- **Pasos breves** con texto enriquecido, ejemplos de Kotlin resaltados, tablas de traza, salidas de consola, esquemas, capturas de herramientas y diagramas UML.
+- **Prácticas guiadas** con requisitos, resultado esperado en forma de consola, pistas progresivas y ampliación opcional.
+- **Progreso persistente**: una lección a medias se retoma en el último paso y una completada se repasa sin alterar el avance.
+- **Instrucciones por sistema operativo** (macOS, Windows o Linux) en las lecciones de entorno y terminal.
+- **Todo con teclado**: flechas, Tab, Intro y Escape en todas las pantallas.
+- **Temas claro, oscuro o del sistema**, y tratamiento personalizable en los saludos.
+- **Copias de seguridad** en JSON desde Configuración y desde la configuración inicial.
+- **Actualizaciones integradas** desde GitHub Releases, con comprobación de integridad.
+
+## Itinerario
+
+Hay contenido disponible hasta la lección 18; el resto del recorrido está planificado y se irá publicando.
+
+<details>
+<summary><b>Lecciones disponibles (18 de 32)</b></summary>
+
+1. Bienvenida y mapa del camino
+2. Qué es el software y cómo se construye
+3. Preparar el entorno de trabajo
+4. Primeros programas
+5. Leer datos y tomar decisiones
+6. Repetir acciones y construir algoritmos
+7. Entender errores y depurar
+8. Funciones y modularidad
+9. La terminal y el sistema de ficheros
+10. Control de versiones con Git
+11. Pruebas básicas de software
+12. Valores nulos, errores y excepciones
+13. Estructuras de almacenamiento I: arrays y listas
+14. Estructuras de almacenamiento II: conjuntos y mapas
+15. Programación orientada a objetos I: clases y objetos
+16. Programación orientada a objetos II: relaciones y composición
+17. Programación orientada a objetos III: herencia e interfaces
+18. UML: diagramas de clases
+</details>
+
+<details>
+<summary><b>Próximamente</b></summary>
+
+19. Programación funcional aplicada
+20. Genéricos, abstracciones y colecciones avanzadas
+21. Código limpio y refactorización
+22. SOLID, patrones y arquitectura básica
+23. Gradle y dependencias
+24. Leer y escribir ficheros
+25. JSON, XML y formatos de intercambio
+26. Diseñar datos: modelo E/R y normalización
+27. SQL I: crear tablas y manipular datos
+28. SQL II: consultas con varias tablas
+29. Usar una base de datos desde Kotlin
+30. Interfaces gráficas
+31. Desarrollo iterativo y organización del proyecto
+32. Proyecto aplicado
+</details>
+
+La pantalla de apuntes todavía está pendiente.
 
 ## Enfoque didáctico
 
@@ -56,7 +154,7 @@ Cada lección se divide en pantallas cortas. La intención es presentar una idea
 - uso gradual de herramientas profesionales;
 - actividades prácticas para comprobar lo aprendido.
 
-Cuando el contenido lo permite, la lección termina con una práctica estructurada que presenta su objetivo, enunciado, requisitos mínimos, resultado esperado, pistas y una ampliación opcional. Las materias de apoyo se integran en un único recorrido: clasifican y contextualizan las lecciones, pero no crean caminos alternativos para el usuario.
+Cuando el contenido lo permite, la lección termina con una práctica estructurada que presenta su objetivo, enunciado, requisitos mínimos, resultado esperado, pistas y una ampliación opcional. Las materias de apoyo se integran en un único recorrido: clasifican y contextualizan las lecciones, pero no crean caminos alternativos.
 
 El orden de init responde a esta progresión didáctica propia. Por ello puede diferir tanto del orden de las fuentes de referencia como de la distribución utilizada por un centro educativo concreto.
 
@@ -84,27 +182,22 @@ El repositorio de referencia de José Luis González Sánchez está publicado ba
 
 El código fuente de init no tiene todavía una licencia publicada. Esta distinción deberá conservarse al preparar una distribución pública del proyecto.
 
-## Tecnologías
+## Desarrollo
 
-- Kotlin/JVM
-- Compose Multiplatform para escritorio
-- Material 3
-- Navigation Compose con rutas tipadas
-- ViewModels de AndroidX Lifecycle
-- DataStore Preferences
-- Room sobre SQLite para los datos de progreso
-- Koin para la inyección de dependencias, incluidos los ViewModels
-- KSP para la generación de código de Room
-- Gradle con Kotlin DSL
-- Kotlin Test y JUnit Platform
+### Tecnologías
 
-La compilación utiliza una toolchain de Java 25.
+| Ámbito | Herramientas |
+| --- | --- |
+| Lenguaje e interfaz | Kotlin/JVM, Compose Multiplatform para escritorio, Material 3 |
+| Navegación y estado | Navigation Compose con rutas tipadas, ViewModels de AndroidX Lifecycle |
+| Datos | DataStore Preferences, Room sobre SQLite, kotlinx.serialization |
+| Inyección de dependencias | Koin, incluidos los ViewModels |
+| Compilación | Gradle con Kotlin DSL, KSP, toolchain de Java 25 |
+| Calidad | Kotlin Test sobre JUnit Platform, pruebas de interfaz de Compose, ktlint |
 
-## Ejecutar el proyecto
+### Ejecutar el proyecto
 
-El repositorio incluye Gradle Wrapper, por lo que no es necesario instalar Gradle por separado.
-
-En macOS o Linux:
+El repositorio incluye Gradle Wrapper, así que no hace falta instalar Gradle. En macOS o Linux:
 
 ```bash
 ./gradlew run
@@ -116,9 +209,9 @@ En Windows:
 gradlew.bat run
 ```
 
-También se puede abrir el proyecto directamente con IntelliJ IDEA y ejecutar la configuración principal de la aplicación.
+También se puede abrir el proyecto con IntelliJ IDEA y ejecutar la configuración principal de la aplicación.
 
-## Verificación
+### Verificación
 
 Ejecutar las pruebas:
 
@@ -126,14 +219,14 @@ Ejecutar las pruebas:
 ./gradlew test
 ```
 
-Compilar y verificar el proyecto completo desde cero:
+Compilar y verificar el proyecto completo desde cero (compilación, pruebas y estilo):
 
 ```bash
 ./gradlew --stop
 ./gradlew --no-daemon clean build
 ```
 
-La tarea `build` también comprueba el estilo del código. Para aplicar automáticamente el formato acordado:
+Aplicar automáticamente el formato acordado:
 
 ```bash
 ./gradlew ktlintFormat
@@ -141,29 +234,48 @@ La tarea `build` también comprueba el estilo del código. Para aplicar automát
 
 Si una compilación se queda detenida sin avanzar, suele deberse a salidas previas en `build/`: basta con detenerla, ejecutar `./gradlew --stop` y repetir la tarea precedida de `clean`.
 
-Para generar el instalador correspondiente al sistema operativo actual:
+### Instaladores
 
 ```bash
 ./gradlew packageDistributionForCurrentOS
 ```
 
-Compose Desktop no permite generar instaladores para otro sistema operativo: los paquetes de macOS, Windows y Linux deben construirse en cada plataforma respectiva.
-
-Si macOS rechaza la firma porque la carpeta está gestionada por un servicio de sincronización, el código puede mantenerse en su ubicación y dirigir únicamente los archivos de distribución a una carpeta local:
+Compose Desktop no genera instaladores para otro sistema: cada paquete se construye en su plataforma, que es lo que hace el workflow de releases. Si macOS rechaza la firma porque la carpeta está gestionada por un servicio de sincronización, se puede dirigir solo la salida a una carpeta local:
 
 ```bash
 ./gradlew packageDistributionForCurrentOS -PnativeDistributionOutput=/private/tmp/init-distribution
 ```
 
-## Estructura principal
+### Versiones y releases
+
+Las versiones siguen [SemVer](https://semver.org/lang/es/) y se publican con un tag `vMAJOR.MINOR.PATCH` sin sufijos. Mientras la versión mayor sea 0 la app se considera beta y lo indica en Configuración; `1.0.0` queda para la primera versión estable.
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+El workflow [`Release`](.github/workflows/release.yml) verifica el proyecto, construye los instaladores (dmg para macOS arm64 y x64, msi para Windows x64 y deb para Linux x64), calcula `SHA256SUMS` y publica la release con los cambios `feat` y `fix` desde el tag anterior.
+
+La app consulta la última release al iniciarse (se puede desactivar en Configuración) y, si es más nueva, muestra un botón en la portada. Antes de instalar comprueba el SHA-256 del instalador:
+
+- **macOS**: sustituye la app al cerrarla y la vuelve a abrir. Si no tiene permiso de escritura en su carpeta, abre la imagen para instalarla a mano.
+- **Windows**: el MSI, por usuario y sin administrador, sustituye la versión anterior gracias a su `upgradeUuid` fijo.
+- **Linux**: abre el paquete en el instalador del sistema.
+
+macOS exige que la versión del paquete empiece por 1 o más, así que durante la etapa 0.x el `.app` lleva internamente `1.0.<nº de commits>`; la versión visible es siempre la del tag. Las ejecuciones con `./gradlew run` no tienen versión (`dev`) y no buscan actualizaciones. Las migraciones de Room y los identificadores estables de las lecciones mantienen el progreso entre versiones.
+
+### Estructura principal
 
 ```text
 src/main/kotlin/dev/kuromiichi/init/
 ├── data/
+│   ├── backup/        Exportación e importación de datos en JSON
 │   ├── lessons/       Catálogo, modelos, contenidos y resaltado de ejemplos de Kotlin
-│   ├── local/         Resolución del directorio de datos de la aplicación
+│   ├── local/         Directorio de datos de la aplicación
 │   ├── preferences/   Preferencias persistentes del usuario
-│   └── progress/      Base Room y repositorio de progreso
+│   ├── progress/      Base Room y repositorio de progreso
+│   └── update/        Versión instalada, releases de GitHub e instalación por sistema
 ├── di/                Módulos de Koin: datos y ViewModels
 ├── ui/
 │   ├── common/        Componentes compartidos y visuales didácticos
@@ -172,24 +284,25 @@ src/main/kotlin/dev/kuromiichi/init/
 │   ├── navigation/    Rutas y navegación de la aplicación
 │   ├── notes/         Área de apuntes, todavía provisional
 │   ├── onboarding/    Configuración inicial
-│   ├── settings/      Preferencias de nombre, tratamiento y tema
+│   ├── settings/      Preferencias, copias de seguridad y actualizaciones
 │   ├── theme/         Sistema visual
+│   ├── update/        Diálogo y estado de las actualizaciones
 │   └── window/        Adaptación al tamaño de ventana
 └── App.kt             Composición principal de la aplicación
 ```
 
-Los recursos gráficos se encuentran en `src/main/composeResources/drawable` y las pruebas en `src/test/kotlin`.
+Los recursos gráficos están en `src/main/composeResources/drawable`, las pruebas en `src/test/kotlin` y las capturas de este documento en `docs/screenshots`.
 
-## Arquitectura
+### Arquitectura
 
 La aplicación sigue las guías de arquitectura de Android adaptadas a escritorio:
 
 - Cada pantalla obtiene su `ViewModel` con `koinViewModel()` y observa un único `StateFlow` de estado mediante `collectAsStateWithLifecycle()`.
 - Los ViewModels producen el estado combinando los flujos de los repositorios con `stateIn(WhileSubscribed(5_000))`, sin lanzar trabajo en `init`. Los eventos de un solo uso, como terminar una lección, se exponen como estado.
-- Los repositorios escriben en un ámbito de corrutinas de aplicación inyectado, de modo que el progreso se guarda aunque la pantalla se cierre justo después.
+- Los repositorios escriben en un ámbito de corrutinas de aplicación inyectado, de modo que el progreso se guarda aunque la pantalla se cierre justo después. El actualizador también trabaja en ese ámbito y comparte su estado entre la portada y Configuración.
 - La lección abierta recibe su identificador de la ruta tipada mediante `SavedStateHandle.toRoute()`.
 
-## Escribir contenido
+### Escribir contenido
 
 Cada lección es un `LessonContent` en `data/lessons/contents`, identificado con el mismo id que su entrada en `LessonCatalog`. Los ejemplos de código se escriben como Kotlin normal y se resaltan automáticamente:
 
@@ -217,10 +330,10 @@ Las pruebas de `LessonContentRulesTest` comprueban reglas generales del contenid
 
 ## Próximos pasos
 
-1. Desarrollar la lección de arrays y listas, manteniendo la progresión lineal.
+1. Desarrollar las lecciones restantes, empezando por programación funcional, manteniendo la progresión lineal.
 2. Documentar la relación entre cada lección, sus fuentes y los resultados de aprendizaje correspondientes.
 3. Implementar apuntes persistentes sobre la base de datos local.
-4. Completar los metadatos, iconos y pruebas de los instaladores nativos.
+4. Firmar los instaladores de macOS y Windows para evitar los avisos de la primera instalación.
 
 ## Contribución
 
