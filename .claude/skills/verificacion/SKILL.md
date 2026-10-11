@@ -9,9 +9,9 @@ Escalar de lo barato a lo caro y parar en el nivel que el riesgo exija.
 
 ## 1. Diagnóstico inmediato con IntelliJ (sin Gradle)
 
-Tras editar, `mcp__idea__get_file_problems` con `errorsOnly: true` y `projectPath: /Users/kuromi/Projects/dam-prep` en cada archivo tocado. Detecta errores de compilación y tipos en segundos sin lanzar Gradle.
+Tras editar, `mcp__idea__get_file_problems` con `errorsOnly: true` y `projectPath: /Users/kuromi/Projects/init` en cada archivo tocado. Detecta errores de compilación y tipos en segundos sin lanzar Gradle.
 
-- Si responde que el proyecto no está abierto: `open -a "$HOME/Applications/IntelliJ IDEA.app" /Users/kuromi/Projects/dam-prep` y reintentar tras unos segundos (el primer análisis tras indexar puede tardar).
+- Si responde que el proyecto no está abierto: `open -a "$HOME/Applications/IntelliJ IDEA.app" /Users/kuromi/Projects/init` y reintentar tras unos segundos (el primer análisis tras indexar puede tardar).
 - Para buscar código: `search_symbol` (declaraciones), `get_symbol_info` (firma y documentación en una posición), `analyze_calls` (quién llama a qué), `search_text`/`search_regex` acotando `paths`. Devuelven coordenadas: leer después solo ese rango del archivo.
 - Para renombrar símbolos usados en varios archivos: `rename_refactoring`.
 - No usar `build_project` ni las configuraciones run de Gradle del IDE mientras haya un Gradle de terminal en curso: comparten `build/`.
