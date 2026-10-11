@@ -39,7 +39,7 @@ val basicUmlLessonContent =
                         listOf(
                             paragraph(regular("Con dos o tres clases, el código se entiende de un vistazo. Con diez, ya no: cuesta ver qué clase conoce a cuál o quién crea a quién. Un dibujo de las clases y sus relaciones da esa visión de conjunto antes de escribir una línea, y sirve para hablar del diseño con otras personas.")),
                             paragraph(regular("Para que todos dibujen igual existe "), highlight("UML"), regular(" (Unified Modeling Language), una notación estándar para describir software. No es un lenguaje de programación: es un conjunto de diagramas con reglas comunes que entiende cualquier equipo, programe en Kotlin, Java o C#.")),
-                            paragraph(regular("Hay diagramas de "), emphasis("estructura"), regular(", que muestran de qué piezas está hecho el programa, y de "), emphasis("comportamiento"), regular(", que muestran qué ocurre mientras se ejecuta. Esta lección trata el más usado de estructura, el "), highlight("diagrama de clases"), regular("; los de comportamiento llegan en la siguiente.")),
+                            paragraph(regular("Hay diagramas de "), emphasis("estructura"), regular(", que muestran de qué piezas está hecho el programa, y de "), emphasis("comportamiento"), regular(", que muestran qué ocurre mientras se ejecuta. Esta lección trata el más usado de estructura, el "), highlight("diagrama de clases"), regular("; los de comportamiento los verás en Entornos de Desarrollo.")),
                         ),
                     visual = LessonVisualContent.Flow(listOf("Leer el enunciado", "Dibujar las clases", "Escribir el código", "Revisar el diagrama")),
                 ),
@@ -534,7 +534,6 @@ val basicUmlLessonContent =
                         listOf(
                             paragraph(regular("Un taller mecánico registra con este programa las reparaciones de cada vehículo. Un cliente puede traer varios vehículos y un vehículo puede volver otro día. Cada reparación tiene líneas de dos tipos: piezas, con su precio y unidades, y mano de obra, a 40 la hora.")),
                             paragraph(regular("Todo está en un solo "), inlineCode("main"), regular(" y no sabe qué vehículos son de quién. "), highlight("Diseña primero el diagrama de clases"), regular(" y después el código. Además, al terminar el programa debe mostrar cuánto ha gastado cada cliente.")),
-                            callout("Guarda el proyecto", "En la lección siguiente ampliarás este mismo taller: las reparaciones tendrán un ciclo de vida y dibujarás cómo se comporta el programa.", LessonCalloutTone.Warning),
                         ),
                     visual =
                         LessonVisualContent.CodeExamples(

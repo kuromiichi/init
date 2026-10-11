@@ -107,12 +107,7 @@ object LessonCatalog {
             ),
             LessonSummary(
                 id = "basic-uml",
-                title = "UML I: diagramas de clases",
-                subjectArea = SubjectArea.DevelopmentEnvironments,
-            ),
-            LessonSummary(
-                id = "uml-behavior",
-                title = "UML II: diagramas de comportamiento",
+                title = "UML: diagramas de clases",
                 subjectArea = SubjectArea.DevelopmentEnvironments,
             ),
             LessonSummary(

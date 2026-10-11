@@ -8,7 +8,7 @@ class LessonCatalogTest {
     fun `catalog exposes provisional continuous syllabus`() {
         val lessons = LessonCatalog.lessons
 
-        assertEquals(33, lessons.size)
+        assertEquals(32, lessons.size)
         assertEquals("welcome-roadmap", lessons.first().id)
         assertEquals("applied-project", lessons.last().id)
         assertEquals(
@@ -51,7 +51,6 @@ class LessonCatalogTest {
                 "oop-relationships",
                 "oop-inheritance-interfaces",
                 "basic-uml",
-                "uml-behavior",
                 "functional-programming",
                 "generics-collections",
                 "clean-code-refactoring",
