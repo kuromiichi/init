@@ -2,10 +2,14 @@ package dev.kuromiichi.init.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dev.kuromiichi.init.data.update.UpdateState
 import dev.kuromiichi.init.ui.common.LoadingScreen
 import dev.kuromiichi.init.ui.home.HomeScreen
 import dev.kuromiichi.init.ui.home.HomeViewModel
@@ -15,6 +19,8 @@ import dev.kuromiichi.init.ui.lessons.LessonListViewModel
 import dev.kuromiichi.init.ui.notes.NotesScreen
 import dev.kuromiichi.init.ui.onboarding.OnboardingScreen
 import dev.kuromiichi.init.ui.settings.SettingsScreen
+import dev.kuromiichi.init.ui.update.UpdateDialog
+import dev.kuromiichi.init.ui.update.UpdateViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -43,6 +49,10 @@ fun AppNavHost(
             val homeViewModel = koinViewModel<HomeViewModel>()
             val homeUiState by homeViewModel.uiState.collectAsStateWithLifecycle()
             val uiState = homeUiState
+            val updateViewModel = koinViewModel<UpdateViewModel>()
+            val updateState by updateViewModel.state.collectAsStateWithLifecycle()
+            val availableUpdate = updateState as? UpdateState.HasUpdate
+            var showUpdateDialog by rememberSaveable { mutableStateOf(false) }
 
             if (uiState == null) {
                 LoadingScreen()
@@ -57,6 +67,17 @@ fun AppNavHost(
                     onShowLessons = { navController.navigate(AppRoute.Lessons) },
                     onShowNotes = { navController.navigate(AppRoute.Notes) },
                     onShowSettings = { navController.navigate(AppRoute.Settings) },
+                    availableUpdateVersion = availableUpdate?.update?.version?.toString(),
+                    onShowUpdate = { showUpdateDialog = true },
+                )
+            }
+
+            if (showUpdateDialog && availableUpdate != null) {
+                UpdateDialog(
+                    state = availableUpdate,
+                    installedVersion = updateViewModel.installedVersion,
+                    onInstall = updateViewModel::installUpdate,
+                    onDismiss = { showUpdateDialog = false },
                 )
             }
         }

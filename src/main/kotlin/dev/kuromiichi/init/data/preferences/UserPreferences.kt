@@ -7,4 +7,6 @@ data class UserPreferences(
     val targetOperatingSystem: TargetOperatingSystem? = null,
     val onboardingCompleted: Boolean = false,
     val unlockAllLessons: Boolean = false,
+    /** Propia de cada equipo: no forma parte de las copias de seguridad. */
+    val checkForUpdates: Boolean = true,
 )

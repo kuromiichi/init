@@ -30,6 +30,17 @@ class UserPreferencesRepositoryTest {
             assertEquals(null, preferences.targetOperatingSystem)
             assertFalse(preferences.onboardingCompleted)
             assertFalse(preferences.unlockAllLessons)
+            assertTrue(preferences.checkForUpdates)
+        }
+
+    @Test
+    fun `update checks can be turned off`() =
+        runBlocking {
+            val repository = createRepository(this)
+
+            repository.setCheckForUpdates(false)
+
+            assertFalse(repository.preferences.first().checkForUpdates)
         }
 
     @Test

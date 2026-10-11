@@ -38,6 +38,7 @@ class UserPreferencesRepository(
                     targetOperatingSystem = preferences[TargetOperatingSystemKey].toTargetOperatingSystem(),
                     onboardingCompleted = preferences[OnboardingCompletedKey] ?: false,
                     unlockAllLessons = preferences[UnlockAllLessonsKey] ?: false,
+                    checkForUpdates = preferences[CheckForUpdatesKey] ?: true,
                 )
             }
 
@@ -68,6 +69,12 @@ class UserPreferencesRepository(
     suspend fun setUnlockAllLessons(unlockAllLessons: Boolean) {
         edit { preferences ->
             preferences[UnlockAllLessonsKey] = unlockAllLessons
+        }
+    }
+
+    suspend fun setCheckForUpdates(checkForUpdates: Boolean) {
+        edit { preferences ->
+            preferences[CheckForUpdatesKey] = checkForUpdates
         }
     }
 
@@ -121,5 +128,6 @@ class UserPreferencesRepository(
         val TargetOperatingSystemKey = stringPreferencesKey("target_operating_system")
         val OnboardingCompletedKey = booleanPreferencesKey("onboarding_completed")
         val UnlockAllLessonsKey = booleanPreferencesKey("unlock_all_lessons")
+        val CheckForUpdatesKey = booleanPreferencesKey("check_for_updates")
     }
 }

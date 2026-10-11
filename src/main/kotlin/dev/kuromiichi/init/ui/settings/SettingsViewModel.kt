@@ -25,6 +25,7 @@ data class SettingsUiState(
     val targetOperatingSystem: TargetOperatingSystem?,
     val themePreference: ThemePreference,
     val unlockAllLessons: Boolean,
+    val checkForUpdates: Boolean,
     val hasLessonProgress: Boolean,
     val backupState: BackupOperationState,
 )
@@ -53,6 +54,7 @@ class SettingsViewModel(
                 targetOperatingSystem = preferences.targetOperatingSystem,
                 themePreference = preferences.themePreference,
                 unlockAllLessons = preferences.unlockAllLessons,
+                checkForUpdates = preferences.checkForUpdates,
                 hasLessonProgress = completedLessonIds.isNotEmpty() || lessonStepIndices.isNotEmpty(),
                 backupState = backup,
             )
@@ -90,6 +92,10 @@ class SettingsViewModel(
 
     fun setUnlockAllLessons(unlockAllLessons: Boolean) {
         viewModelScope.launch { preferencesRepository.setUnlockAllLessons(unlockAllLessons) }
+    }
+
+    fun setCheckForUpdates(checkForUpdates: Boolean) {
+        viewModelScope.launch { preferencesRepository.setCheckForUpdates(checkForUpdates) }
     }
 
     fun resetLessonProgress() {

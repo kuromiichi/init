@@ -110,22 +110,9 @@ fun AppScreen(
                     .padding(horizontal = 40.dp, vertical = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            TopAppBar(
-                modifier =
-                    Modifier
-                        .widthIn(max = contentMaxWidth)
-                        .fillMaxWidth(),
-                title = {
-                    if (topBarTitle != null) {
-                        Text(
-                            text = topBarTitle,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            style = MaterialTheme.typography.titleMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                },
+            AppTopBar(
+                contentMaxWidth = contentMaxWidth,
+                title = topBarTitle,
                 navigationIcon = {
                     IconButton(
                         onClick = onBack,
@@ -139,18 +126,49 @@ fun AppScreen(
                     }
                 },
                 actions = topBarActions,
-                expandedHeight = 48.dp,
-                windowInsets = WindowInsets(0.dp),
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                        actionIconContentColor = MaterialTheme.colorScheme.onSurface,
-                    ),
             )
 
             content()
         }
     }
+}
+
+/** Barra superior de las pantallas; la portada la usa sin título para colocar el botón de actualizar donde va «Volver». */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppTopBar(
+    navigationIcon: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    contentMaxWidth: Dp = AppScreenContentMaxWidth,
+    title: String? = null,
+    actions: @Composable RowScope.() -> Unit = {},
+) {
+    TopAppBar(
+        modifier =
+            modifier
+                .widthIn(max = contentMaxWidth)
+                .fillMaxWidth(),
+        title = {
+            if (title != null) {
+                Text(
+                    text = title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+        },
+        navigationIcon = navigationIcon,
+        actions = actions,
+        expandedHeight = 48.dp,
+        windowInsets = WindowInsets(0.dp),
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                actionIconContentColor = MaterialTheme.colorScheme.onSurface,
+            ),
+    )
 }

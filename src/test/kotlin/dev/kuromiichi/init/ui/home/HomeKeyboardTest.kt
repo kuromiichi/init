@@ -4,6 +4,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.v2.runComposeUiTest
 import dev.kuromiichi.init.testing.press
@@ -61,7 +62,27 @@ class HomeKeyboardTest {
             assertEquals(listOf("lessons"), actions)
         }
 
-    private fun ComposeUiTest.showHome() {
+    @Test
+    fun `the update button keeps the initial focus and is reached with tab after settings`() =
+        runComposeUiTest {
+            showHome(availableUpdateVersion = "0.2.0")
+
+            onNodeWithText("Continuar lección").assertIsFocused()
+
+            press(Key.Tab)
+            press(Key.Tab)
+            press(Key.Tab)
+            press(Key.Tab)
+            onNodeWithText("Configuración").assertIsFocused()
+
+            press(Key.Tab)
+            onNodeWithContentDescription("Actualizar a la versión 0.2.0").assertIsFocused()
+
+            press(Key.Enter)
+            assertEquals(listOf("update"), actions)
+        }
+
+    private fun ComposeUiTest.showHome(availableUpdateVersion: String? = null) {
         setWindowContent {
             HomeScreen(
                 uiState =
@@ -81,6 +102,8 @@ class HomeKeyboardTest {
                 onShowLessons = { actions += "lessons" },
                 onShowNotes = { actions += "notes" },
                 onShowSettings = { actions += "settings" },
+                availableUpdateVersion = availableUpdateVersion,
+                onShowUpdate = { actions += "update" },
             )
         }
     }

@@ -50,6 +50,7 @@ import dev.kuromiichi.init.ui.common.SettingControlMaxWidth
 import dev.kuromiichi.init.ui.common.SettingRow
 import dev.kuromiichi.init.ui.common.focusHighlight
 import dev.kuromiichi.init.ui.common.verticalFadingEdges
+import dev.kuromiichi.init.ui.update.UpdateViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,9 +58,11 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SettingsScreen(
     onBack: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel(),
+    updateViewModel: UpdateViewModel = koinViewModel(),
 ) {
     val focusManager = LocalFocusManager.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val updateState = updateViewModel.state.collectAsStateWithLifecycle().value
 
     if (uiState == null) {
         LoadingScreen()
@@ -246,6 +249,15 @@ fun SettingsScreen(
                             onExport = viewModel::exportBackup,
                             onImport = viewModel::importBackup,
                             onDismissResult = viewModel::dismissBackupResult,
+                        )
+
+                        UpdateSettingsSection(
+                            installedVersion = updateViewModel.installedVersion,
+                            updateState = updateState,
+                            checkForUpdates = uiState.checkForUpdates,
+                            onCheckForUpdatesChanged = viewModel::setCheckForUpdates,
+                            onCheckNow = updateViewModel::checkForUpdates,
+                            onInstall = updateViewModel::installUpdate,
                         )
 
                         AdvancedSettingsSection(

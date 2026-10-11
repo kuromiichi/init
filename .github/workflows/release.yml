@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Comprobar la versión y el proyecto
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v6
+
+      - name: Leer la versión del tag
+        id: version
+        shell: bash
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          # Solo MAJOR.MINOR.PATCH: los instaladores no admiten sufijos como -beta.1.
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::El tag $tag no tiene el formato vMAJOR.MINOR.PATCH."
+            exit 1
+          fi
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Configurar Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Verificar el proyecto
+        run: ./gradlew clean build
+
+  package:
+    name: Instalador (${{ matrix.suffix }})
+    needs: verify
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - runner: macos-latest
+            suffix: macos-arm64
+            extension: dmg
+          - runner: macos-15-intel
+            suffix: macos-x64
+            extension: dmg
+          - runner: windows-latest
+            suffix: windows-x64
+            extension: msi
+          - runner: ubuntu-latest
+            suffix: linux-x64
+            extension: deb
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v6
+        with:
+          # El historial completo da el nº de commits que usa la versión interna de macOS.
+          fetch-depth: 0
+
+      - name: Configurar Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Configurar Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Empaquetar
+        shell: bash
+        run: ./gradlew packageDistributionForCurrentOS -PappVersion=${{ needs.verify.outputs.version }} -PappCommit=$(git rev-parse --short HEAD)
+
+      - name: Renombrar el instalador
+        shell: bash
+        run: |
+          mkdir -p dist
+          installer=$(find build/compose/binaries -type f -name "*.${{ matrix.extension }}" | head -n 1)
+          cp "$installer" "dist/init-${{ needs.verify.outputs.version }}-${{ matrix.suffix }}.${{ matrix.extension }}"
+
+      - name: Guardar el instalador
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.suffix }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    name: Publicar la release
+    needs: [verify, package]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Reunir los instaladores
+        uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Calcular las sumas de comprobación
+        working-directory: dist
+        run: sha256sum init-* > SHA256SUMS
+
+      - name: Escribir las novedades
+        shell: bash
+        run: |
+          previous=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
+          if [ -z "$previous" ]; then
+            echo "Primera versión publicada de init." > notes.md
+            exit 0
+          fi
+          # Solo los cambios que se notan al usar la app, sin el prefijo de Conventional Commits.
+          git log --no-merges --pretty='%s' "$previous..${GITHUB_REF_NAME}" \
+            | grep -E '^(feat|fix)(\([^)]*\))?!?: ' \
+            | sed -E 's/^[a-z]+(\([^)]*\))?!?: (.)/- \U\2/' > notes.md || true
+          if [ ! -s notes.md ]; then
+            echo "Correcciones y mejoras internas." > notes.md
+          fi
+
+      - name: Crear la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/* --title "init ${{ needs.verify.outputs.version }}" --notes-file notes.md --verify-tag

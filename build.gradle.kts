@@ -11,7 +11,30 @@ plugins {
 }
 
 group = "dev.kuromiichi"
-version = "1.0.0"
+
+/** Versión del tag sin la `v` (`0.1.0`); la pasa el workflow de releases. Sin ella es una ejecución de desarrollo. */
+val appVersion = providers.gradleProperty("appVersion").orElse("dev")
+
+fun gitOutput(vararg arguments: String): Provider<String> =
+    providers
+        .exec {
+            commandLine("git", *arguments)
+            isIgnoreExitValue = true
+        }.standardOutput.asText
+        .map { it.trim() }
+
+val appCommit = providers.gradleProperty("appCommit").orElse(gitOutput("rev-parse", "--short", "HEAD"))
+
+/**
+ * Versión numérica de los instaladores. Windows y Linux usan la del tag; macOS exige una mayor de al menos 1, así que
+ * durante la etapa 0.x lleva `1.0.<nº de commits>`, que solo sirve para el sistema y siempre crece.
+ */
+val releaseVersion = appVersion.get().takeIf { Regex("""\d+\.\d+\.\d+""").matches(it) }
+val installerVersion = releaseVersion ?: "1.0.0"
+val macInstallerVersion =
+    if (releaseVersion?.startsWith("0.") == true) "1.0.${gitOutput("rev-list", "--count", "HEAD").get()}" else installerVersion
+
+version = appVersion.get()
 
 repositories {
     google()
@@ -51,6 +74,19 @@ ktlint {
     }
 }
 
+val appVersionResourcesDirectory = layout.buildDirectory.dir("generated/appVersion")
+
+val generateAppVersionInfo =
+    tasks.register<WriteProperties>("generateAppVersionInfo") {
+        destinationFile = appVersionResourcesDirectory.map { it.file("init-version.properties") }
+        property("version", appVersion)
+        property("commit", appCommit)
+    }
+
+sourceSets.main {
+    resources.srcDir(generateAppVersionInfo.map { appVersionResourcesDirectory.get() })
+}
+
 room {
     schemaDirectory("$projectDir/schemas")
 }
@@ -69,16 +105,28 @@ compose.desktop {
             nativeDistributionOutput.orNull?.let { outputDirectory ->
                 outputBaseDir.set(file(outputDirectory))
             }
-            targetFormats(
-                TargetFormat.Dmg,
-                TargetFormat.Msi,
-                TargetFormat.Exe,
-                TargetFormat.Deb,
-                TargetFormat.Rpm,
-            )
+            // Un formato por sistema: es el que descarga e instala el actualizador.
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "init"
+            packageVersion = installerVersion
             description = "Guía interactiva para aprender a programar desde cero con Kotlin"
-            modules("java.instrument", "jdk.unsupported")
+            modules("java.instrument", "jdk.unsupported", "java.net.http")
+
+            macOS {
+                bundleID = "dev.kuromiichi.init"
+                packageVersion = macInstallerVersion
+                dmgPackageVersion = macInstallerVersion
+            }
+            windows {
+                // Fijo para siempre: es lo que hace que cada MSI sustituya a la versión instalada en vez de sumarse.
+                upgradeUuid = "50BAFD72-E030-4D55-B94D-0988E64EE21F"
+                // Sin permisos de administrador: el actualizador puede lanzar el MSI sin pedir elevación.
+                perUserInstall = true
+            }
+            linux {
+                // «init» es un paquete esencial de Debian y Ubuntu.
+                packageName = "init-app"
+            }
         }
     }
 }

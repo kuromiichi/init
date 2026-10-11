@@ -86,7 +86,10 @@ fun main() {
                     LocalKeyboardFocusVisibility provides keyboardFocusVisibility,
                 ) {
                     Box(modifier = Modifier.fillMaxSize().hideKeyboardFocusOnPointer(keyboardFocusVisibility)) {
-                        App(titleBarInset = if (IsMacOs) MacTitleBarHeight else 0.dp)
+                        App(
+                            titleBarInset = if (IsMacOs) MacTitleBarHeight else 0.dp,
+                            onExitRequest = ::exitApplication,
+                        )
                         if (IsMacOs) {
                             WindowDraggableArea(modifier = Modifier.fillMaxWidth().height(MacTitleBarHeight)) {
                                 Spacer(modifier = Modifier.fillMaxSize())
