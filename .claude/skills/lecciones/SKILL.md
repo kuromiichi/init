@@ -36,12 +36,36 @@ Al escribir o revisar una práctica, releer explicación, objetivo, enunciado, r
 ## Guía visual
 
 - Diagramas, tarjetas de logos e iconos van sobre un panel más oscuro que la página (`surfaceContainerLow`) con nodos más claros y borde fino (`surfaceContainerHigh` + `outlineVariant`). Nada se funde con el fondo en ningún tema.
-- Código, consola y tablas usan `codeBlockSurface`. El resaltado de Kotlin reproduce IntelliJ IDEA con Catppuccin (`KotlinCodeHighlighter`, `spanStyle` en `CodeExamplesVisual`). Errores subrayados: `⟦…⟧` dentro del código.
+- Código, consola y tablas usan `codeBlockSurface`. El resaltado de Kotlin reproduce IntelliJ IDEA con Catppuccin (`KotlinCodeHighlighter`, `spanStyle` en `CodeExamplesVisual`; ver «Colores de Kotlin»). Errores subrayados: `⟦…⟧` dentro del código.
 - Los bloques de código llevan pestaña de editor con `fileName` («Main.kt» por defecto) y el título descriptivo como leyenda.
 - Las salidas de terminal (`LessonConsoleKind.Terminal`, `explanationTerminal`) van en una ventana con decoraciones del sistema elegido (semáforo en macOS, botones de Windows 11, botones redondos de GNOME), «Terminal» centrado y fondo Catppuccin Mocha (Latte `crust` en claro, `CatppuccinLatteTerminal`). Las salidas del programa (`IntelliJRun`) llevan la cabecera de la ventana Run.
 - Código en línea: color del texto sobre fondo translúcido de ese color (`toAnnotatedString(tintedContentColor = …)`).
 - Un color nuevo debe pasar `ThemeContrastTest` en claro y oscuro.
 - Todo paso cuyo contenido cambie según el SO (comandos, rutas, archivos del sistema, atajos) se declara con `operatingSystemStep`.
 - Capturas de IntelliJ: siempre en pareja `intellij_<nombre>_{light,dark}.png`, elegidas por `LocalCatppuccinFlavor`; se muestran a resolución real, con borde y ampliables. Para hacerlas, skill `capturas-intellij`.
+
+### Colores de Kotlin
+
+Comprobados en IntelliJ IDEA (modo K2, Catppuccin con corchetes de colores). Fuentes: `templates/editor.tera` de catppuccin/jetbrains (color de cada clave) y `KotlinHighlightingColors.java` de intellij-community (clave de cada token). Ante la duda, mirar el editor real con un archivo temporal en `src/test` y borrarlo después.
+
+| Elemento | Color |
+|---|---|
+| Palabras clave | mauve |
+| Llamadas a función (también extensiones y llamadas con solo una lambda: `filter {`) y declaraciones | blue cursiva |
+| Clases, tipos y anotaciones (`@Test`) | yellow cursiva |
+| Parámetros (también lambda `{ n ->` y llamado: `operacion(n)`) | maroon cursiva |
+| `it` | maroon |
+| Variables `val` (también llamadas: `doble(4)`), propiedades y constantes de `companion object` | text |
+| Variables y propiedades `var` | text cursiva |
+| Constructores (`Alumno(`), argumentos con nombre, valores de enum y `?` de tipo nulable | peach |
+| `const val` de nivel superior y propiedades de extensión (`indices`, `lastIndex`) | teal |
+| Números | peach |
+| Textos | green; `$`, `\n` en pink; dentro de `$nombre` y `${…}`, cada token con su color |
+| Operadores, `?:`, `!!` | sky |
+| `.`, `?.`, `,` | overlay2 |
+| `:`, `::`, referencias (`::esPar`), flechas de `when` y de tipos de función | text |
+| Flecha de una lambda | red |
+| `()`, `[]`, `{}` (también lambdas y `${}`) | por nivel: red, peach, yellow, green, sapphire |
+| Parámetro de tipo `T` | text (aún no implementado) |
 
 Tras cambiar una lección: skill `verificacion` (al menos `./gradlew test --tests '*Lesson*'`) y skill `qa-app`.
