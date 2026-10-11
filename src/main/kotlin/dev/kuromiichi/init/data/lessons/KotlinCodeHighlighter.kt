@@ -102,6 +102,9 @@ private class KotlinClassifier(
     private val significant = raw.indices.filter { raw[it].group != Group.Comment && !raw[it].isBlank() }
     private val parameterNames = collectParameterNames()
     private val mutableNames = collectMutableNames()
+    private val variableNames = collectVariableNames()
+    private val functionNames = collectFunctionNames()
+    private val enumEntries = collectEnumEntries()
 
     private val stack = mutableListOf<Frame>()
     private val pieces = mutableListOf<Piece>()
@@ -148,15 +151,7 @@ private class KotlinClassifier(
                 if (text == "while" && previous == "}" && closedDoBlock) doWhilePending = true
                 add(token.range, identifierKind(text, previous, next, isInfixCall(position)))
             }
-            Group.Operator ->
-                add(
-                    token.range,
-                    when (text) {
-                        "->" -> LessonCodeTokenKind.LambdaDelimiter
-                        ":", "::" -> LessonCodeTokenKind.Punctuation
-                        else -> LessonCodeTokenKind.Operator
-                    },
-                )
+            Group.Operator -> add(token.range, operatorKind(text, position))
             Group.Punctuation -> add(token.range, punctuationKind(text, previous, next, position))
             Group.Comment, Group.Other -> add(token.range, LessonCodeTokenKind.Plain)
         }
@@ -185,15 +180,21 @@ private class KotlinClassifier(
             !afterDot && name in AccessorNames && previous in VisibilityModifiers -> LessonCodeTokenKind.Keyword
             !afterDot && name == "field" -> LessonCodeTokenKind.MutableVariable
             !afterDot && name == "it" && stack.any { it.role == Role.Lambda } -> LessonCodeTokenKind.ImplicitParameter
-            previous == "::" && name.first().isLowerCase() -> LessonCodeTokenKind.Function
             isNamedArgument -> LessonCodeTokenKind.Constant
+            name in enumEntries -> LessonCodeTokenKind.Constant
             next == "(" && previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
             next == "(" && name.first().isUpperCase() && !afterDot -> LessonCodeTokenKind.Constant
+            // Una variable o un parámetro que guarda una función se llama como una, pero conserva su color.
+            next == "(" && !afterDot && name !in functionNames && name in parameterNames -> LessonCodeTokenKind.Parameter
+            next == "(" && !afterDot && name !in functionNames && name in variableNames ->
+                if (name in mutableNames) LessonCodeTokenKind.MutableVariable else LessonCodeTokenKind.Plain
             next == "(" -> LessonCodeTokenKind.Function
+            next == "{" && name.first().isLowerCase() -> LessonCodeTokenKind.Function
             isInfixCall -> LessonCodeTokenKind.Function
             previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
             name.length > 1 && name.all { it.isUpperCase() || it.isDigit() || it == '_' } -> LessonCodeTokenKind.Plain
             name.first().isUpperCase() -> LessonCodeTokenKind.ClassName
+            afterDot && name in ExtensionProperties -> LessonCodeTokenKind.ExtensionProperty
             afterDot -> if (name in mutableNames) LessonCodeTokenKind.MutableVariable else LessonCodeTokenKind.Plain
             previous == "val" -> LessonCodeTokenKind.Plain
             previous == "var" -> LessonCodeTokenKind.MutableVariable
@@ -252,7 +253,7 @@ private class KotlinClassifier(
             }
             "{" -> {
                 val isBlock = isBlockBrace(previous)
-                val kind = if (isBlock) bracketKind(stack.size) else LessonCodeTokenKind.LambdaDelimiter
+                val kind = bracketKind(stack.size)
                 val marker = stack.lastOrNull()?.role == Role.BlockMarker
                 stack += Frame(if (isBlock) Role.Block else Role.Lambda, bodyOfMarker = marker, isDoBlock = previous == "do")
                 if (isBlock) {
@@ -272,13 +273,29 @@ private class KotlinClassifier(
             }
             "}" -> {
                 val closed = popUntil { it.role == Role.Block || it.role == Role.Lambda }
-                val kind = if (closed?.role == Role.Lambda) LessonCodeTokenKind.LambdaDelimiter else bracketKind(stack.size)
+                val kind = bracketKind(stack.size)
                 lastClosedRole = closed?.role
                 lastClosedWasDo = closed?.isDoBlock == true
                 if (closed?.bodyOfMarker == true && next != "else") popUntil { it.role == Role.BlockMarker }
                 kind
             }
             else -> LessonCodeTokenKind.Punctuation
+        }
+
+    /**
+     * Solo la flecha que separa los parámetros de una lambda es roja; la de las ramas de `when` y la de los tipos de función
+     * tienen el color del texto. `?` (tipo nulable), `?.`, `:` y `::` tienen colores propios en el tema.
+     */
+    private fun operatorKind(
+        text: String,
+        position: Int?,
+    ): LessonCodeTokenKind =
+        when (text) {
+            "->" -> if (position != null && lambdaHeaderBrace(position) != null) LessonCodeTokenKind.LambdaDelimiter else LessonCodeTokenKind.Plain
+            ":", "::" -> LessonCodeTokenKind.Plain
+            "?" -> LessonCodeTokenKind.Constant
+            "?." -> LessonCodeTokenKind.Punctuation
+            else -> LessonCodeTokenKind.Operator
         }
 
     /** Los paréntesis de `get()` y `set(valor)` en una propiedad abren una cabecera, no una llamada. */
@@ -347,11 +364,55 @@ private class KotlinClassifier(
         }
         var index = 0
         StringPartPattern.findAll(text).forEach { part ->
-            if (part.range.first > index) add(range.first + index until range.first + part.range.first, LessonCodeTokenKind.StringLiteral)
-            add(range.first + part.range.first..range.first + part.range.last, LessonCodeTokenKind.Interpolation)
+            val start = range.first + part.range.first
+            if (part.range.first > index) add(range.first + index until start, LessonCodeTokenKind.StringLiteral)
+            when {
+                part.value.startsWith("\${") -> {
+                    add(start..start + 1, bracketKind(stack.size))
+                    addTemplateExpression(start + 2, part.value.substring(2, part.value.length - 1))
+                    add(start + part.value.length - 1..start + part.value.length - 1, bracketKind(stack.size))
+                }
+                part.value.startsWith("$") -> {
+                    add(start..start, LessonCodeTokenKind.Interpolation)
+                    add(start + 1..range.first + part.range.last, identifierKind(part.value.substring(1), "$", null, false))
+                }
+                else -> add(start..range.first + part.range.last, LessonCodeTokenKind.Interpolation)
+            }
             index = part.range.last + 1
         }
         if (index < text.length) add(range.first + index..range.last, LessonCodeTokenKind.StringLiteral)
+    }
+
+    /**
+     * IntelliJ IDEA colorea `$` como un escape y lo que sigue como código: `${it.nombre}` muestra `it` y `nombre`
+     * con sus colores, y las llaves de `${…}` cuentan como un nivel más de corchetes.
+     */
+    private fun addTemplateExpression(
+        offset: Int,
+        expression: String,
+    ) {
+        val tokens = KotlinTokenPattern.findAll(expression).toList()
+        val significantTokens = tokens.filter { it.value.isNotBlank() }
+        var depth = stack.size + 1
+        tokens.forEach { match ->
+            val range = offset + match.range.first..offset + match.range.last
+            val position = significantTokens.indexOf(match)
+            val previous = significantTokens.getOrNull(position - 1)?.value
+            val next = significantTokens.getOrNull(position + 1)?.value
+            val kind =
+                when {
+                    match.value.isBlank() -> LessonCodeTokenKind.Plain
+                    match.groups["identifier"] != null -> identifierKind(match.value, previous, next, false)
+                    match.groups["number"] != null -> LessonCodeTokenKind.Number
+                    match.groups["string"] != null -> LessonCodeTokenKind.StringLiteral
+                    match.groups["operator"] != null -> operatorKind(match.value, position = null)
+                    match.value == "(" || match.value == "[" -> bracketKind(depth++)
+                    match.value == ")" || match.value == "]" -> bracketKind(--depth)
+                    match.groups["punctuation"] != null -> LessonCodeTokenKind.Punctuation
+                    else -> LessonCodeTokenKind.Plain
+                }
+            add(range, kind)
+        }
     }
 
     private fun tokenize(): List<Raw> =
@@ -420,25 +481,31 @@ private class KotlinClassifier(
      * en la misma línea. Las ramas de un `when` también llevan flecha, pero su llave abre el `when`.
      */
     private fun lambdaParameterNames(arrow: Int): List<String> {
+        val brace = lambdaHeaderBrace(arrow) ?: return emptyList()
+        return (brace + 1 until arrow).mapNotNull { position ->
+            val token = raw[significant[position]]
+            val previous = textOf(raw[significant[position - 1]])
+            val name = textOf(token).trim('`')
+            name.takeIf { token.group == Group.Identifier && previous != ":" && previous != "." && name.first().isLowerCase() }
+        }
+    }
+
+    /** La posición de la llave que abre la lambda cuya cabecera termina en esa flecha, o `null` si la flecha no es de una lambda. */
+    private fun lambdaHeaderBrace(arrow: Int): Int? {
         var cursor = arrow - 1
         while (cursor >= 0) {
             val token = raw[significant[cursor]]
             val text = textOf(token)
             if (text == "{") break
             val allowed = (token.group == Group.Identifier && text !in KotlinKeywords) || text in LambdaHeaderSymbols
-            if (!allowed) return emptyList()
+            if (!allowed) return null
             cursor--
         }
-        if (cursor < 0) return emptyList()
+        if (cursor < 0) return null
         val brace = raw[significant[cursor]]
-        if ('\n' in source.substring(brace.range.last + 1, raw[significant[arrow]].range.first)) return emptyList()
-        if (opensWhen(cursor)) return emptyList()
-        return (cursor + 1 until arrow).mapNotNull { position ->
-            val token = raw[significant[position]]
-            val previous = textOf(raw[significant[position - 1]])
-            val name = textOf(token).trim('`')
-            name.takeIf { token.group == Group.Identifier && previous != ":" && previous != "." && name.first().isLowerCase() }
-        }
+        if ('\n' in source.substring(brace.range.last + 1, raw[significant[arrow]].range.first)) return null
+        if (opensWhen(cursor)) return null
+        return cursor
     }
 
     /** Si la llave en esa posición es la de un `when`, con o sin sujeto entre paréntesis. */
@@ -464,6 +531,47 @@ private class KotlinClassifier(
                 val next = significant.getOrNull(position + 1)?.let { raw[it] }
                 if (textOf(raw[rawIndex]) == "var" && next?.group == Group.Identifier) textOf(next).trim('`') else null
             }.toSet()
+
+    private fun collectVariableNames(): Set<String> =
+        significant
+            .mapIndexedNotNull { position, rawIndex ->
+                val next = significant.getOrNull(position + 1)?.let { raw[it] }
+                if (textOf(raw[rawIndex]) in setOf("val", "var") && next?.group == Group.Identifier) textOf(next).trim('`') else null
+            }.toSet()
+
+    /** El nombre de una función es el identificador justo antes del paréntesis de su cabecera (`fun String.esPalindromo(`). */
+    private fun collectFunctionNames(): Set<String> =
+        significant
+            .mapIndexedNotNull { position, rawIndex ->
+                if (textOf(raw[rawIndex]) != "fun") return@mapIndexedNotNull null
+                var cursor = position + 1
+                while (cursor + 1 < significant.size && textOf(raw[significant[cursor + 1]]) != "(") cursor++
+                raw[significant[cursor]].takeIf { it.group == Group.Identifier }?.let { textOf(it).trim('`') }
+            }.toSet()
+
+    /** Los valores de una `enum class` son los nombres de su cuerpo hasta el primer `;` o la llave que lo cierra. */
+    private fun collectEnumEntries(): Set<String> {
+        val names = mutableSetOf<String>()
+        significant.forEachIndexed { position, rawIndex ->
+            if (textOf(raw[rawIndex]) != "enum") return@forEachIndexed
+            var cursor = position + 1
+            while (cursor < significant.size && textOf(raw[significant[cursor]]) != "{") cursor++
+            var depth = 0
+            while (cursor < significant.size) {
+                val token = raw[significant[cursor]]
+                val text = textOf(token)
+                when (text) {
+                    "{", "(" -> depth++
+                    "}", ")" -> depth--
+                }
+                if (depth == 0 || (depth == 1 && text == ";")) break
+                val previous = textOf(raw[significant[cursor - 1]])
+                if (depth == 1 && token.group == Group.Identifier && (previous == "{" || previous == ",")) names += text
+                cursor++
+            }
+        }
+        return names
+    }
 
     private fun textOf(token: Raw): String = source.substring(token.range.first, token.range.last + 1)
 
@@ -505,6 +613,9 @@ private val LambdaHeaderSymbols = setOf(":", ",", "(", ")", "<", ">", "?")
 private val ControlKeywords = setOf("if", "for", "while", "catch")
 
 private val BlockKeywords = setOf("else", "try", "finally", "do", "init")
+
+/** Propiedades de extensión de la biblioteca estándar que aparecen en las lecciones; IntelliJ IDEA las colorea aparte. */
+private val ExtensionProperties = setOf("indices", "lastIndex")
 
 private val AccessorNames = setOf("get", "set")
 

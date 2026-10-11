@@ -265,6 +265,7 @@ private fun LessonCodeTokenKind.toLearningCodeTokenKind(): LearningCodeTokenKind
         LessonCodeTokenKind.ImplicitParameter -> LearningCodeTokenKind.ImplicitParameter
         LessonCodeTokenKind.Constant -> LearningCodeTokenKind.Constant
         LessonCodeTokenKind.MutableVariable -> LearningCodeTokenKind.MutableVariable
+        LessonCodeTokenKind.ExtensionProperty -> LearningCodeTokenKind.ExtensionProperty
         LessonCodeTokenKind.LambdaDelimiter -> LearningCodeTokenKind.LambdaDelimiter
         LessonCodeTokenKind.Bracket0 -> LearningCodeTokenKind.Bracket0
         LessonCodeTokenKind.Bracket1 -> LearningCodeTokenKind.Bracket1
