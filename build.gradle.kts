@@ -204,7 +204,7 @@ abstract class StyledInstallerTask : DefaultTask() {
 fun registerStyledInstaller(
     composeTaskName: String,
     operatingSystem: String,
-    appImageName: String?,
+    appImageName: String,
     resourcesName: String,
     options: Map<String, String?>,
 ) {
@@ -218,8 +218,7 @@ fun registerStyledInstaller(
             dependsOn(createDistributable)
             tasks.findByName("unzipWix")?.let { unzipWix -> dependsOn(unzipWix) }
             javaHome = composeTask.flatMap { it.javaHome }
-            // Igual que Compose: en macOS, el .app; en Windows, la carpeta de la app.
-            appImage = createDistributable.flatMap { task -> appImageName?.let { task.destinationDir.dir(it) } ?: task.destinationDir }
+            appImage = createDistributable.flatMap { it.destinationDir.dir(appImageName) }
             resources = packagingDirectory.dir(resourcesName)
             jpackageArguments = options.flatMap { (option, value) -> listOfNotNull(option, value) }
             wixToolsetDir = composeTask.flatMap { it.wixToolsetDir }
@@ -250,7 +249,7 @@ afterEvaluate {
     registerStyledInstaller(
         composeTaskName = "packageMsi",
         operatingSystem = "Windows",
-        appImageName = null,
+        appImageName = "init",
         resourcesName = "windows",
         options =
             mapOf(

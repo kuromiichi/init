@@ -4,12 +4,13 @@ on:
   push:
     tags:
       - "v*"
-    # En una rama, solo si cambian los instaladores: los genera como artefactos para revisarlos, sin publicar nada.
+    # En una rama, solo si cambia el empaquetado: los genera como artefactos para revisarlos, sin publicar nada.
     # Los filtros de rutas no se aplican a los tags.
     branches:
       - "**"
     paths:
       - "packaging/**"
+      - "build.gradle.kts"
       - ".github/workflows/release.yml"
 
 permissions:
