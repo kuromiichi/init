@@ -16,11 +16,14 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import dev.kuromiichi.init.data.local.migrateLegacyAppData
 import dev.kuromiichi.init.di.appModules
+import dev.kuromiichi.init.generated.resources.Res
+import dev.kuromiichi.init.generated.resources.app_icon
 import dev.kuromiichi.init.ui.common.KeyboardFocusVisibility
 import dev.kuromiichi.init.ui.common.LocalAppWindow
 import dev.kuromiichi.init.ui.common.LocalKeyboardFocusVisibility
 import dev.kuromiichi.init.ui.common.hideKeyboardFocusOnPointer
 import dev.kuromiichi.init.ui.window.WindowMetrics
+import org.jetbrains.compose.resources.painterResource
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import java.awt.Toolkit
@@ -51,6 +54,7 @@ fun main() {
                 onCloseRequest = ::exitApplication,
                 state = windowState,
                 title = "init",
+                icon = painterResource(Res.drawable.app_icon),
             ) {
                 if (IsMacOs) {
                     DisposableEffect(window) {

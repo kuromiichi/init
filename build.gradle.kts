@@ -1,4 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.desktop.application.tasks.AbstractJPackageTask
+import javax.inject.Inject
 
 plugins {
     kotlin("jvm") version "2.4.0"
@@ -42,6 +44,12 @@ repositories {
 }
 
 val nativeDistributionOutput = providers.gradleProperty("nativeDistributionOutput")
+val appDescription = "Guía interactiva para aprender a programar desde cero con Kotlin"
+val macBundleId = "dev.kuromiichi.init"
+
+// Fijo para siempre: es lo que hace que cada MSI sustituya a la versión instalada en vez de sumarse.
+val windowsUpgradeUuid = "50BAFD72-E030-4D55-B94D-0988E64EE21F"
+val packagingDirectory = layout.projectDirectory.dir("packaging")
 
 dependencies {
     implementation(compose.desktop.currentOs)
@@ -109,24 +117,150 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "init"
             packageVersion = installerVersion
-            description = "Guía interactiva para aprender a programar desde cero con Kotlin"
+            description = appDescription
             modules("java.instrument", "jdk.unsupported", "java.net.http")
 
             macOS {
-                bundleID = "dev.kuromiichi.init"
+                bundleID = macBundleId
+                iconFile = packagingDirectory.file("icons/init.icns")
                 packageVersion = macInstallerVersion
                 dmgPackageVersion = macInstallerVersion
             }
             windows {
-                // Fijo para siempre: es lo que hace que cada MSI sustituya a la versión instalada en vez de sumarse.
-                upgradeUuid = "50BAFD72-E030-4D55-B94D-0988E64EE21F"
+                upgradeUuid = windowsUpgradeUuid
+                iconFile = packagingDirectory.file("icons/init.ico")
                 // Sin permisos de administrador: el actualizador puede lanzar el MSI sin pedir elevación.
                 perUserInstall = true
             }
             linux {
                 // «init» es un paquete esencial de Debian y Ubuntu.
                 packageName = "init-app"
+                iconFile = packagingDirectory.file("icons/init.png")
             }
         }
     }
+}
+
+/**
+ * Crea un instalador con jpackage a partir de la app de `createDistributable`, con los recursos de una carpeta de
+ * `packaging/`. Compose vacía su directorio de recursos de jpackage antes de cada empaquetado, así que no admite
+ * recursos propios como el fondo del DMG o las imágenes del asistente del MSI.
+ */
+abstract class StyledInstallerTask : DefaultTask() {
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
+    @get:Inject
+    abstract val fileSystemOperations: FileSystemOperations
+
+    @get:Input
+    abstract val javaHome: Property<String>
+
+    @get:InputDirectory
+    abstract val appImage: DirectoryProperty
+
+    @get:InputDirectory
+    abstract val resources: DirectoryProperty
+
+    @get:Input
+    abstract val jpackageArguments: ListProperty<String>
+
+    /** WiX 3, que descarga Compose; solo en Windows. */
+    @get:Internal
+    abstract val wixToolsetDir: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val destinationDir: DirectoryProperty
+
+    @TaskAction
+    fun run() {
+        val resourceDir = temporaryDir.resolve("resources")
+        val resourcesPath = resources.get().asFile.invariantSeparatorsPath
+        fileSystemOperations.sync {
+            from(resources)
+            into(resourceDir)
+            // El proyecto WiX enlaza las imágenes del asistente por ruta absoluta.
+            filesMatching("*.wxs") { filter { line: String -> line.replace("@PACKAGING_DIR@", resourcesPath) } }
+        }
+        fileSystemOperations.delete { delete(destinationDir) }
+
+        val isWindows = System.getProperty("os.name").startsWith("Windows")
+        execOperations.exec {
+            executable = File(javaHome.get(), if (isWindows) "bin/jpackage.exe" else "bin/jpackage").path
+            args(jpackageArguments.get())
+            args("--app-image", appImage.get().asFile.path)
+            args("--resource-dir", resourceDir.path)
+            args("--dest", destinationDir.get().asFile.path)
+            args("--verbose")
+            wixToolsetDir.orNull?.let { environment("PATH", "${it.asFile.path};${System.getenv("PATH")}") }
+        }
+    }
+}
+
+/**
+ * Sustituye el empaquetado de Compose de [composeTaskName] por un [StyledInstallerTask]: `packageDistributionForCurrentOS`
+ * y la tarea de Compose siguen siendo la forma de crearlo, y el instalador queda en la misma carpeta.
+ */
+fun registerStyledInstaller(
+    composeTaskName: String,
+    operatingSystem: String,
+    appImageName: String?,
+    resourcesName: String,
+    options: Map<String, String?>,
+) {
+    val createDistributable = tasks.named<AbstractJPackageTask>("createDistributable")
+    val composeTask = tasks.named<AbstractJPackageTask>(composeTaskName)
+    val styledTask =
+        tasks.register<StyledInstallerTask>("${composeTaskName}Styled") {
+            group = "compose desktop"
+            description = "Crea el instalador de $composeTaskName con los recursos de packaging/$resourcesName."
+            onlyIf { System.getProperty("os.name").startsWith(operatingSystem) }
+            dependsOn(createDistributable)
+            tasks.findByName("unzipWix")?.let { unzipWix -> dependsOn(unzipWix) }
+            javaHome = composeTask.flatMap { it.javaHome }
+            // Igual que Compose: en macOS, el .app; en Windows, la carpeta de la app.
+            appImage = createDistributable.flatMap { task -> appImageName?.let { task.destinationDir.dir(it) } ?: task.destinationDir }
+            resources = packagingDirectory.dir(resourcesName)
+            jpackageArguments = options.flatMap { (option, value) -> listOfNotNull(option, value) }
+            wixToolsetDir = composeTask.flatMap { it.wixToolsetDir }
+            destinationDir = composeTask.flatMap { it.destinationDir }
+        }
+    composeTask.configure {
+        dependsOn(styledTask)
+        enabled = false
+    }
+}
+
+afterEvaluate {
+    // Compose registra sus tareas de empaquetado al terminar de evaluar el proyecto.
+    registerStyledInstaller(
+        composeTaskName = "packageDmg",
+        operatingSystem = "Mac",
+        appImageName = "init.app",
+        resourcesName = "macos",
+        options =
+            mapOf(
+                "--type" to "dmg",
+                "--name" to "init",
+                "--app-version" to macInstallerVersion,
+                "--description" to appDescription,
+                "--mac-package-identifier" to macBundleId,
+            ),
+    )
+    registerStyledInstaller(
+        composeTaskName = "packageMsi",
+        operatingSystem = "Windows",
+        appImageName = null,
+        resourcesName = "windows",
+        options =
+            mapOf(
+                "--type" to "msi",
+                "--name" to "init",
+                "--app-version" to installerVersion,
+                "--description" to appDescription,
+                "--win-dir-chooser" to null,
+                "--win-per-user-install" to null,
+                "--win-upgrade-uuid" to windowsUpgradeUuid,
+            ),
+    )
 }

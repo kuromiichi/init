@@ -4,6 +4,13 @@ on:
   push:
     tags:
       - "v*"
+    # En una rama, solo si cambian los instaladores: los genera como artefactos para revisarlos, sin publicar nada.
+    # Los filtros de rutas no se aplican a los tags.
+    branches:
+      - "**"
+    paths:
+      - "packaging/**"
+      - ".github/workflows/release.yml"
 
 permissions:
   contents: read
@@ -22,6 +29,11 @@ jobs:
         id: version
         shell: bash
         run: |
+          if [[ "${GITHUB_REF_TYPE}" != "tag" ]]; then
+            # Instaladores de prueba de una rama: versión de desarrollo.
+            echo "version=dev" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           tag="${GITHUB_REF_NAME}"
           # Solo MAJOR.MINOR.PATCH: los instaladores no admiten sufijos como -beta.1.
           if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -99,6 +111,7 @@ jobs:
   publish:
     name: Publicar la release
     needs: [verify, package]
+    if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     permissions:
       contents: write

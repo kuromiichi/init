@@ -246,6 +246,8 @@ Compose Desktop no genera instaladores para otro sistema: cada paquete se constr
 ./gradlew packageDistributionForCurrentOS -PnativeDistributionOutput=/private/tmp/init-distribution
 ```
 
+El icono y la imagen de los instaladores están en [`packaging/`](packaging/): el fondo y la disposición del DMG, y las imágenes y el proyecto WiX del asistente del MSI. Compose no admite recursos propios de jpackage, así que `packageDmg` y `packageMsi` delegan en tareas que crean el instalador con ellos. Las imágenes se regeneran con `python3 packaging/generate_assets.py <carpeta fonts/ttf de JetBrains Mono>`. Un push que cambie `packaging/` lanza el workflow de releases sin publicar nada, y deja los instaladores como artefactos para revisarlos.
+
 ### Versiones y releases
 
 Las versiones siguen [SemVer](https://semver.org/lang/es/) y se publican con un tag `vMAJOR.MINOR.PATCH` sin sufijos. Mientras la versión mayor sea 0 la app se considera beta y lo indica en Configuración; `1.0.0` queda para la primera versión estable.
