@@ -13,7 +13,7 @@ El agente principal lleva cada tarea de principio a fin; la verificación se aju
 5. **Probar la experiencia en la app** con la skill `qa-app` si cambia la interfaz o una lección.
 6. **Corregir** y repetir las comprobaciones afectadas. Commit solo si se pide o forma parte del encargo.
 
-Skills del proyecto: `lecciones` (crear o editar lecciones y prácticas, guía visual), `verificacion`, `qa-app` y `capturas-intellij`. Cargarlas antes de trabajar en su ámbito.
+Skills del proyecto: `lecciones` (crear o editar lecciones y prácticas, guía visual), `verificacion`, `qa-app`, `capturas-intellij` y `publicar-version`. Cargarlas antes de trabajar en su ámbito.
 
 ## Principios
 
@@ -32,4 +32,6 @@ Skills del proyecto: `lecciones` (crear o editar lecciones y prácticas, guía v
 
 ## Commits
 
-Conventional Commits en español (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`…). Incluir solo cambios relacionados y no reescribir el historial sin petición explícita.
+Conventional Commits en español (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`…). Incluir solo cambios relacionados y no reescribir el historial sin petición explícita. Los asuntos `feat` y `fix` forman las notas de cada release, así que deben entenderse sin contexto técnico.
+
+Las versiones se publican con un tag `vMAJOR.MINOR.PATCH` (0.x mientras sea beta) siguiendo la skill `publicar-version`; un tag subido llega a los usuarios por el actualizador, así que se confirma antes de cada push.
