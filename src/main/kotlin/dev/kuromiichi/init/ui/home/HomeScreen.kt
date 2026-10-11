@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.kuromiichi.init.ui.common.AppTopBar
+import dev.kuromiichi.init.ui.common.InitLogo
 import dev.kuromiichi.init.ui.common.arrowKeyNavigation
 import dev.kuromiichi.init.ui.common.focusHighlight
 import dev.kuromiichi.init.ui.common.hoverScale
@@ -102,6 +103,8 @@ fun HomeScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(28.dp),
                     ) {
+                        InitLogo()
+
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(12.dp),
