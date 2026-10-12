@@ -105,6 +105,7 @@ private class KotlinClassifier(
     private val variableNames = collectVariableNames()
     private val functionNames = collectFunctionNames()
     private val enumEntries = collectEnumEntries()
+    private val typeParameterNames = collectTypeParameterNames()
 
     private val stack = mutableListOf<Frame>()
     private val pieces = mutableListOf<Piece>()
@@ -149,7 +150,9 @@ private class KotlinClassifier(
             Group.Annotation -> add(token.range, LessonCodeTokenKind.ClassName)
             Group.Identifier -> {
                 if (text == "while" && previous == "}" && closedDoBlock) doWhilePending = true
-                add(token.range, identifierKind(text, previous, next, isInfixCall(position)))
+                // En `listOf<Int>()` o `compareBy<Alumno> { … }` lo que decide si es una llamada es lo que sigue a los argumentos de tipo.
+                val callNext = if (next == "<") afterTypeArguments(position + 1) ?: next else next
+                add(token.range, identifierKind(text, previous, callNext, isInfixCall(position)))
             }
             Group.Operator -> add(token.range, operatorKind(text, position))
             Group.Punctuation -> add(token.range, punctuationKind(text, previous, next, position))
@@ -180,6 +183,7 @@ private class KotlinClassifier(
             !afterDot && name in AccessorNames && previous in VisibilityModifiers -> LessonCodeTokenKind.Keyword
             !afterDot && name == "field" -> LessonCodeTokenKind.MutableVariable
             !afterDot && name == "it" && stack.any { it.role == Role.Lambda } -> LessonCodeTokenKind.ImplicitParameter
+            !afterDot && name in typeParameterNames -> LessonCodeTokenKind.Plain
             isNamedArgument -> LessonCodeTokenKind.Constant
             name in enumEntries -> LessonCodeTokenKind.Constant
             next == "(" && previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
@@ -202,6 +206,27 @@ private class KotlinClassifier(
             name in mutableNames -> LessonCodeTokenKind.MutableVariable
             else -> LessonCodeTokenKind.Plain
         }
+    }
+
+    /**
+     * Si en esa posición empiezan unos argumentos de tipo (`<String, Int>`) seguidos de `(` o `{`, devuelve ese corchete.
+     * Así se distingue `listOf<Int>()` de una comparación como `n < limite`.
+     */
+    private fun afterTypeArguments(open: Int): String? {
+        var depth = 0
+        var cursor = open
+        while (cursor < significant.size) {
+            val token = raw[significant[cursor]]
+            val text = textOf(token)
+            when {
+                text == "<" -> depth++
+                text == ">" -> if (--depth == 0) return significant.getOrNull(cursor + 1)?.let { textOf(raw[it]) }?.takeIf { it == "(" || it == "{" }
+                token.group == Group.Identifier && text !in KotlinKeywords -> Unit
+                text !in TypeArgumentSymbols -> return null
+            }
+            cursor++
+        }
+        return null
     }
 
     /**
@@ -573,6 +598,32 @@ private class KotlinClassifier(
         return names
     }
 
+    /**
+     * Los parámetros de tipo son los nombres que declara `fun <T>`, `class Caja<T>` o `interface Pila<T>`, sin sus límites
+     * (`<T : Number>`). IntelliJ IDEA los muestra con el color del texto, no como un tipo.
+     */
+    private fun collectTypeParameterNames(): Set<String> {
+        val names = mutableSetOf<String>()
+        significant.forEachIndexed { position, rawIndex ->
+            if (textOf(raw[rawIndex]) != "<") return@forEachIndexed
+            val previous = significant.getOrNull(position - 1)?.let { textOf(raw[it]) }
+            val beforePrevious = significant.getOrNull(position - 2)?.let { textOf(raw[it]) }
+            if (previous != "fun" && beforePrevious !in setOf("class", "interface")) return@forEachIndexed
+            var depth = 0
+            var cursor = position
+            while (cursor < significant.size) {
+                val token = raw[significant[cursor]]
+                val text = textOf(token)
+                if (text == "<") depth++
+                if (text == ">" && --depth == 0) break
+                val before = textOf(raw[significant[cursor - 1]])
+                if (depth == 1 && token.group == Group.Identifier && (before == "<" || before == ",")) names += text
+                cursor++
+            }
+        }
+        return names
+    }
+
     private fun textOf(token: Raw): String = source.substring(token.range.first, token.range.last + 1)
 
     private fun Raw.isBlank(): Boolean = group == Group.Other && textOf(this).isBlank()
@@ -607,6 +658,8 @@ private val StringPartPattern = Regex("""\$\{[^}]*}|\$[A-Za-z_][A-Za-z0-9_]*|\\.
 private val ParenRoles = setOf(Role.Call, Role.Group, Role.FunParams, Role.Header, Role.WhenHeader)
 
 private val BlockHeaderRoles = setOf(Role.Header, Role.WhenHeader, Role.FunParams)
+
+private val TypeArgumentSymbols = setOf(",", ".", "?", "*")
 
 private val LambdaHeaderSymbols = setOf(":", ",", "(", ")", "<", ">", "?")
 

@@ -51,7 +51,7 @@ Comprobados en IntelliJ IDEA (modo K2, Catppuccin con corchetes de colores). Fue
 | Elemento | Color |
 |---|---|
 | Palabras clave | mauve |
-| Llamadas a función (también extensiones y llamadas con solo una lambda: `filter {`) y declaraciones | blue cursiva |
+| Llamadas a función (también extensiones, llamadas con solo una lambda: `filter {`, y con argumentos de tipo: `listOf<Int>()`, `compareBy<Alumno> {`) y declaraciones | blue cursiva |
 | Clases, tipos y anotaciones (`@Test`) | yellow cursiva |
 | Parámetros (también lambda `{ n ->` y llamado: `operacion(n)`) | maroon cursiva |
 | `it` | maroon |
@@ -66,6 +66,6 @@ Comprobados en IntelliJ IDEA (modo K2, Catppuccin con corchetes de colores). Fue
 | `:`, `::`, referencias (`::esPar`), flechas de `when` y de tipos de función | text |
 | Flecha de una lambda | red |
 | `()`, `[]`, `{}` (también lambdas y `${}`) | por nivel: red, peach, yellow, green, sapphire |
-| Parámetro de tipo `T` | text (aún no implementado) |
+| Parámetro de tipo (`T` en `fun <T>`, `class Caja<T>`) | text |
 
 Tras cambiar una lección: skill `verificacion` (al menos `./gradlew test --tests '*Lesson*'`) y skill `qa-app`.

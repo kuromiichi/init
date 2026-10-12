@@ -152,6 +152,7 @@ class LessonContentRulesTest {
                 "oop-inheritance-interfaces" to listOf("""\b(lateinit|lazy|inner|by)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "basic-uml" to listOf("""\b(lateinit|lazy|inner|by)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(filter|map|forEach|any|all|count|sumOf|let|also|apply|run)\b""", """\{ it\b""", """\{ \w+ ->"""),
                 "functional-programming" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator)\b""", """(?<!companion )\bobject\b""", """\b(class|interface) \w+<""", """\bfun <""", """\.(groupBy|groupingBy|fold|reduce|flatMap|flatten|partition|zip|associate\w*|asSequence|sortedWith|mapValues|mapKeys)\b""", """\b(sequenceOf|Comparator|compareBy)\b""", """\b(Pair|Triple)\("""),
+                "generics-collections" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """(?<!companion )\bobject\b""", """\b(asSequence|sequenceOf|buildList|buildMap)\b""", """\b(File|Path|readLines|readText)\b"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 

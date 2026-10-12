@@ -8,6 +8,7 @@ import dev.kuromiichi.init.data.lessons.contents.developmentEnvironmentLessonCon
 import dev.kuromiichi.init.data.lessons.contents.firstProgramsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.functionalProgrammingLessonContent
 import dev.kuromiichi.init.data.lessons.contents.functionsModularityLessonContent
+import dev.kuromiichi.init.data.lessons.contents.genericsCollectionsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.gitVersionControlLessonContent
 import dev.kuromiichi.init.data.lessons.contents.inputDecisionsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.loopsLessonContent
@@ -311,6 +312,7 @@ object LessonContentCatalog {
             oopInheritanceInterfacesLessonContent,
             basicUmlLessonContent,
             functionalProgrammingLessonContent,
+            genericsCollectionsLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

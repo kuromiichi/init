@@ -2,6 +2,7 @@ package dev.kuromiichi.init.data.lessons
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class KotlinCodeHighlighterTest {
     @Test
@@ -398,6 +399,35 @@ class KotlinCodeHighlighterTest {
         val tokens = kotlinCode("""println("a\nb")""").single().tokens
 
         assertEquals(LessonCodeTokenKind.Interpolation, tokens.kindOf("\\n"))
+    }
+
+    @Test
+    fun `type parameters are plain text and calls with type arguments are functions`() {
+        val lines =
+            kotlinCode(
+                """
+                class Caja<T>(val contenido: T)
+                fun <T : Comparable<T>> mayorDe(a: T, b: T): T = if (a > b) a else b
+                val vacia = listOf<String>()
+                val orden = compareBy<Alumno> { it.curso }
+                val cola = ArrayDeque<Int>()
+                if (n < limite) println(n)
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.ClassName, lines[0].tokens.kindOf("Caja"))
+        assertEquals(LessonCodeTokenKind.ClassName, lines[1].tokens.kindOf("Comparable"))
+        assertEquals(LessonCodeTokenKind.Function, lines[1].tokens.kindOf("mayorDe"))
+        lines.take(2).forEach { line ->
+            assertTrue(line.tokens.none { it.text.trim() == "T" && it.kind != LessonCodeTokenKind.Plain }, line.sourceText())
+        }
+        assertEquals(LessonCodeTokenKind.Function, lines[2].tokens.kindOf("listOf"))
+        assertEquals(LessonCodeTokenKind.ClassName, lines[2].tokens.kindOf("String"))
+        assertEquals(LessonCodeTokenKind.Function, lines[3].tokens.kindOf("compareBy"))
+        assertEquals(LessonCodeTokenKind.ImplicitParameter, lines[3].tokens.kindOf("it"))
+        assertEquals(LessonCodeTokenKind.Constant, lines[4].tokens.kindOf("ArrayDeque"))
+        assertEquals(LessonCodeTokenKind.Plain, lines[5].tokens.kindOf("limite"))
+        assertEquals(LessonCodeTokenKind.Operator, lines[5].tokens.kindOf("<"))
     }
 
     private fun List<LessonCodeToken>.kindOf(text: String): LessonCodeTokenKind = first { it.text.trim() == text }.kind
