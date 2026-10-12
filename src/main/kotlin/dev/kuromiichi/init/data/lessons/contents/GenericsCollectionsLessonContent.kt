@@ -193,7 +193,8 @@ val genericsCollectionsLessonContent =
                                                 return lista
                                             }
 
-                                            fun <T> List<T>.segundoOrNull(): T? = if (size >= 2) this[1] else null
+                                            fun <T> List<T>.segundoOrNull(): T? =
+                                                if (size >= 2) this[1] else null
 
                                             fun main() {
                                                 println(repetir("hola", 3))
@@ -274,11 +275,14 @@ val genericsCollectionsLessonContent =
                                                     elementos.add(elemento)
                                                 }
 
-                                                override fun desapilar(): T? = elementos.removeLastOrNull()
+                                                override fun desapilar(): T? =
+                                                    elementos.removeLastOrNull()
 
-                                                override fun cima(): T? = elementos.lastOrNull()
+                                                override fun cima(): T? =
+                                                    elementos.lastOrNull()
 
-                                                override fun estaVacia(): Boolean = elementos.isEmpty()
+                                                override fun estaVacia(): Boolean =
+                                                    elementos.isEmpty()
                                             }
 
                                             fun main() {
@@ -301,13 +305,13 @@ val genericsCollectionsLessonContent =
                                     columns = listOf("Línea", "Operación", "Pila (cima a la derecha)", "Muestra"),
                                     rows =
                                         listOf(
-                                            listOf("27", "apilar", "[Escribir hola]", "–"),
-                                            listOf("28", "apilar", "[Escribir hola, Poner negrita]", "–"),
-                                            listOf("29", "apilar", "[Escribir hola, Poner negrita, Borrar línea]", "–"),
-                                            listOf("30", "desapilar", "[Escribir hola, Poner negrita]", "Borrar línea"),
-                                            listOf("31", "desapilar", "[Escribir hola]", "Poner negrita"),
-                                            listOf("32", "cima", "[Escribir hola]", "Escribir hola"),
-                                            listOf("33", "estaVacia", "[Escribir hola]", "false"),
+                                            listOf("30", "apilar", "[Escribir hola]", "–"),
+                                            listOf("31", "apilar", "[Escribir hola, Poner negrita]", "–"),
+                                            listOf("32", "apilar", "[Escribir hola, Poner negrita, Borrar línea]", "–"),
+                                            listOf("33", "desapilar", "[Escribir hola, Poner negrita]", "Borrar línea"),
+                                            listOf("34", "desapilar", "[Escribir hola]", "Poner negrita"),
+                                            listOf("35", "cima", "[Escribir hola]", "Escribir hola"),
+                                            listOf("36", "estaVacia", "[Escribir hola]", "false"),
                                         ),
                                 ),
                         ),
@@ -343,7 +347,11 @@ val genericsCollectionsLessonContent =
                                             }
 
                                             fun main() {
-                                                val perros = mutableListOf(Perro("Toby"), Perro("Laika"))
+                                                val perros =
+                                                    mutableListOf(
+                                                        Perro("Toby"),
+                                                        Perro("Laika"),
+                                                    )
                                                 presentar(perros)
                                                 adoptarGato(⟦perros⟧)
                                             }
@@ -411,6 +419,7 @@ val genericsCollectionsLessonContent =
                                                 ordenado.add("fresa")
                                                 println(llegada)
                                                 println(ordenado)
+
                                                 val stock = sortedMapOf("pera" to 3, "kiwi" to 8)
                                                 stock["fresa"] = 5
                                                 println(stock)
@@ -440,7 +449,7 @@ val genericsCollectionsLessonContent =
                     title = "Pilas y colas",
                     explanation =
                         listOf(
-                            paragraph(regular("Una "), highlight("cola"), regular(" atiende por orden de llegada, como la de una tienda: se entra por el final y se sale por el principio. Una pila hace lo contrario: sale primero lo último que entró.")),
+                            paragraph(regular("Una "), highlight("cola"), regular(" atiende por orden de llegada, como la de una tienda: se entra por el final y se sale por el principio. Una "), highlight("pila"), regular(" hace lo contrario: sale primero lo último que entró.")),
                             paragraph(inlineCode("ArrayDeque"), regular(" sirve para las dos cosas, porque añade y quita rápido por ambos extremos. Como cola, "), inlineCode("addLast"), regular(" y "), inlineCode("removeFirst"), regular("; como pila, "), inlineCode("addLast"), regular(" y "), inlineCode("removeLast"), regular(". Con una colección vacía, "), inlineCode("removeFirstOrNull"), regular(" devuelve "), inlineCode("null"), regular(" en vez de fallar.")),
                         ),
                     visual =
@@ -460,14 +469,20 @@ val genericsCollectionsLessonContent =
                                                 cola.addLast("Pau")
                                                 println(cola.removeFirst())
                                                 println(cola)
-                                                val cambios = ArrayDeque(listOf("escribir", "negrita"))
+
+                                                val cambios = ArrayDeque<String>()
+                                                cambios.addLast("escribir")
+                                                cambios.addLast("negrita")
                                                 cambios.addLast("borrar")
                                                 println(cambios.removeLast())
                                                 println(cambios)
+
+                                                val vacia = ArrayDeque<Int>()
+                                                println(vacia.removeFirstOrNull())
                                             }
                                             """.trimIndent(),
                                         ),
-                                    note = richText(regular("Muestra "), inlineCode("Ana"), regular(", "), inlineCode("Luis"), regular(", "), inlineCode("[Marta, Pau]"), regular(", "), inlineCode("borrar"), regular(" y "), inlineCode("[escribir, negrita]"), regular(".")),
+                                    note = richText(regular("Muestra "), inlineCode("Ana"), regular(", "), inlineCode("Luis"), regular(", "), inlineCode("[Marta, Pau]"), regular(", "), inlineCode("borrar"), regular(", "), inlineCode("[escribir, negrita]"), regular(" y "), inlineCode("null"), regular(".")),
                                 ),
                             table =
                                 LessonTraceTable(
@@ -512,6 +527,7 @@ val genericsCollectionsLessonContent =
                                                 println(Punto(1, 2) in visitados)
                                                 visitados.add(Punto(1, 2))
                                                 println(visitados.size)
+
                                                 val visitadosDatos = mutableSetOf(PuntoDatos(1, 2))
                                                 println(PuntoDatos(1, 2) in visitadosDatos)
                                                 visitadosDatos.add(PuntoDatos(1, 2))
@@ -539,7 +555,10 @@ val genericsCollectionsLessonContent =
                                     lines =
                                         kotlinCode(
                                             $$"""
-                                                data class Version(val mayor: Int, val menor: Int) : Comparable<Version> {
+                                                data class Version(
+                                                    val mayor: Int,
+                                                    val menor: Int,
+                                                ) : Comparable<Version> {
                                                     override fun compareTo(other: Version): Int {
                                                         if (mayor != other.mayor) return mayor - other.mayor
                                                         return menor - other.menor
@@ -548,10 +567,16 @@ val genericsCollectionsLessonContent =
                                                     override fun toString(): String = "$mayor.$menor"
                                                 }
 
-                                                fun <T : Comparable<T>> mayorDe(a: T, b: T): T = if (a > b) a else b
+                                                fun <T : Comparable<T>> mayorDe(a: T, b: T): T =
+                                                    if (a > b) a else b
 
                                                 fun main() {
-                                                    val versiones = listOf(Version(1, 10), Version(0, 9), Version(1, 2))
+                                                    val versiones =
+                                                        listOf(
+                                                            Version(1, 10),
+                                                            Version(0, 9),
+                                                            Version(1, 2),
+                                                        )
                                                     println(versiones.sorted())
                                                     println(versiones.max())
                                                     println(Version(1, 2) < Version(1, 10))
@@ -580,13 +605,29 @@ val genericsCollectionsLessonContent =
                                     lines =
                                         kotlinCode(
                                             """
-                                            data class Alumno(val nombre: String, val curso: Int, val nota: Int)
+                                            data class Alumno(
+                                                val nombre: String,
+                                                val curso: Int,
+                                                val nota: Int,
+                                            )
 
                                             fun main() {
-                                                val alumnos = listOf(Alumno("Pau", 2, 7), Alumno("Ana", 1, 9), Alumno("Luis", 2, 9), Alumno("Marta", 1, 6))
-                                                val porCurso = compareBy<Alumno> { it.curso }.thenByDescending { it.nota }
+                                                val alumnos =
+                                                    listOf(
+                                                        Alumno("Pau", 2, 7),
+                                                        Alumno("Ana", 1, 9),
+                                                        Alumno("Luis", 2, 9),
+                                                        Alumno("Marta", 1, 6),
+                                                    )
+
+                                                val porCurso =
+                                                    compareBy<Alumno> { it.curso }
+                                                        .thenByDescending { it.nota }
                                                 println(alumnos.sortedWith(porCurso).map { it.nombre })
-                                                val porNota = compareByDescending<Alumno> { it.nota }.thenBy { it.nombre }
+
+                                                val porNota =
+                                                    compareByDescending<Alumno> { it.nota }
+                                                        .thenBy { it.nombre }
                                                 println(alumnos.sortedWith(porNota).map { it.nombre })
                                             }
                                             """.trimIndent(),
@@ -612,12 +653,32 @@ val genericsCollectionsLessonContent =
                                         kotlinCode(
                                             """
                                             fun main() {
-                                                val palabras = listOf("sol", "luna", "sol", "mar", "sol", "luna")
-                                                println(palabras.groupingBy { it }.eachCount())
-                                                val examenes = listOf("Ana" to 7, "Luis" to 4, "Ana" to 9)
-                                                val notas = examenes.groupBy(keySelector = { it.first }, valueTransform = { it.second })
+                                                val palabras =
+                                                    listOf(
+                                                        "sol", "luna", "sol",
+                                                        "mar", "sol", "luna",
+                                                    )
+                                                val conteo =
+                                                    palabras
+                                                        .groupingBy { it }
+                                                        .eachCount()
+                                                println(conteo)
+
+                                                val examenes =
+                                                    listOf(
+                                                        "Ana" to 7,
+                                                        "Luis" to 4,
+                                                        "Ana" to 9,
+                                                    )
+                                                val notas =
+                                                    examenes.groupBy(
+                                                        keySelector = { it.first },
+                                                        valueTransform = { it.second },
+                                                    )
                                                 println(notas)
-                                                println(notas.mapValues { it.value.max() })
+                                                val maximas =
+                                                    notas.mapValues { it.value.max() }
+                                                println(maximas)
                                             }
                                             """.trimIndent(),
                                         ),
@@ -628,14 +689,37 @@ val genericsCollectionsLessonContent =
                                     lines =
                                         kotlinCode(
                                             """
-                                            data class Alumno(val dni: String, val nombre: String, val curso: Int)
+                                            data class Alumno(
+                                                val dni: String,
+                                                val nombre: String,
+                                                val curso: Int,
+                                            )
 
                                             fun main() {
-                                                val alumnos = listOf(Alumno("111A", "Ana", 1), Alumno("222B", "Luis", 2), Alumno("333C", "Marta", 1))
-                                                println(alumnos.groupBy { it.curso }.mapValues { it.value.map { alumno -> alumno.nombre } })
-                                                val porDni = alumnos.associateBy { it.dni }
+                                                val alumnos =
+                                                    listOf(
+                                                        Alumno("111A", "Ana", 1),
+                                                        Alumno("222B", "Luis", 2),
+                                                        Alumno("333C", "Marta", 1),
+                                                    )
+
+                                                val porCurso =
+                                                    alumnos.groupBy { it.curso }
+                                                val nombresPorCurso =
+                                                    porCurso.mapValues { entrada ->
+                                                        entrada.value.map { it.nombre }
+                                                    }
+                                                println(nombresPorCurso)
+
+                                                val porDni =
+                                                    alumnos.associateBy { it.dni }
                                                 println(porDni["222B"]?.nombre)
-                                                println(listOf("Ana", "Luis", "Marta").associateWith { it.length })
+
+                                                val nombres =
+                                                    listOf("Ana", "Luis", "Marta")
+                                                val longitudes =
+                                                    nombres.associateWith { it.length }
+                                                println(longitudes)
                                             }
                                             """.trimIndent(),
                                         ),
@@ -661,13 +745,22 @@ val genericsCollectionsLessonContent =
                                             """
                                             fun main() {
                                                 val notas = listOf(7, 4, 9, 3, 6)
-                                                val (aprobadas, suspensas) = notas.partition { it >= 5 }
+                                                val (aprobadas, suspensas) =
+                                                    notas.partition { it >= 5 }
                                                 println(aprobadas)
                                                 println(suspensas)
+
                                                 val nombres = listOf("Ana", "Luis", "Marta")
                                                 println(nombres.zip(listOf(1, 2, 3)))
-                                                val grupos = listOf(listOf("Ana", "Luis"), listOf("Marta"), listOf("Pau", "Eva"))
+
+                                                val grupos =
+                                                    listOf(
+                                                        listOf("Ana", "Luis"),
+                                                        listOf("Marta"),
+                                                        listOf("Pau", "Eva"),
+                                                    )
                                                 println(grupos.flatten())
+
                                                 val frases = listOf("hola mundo", "adiós")
                                                 println(frases.flatMap { it.split(" ") })
                                             }
@@ -681,11 +774,11 @@ val genericsCollectionsLessonContent =
                                     columns = listOf("Línea", "Operación", "Muestra"),
                                     rows =
                                         listOf(
-                                            listOf("4", "partition (cumplen)", "[7, 9, 6]"),
-                                            listOf("5", "partition (no cumplen)", "[4, 3]"),
-                                            listOf("7", "zip", "[(Ana, 1), (Luis, 2), (Marta, 3)]"),
-                                            listOf("9", "flatten", "[Ana, Luis, Marta, Pau, Eva]"),
-                                            listOf("11", "flatMap", "[hola, mundo, adiós]"),
+                                            listOf("5", "partition (cumplen)", "[7, 9, 6]"),
+                                            listOf("6", "partition (no cumplen)", "[4, 3]"),
+                                            listOf("9", "zip", "[(Ana, 1), (Luis, 2), (Marta, 3)]"),
+                                            listOf("17", "flatten", "[Ana, Luis, Marta, Pau, Eva]"),
+                                            listOf("20", "flatMap", "[hola, mundo, adiós]"),
                                         ),
                                 ),
                         ),
@@ -694,7 +787,7 @@ val genericsCollectionsLessonContent =
                     title = "Acumular con fold",
                     explanation =
                         listOf(
-                            paragraph(inlineCode("fold"), regular(" recorre la colección llevando un "), emphasis("acumulado"), regular(": empieza con el valor inicial y, en cada vuelta, la lambda recibe el acumulado y el elemento y devuelve el nuevo acumulado. Es el patrón de tus bucles de suma, en una línea.")),
+                            paragraph(inlineCode("fold"), regular(" recorre la colección llevando un "), emphasis("acumulado"), regular(": empieza con el valor inicial y, en cada vuelta, la lambda recibe el acumulado y el elemento y devuelve el nuevo acumulado. Es el patrón de tus bucles de suma, en una sola expresión.")),
                             paragraph(regular("Para sumar ya existe "), inlineCode("sum()"), regular("; "), inlineCode("fold"), regular(" brilla cuando el resultado es de otro tipo, como el texto de las siglas del ejemplo. "), inlineCode("reduce"), regular(" empieza por el primer elemento y falla si la colección está vacía.")),
                         ),
                     visual =
@@ -707,12 +800,24 @@ val genericsCollectionsLessonContent =
                                             """
                                             fun main() {
                                                 val precios = listOf(12.5, 7.5, 30.0)
-                                                val total = precios.fold(0.0) { acumulado, precio -> acumulado + precio }
+                                                val total =
+                                                    precios.fold(0.0) { acumulado, precio ->
+                                                        acumulado + precio
+                                                    }
                                                 println(total)
+
                                                 val palabras = listOf("kotlin", "es", "divertido")
-                                                val siglas = palabras.fold("") { texto, palabra -> texto + palabra.first().uppercase() }
+                                                val siglas =
+                                                    palabras.fold("") { texto, palabra ->
+                                                        texto + palabra.first().uppercase()
+                                                    }
                                                 println(siglas)
-                                                println(listOf(3, 8, 5).reduce { mayor, n -> if (n > mayor) n else mayor })
+
+                                                val maximo =
+                                                    listOf(3, 8, 5).reduce { mayor, n ->
+                                                        if (n > mayor) n else mayor
+                                                    }
+                                                println(maximo)
                                             }
                                             """.trimIndent(),
                                         ),
@@ -720,7 +825,7 @@ val genericsCollectionsLessonContent =
                                 ),
                             table =
                                 LessonTraceTable(
-                                    title = "El fold de la línea 3, vuelta a vuelta",
+                                    title = "El fold de total, vuelta a vuelta",
                                     columns = listOf("Vuelta", "acumulado", "precio", "Devuelve"),
                                     rows =
                                         listOf(
@@ -812,10 +917,16 @@ val genericsCollectionsLessonContent =
                                                     mostrar(partidas)
                                                 }
 
-                                                data class Partida(val jugador: String, val juego: String, val puntos: Int)
+                                                data class Partida(
+                                                    val jugador: String,
+                                                    val juego: String,
+                                                    val puntos: Int,
+                                                )
 
                                                 fun mostrar(partidas: List<Partida>) {
-                                                    partidas.forEach { println("${it.jugador} (${it.juego}): ${it.puntos}") }
+                                                    partidas.forEach {
+                                                        println("${it.jugador} (${it.juego}): ${it.puntos}")
+                                                    }
                                                 }
                                             """.trimIndent(),
                                         ),
@@ -845,7 +956,7 @@ val genericsCollectionsLessonContent =
                                     richText(regular("Crea "), inlineCode("fun <T> masRepetido(elementos: List<T>): T?"), regular(", que devuelva el elemento que más veces aparece; si hay empate, el que aparece antes en la lista; y "), inlineCode("null"), regular(" si la lista está vacía. Úsala para el juego más jugado y la puntuación más repetida.")),
                                     richText(regular("Crea "), inlineCode("class Recientes<T>(capacidad: Int)"), regular(" con "), inlineCode("registrar(elemento: T)"), regular(" y "), inlineCode("todos(): List<T>"), regular(". Recuerda solo los "), inlineCode("capacidad"), regular(" últimos elementos registrados y los devuelve del más antiguo al más reciente. Úsala para mostrar las tres últimas partidas.")),
                                     richText(regular("El programa muestra el informe como en la primera ejecución. Si no hay partidas, como en la segunda (con "), inlineCode("listOf<Partida>()"), regular("), muestra solo "), inlineCode("No hay partidas"), regular(".")),
-                                    richText(regular("Crea "), inlineCode("TorneoTest"), regular(" con pruebas de las tres funciones y de "), inlineCode("Recientes"), regular(", con empates, con listas vacías y con más de un tipo.")),
+                                    richText(regular("Crea "), inlineCode("TorneoTest"), regular(" con pruebas de las tres funciones y de "), inlineCode("Recientes"), regular(" que cubran los casos límite y más de un tipo.")),
                                 ),
                             expectedOutput =
                                 listOf(
@@ -869,9 +980,9 @@ val genericsCollectionsLessonContent =
                             hints =
                                 listOf(
                                     richText(inlineCode("puntosPorJugador"), regular(" cabe en una línea: agrupa las partidas por jugador con "), inlineCode("groupBy"), regular(" y suma los puntos de cada grupo con "), inlineCode("mapValues"), regular(" y "), inlineCode("sumOf"), regular(".")),
-                                    richText(inlineCode("toList()"), regular(" convierte un mapa en una lista de pares. Ordénala con "), inlineCode("sortedWith"), regular(" y un criterio que empiece por "), inlineCode("compareByDescending<Pair<String, Int>> { it.second }"), regular(" y desempate con "), inlineCode("thenBy"), regular(".")),
+                                    richText(inlineCode("toList()"), regular(" convierte un mapa en una lista de pares. Ordénala con "), inlineCode("sortedWith"), regular(" y un criterio que empiece por "), inlineCode("compareByDescending<Pair<String, Int>> { it.second }"), regular(" y desempate con "), inlineCode("thenBy"), regular(". Para numerar la clasificación, recuerda "), inlineCode("withIndex()"), regular(".")),
                                     richText(inlineCode("groupingBy { it }.eachCount()"), regular(" respeta el orden de aparición, y "), inlineCode("maxByOrNull"), regular(" se queda con el primero de los empatados. El resultado es una entrada del mapa: te interesa su "), inlineCode("key"), regular(".")),
-                                    richText(regular("Dentro de "), inlineCode("Recientes"), regular(", guarda los elementos en un "), inlineCode("ArrayDeque<T>"), regular(" privado: añade por el final y, si te pasas de la capacidad, quita el primero. "), inlineCode("todos()"), regular(" puede devolver una copia con "), inlineCode("toList()"), regular(". Para numerar la clasificación, recuerda "), inlineCode("withIndex()"), regular(".")),
+                                    richText(regular("Dentro de "), inlineCode("Recientes"), regular(", guarda los elementos en un "), inlineCode("ArrayDeque<T>"), regular(" privado: añade por el final y, si te pasas de la capacidad, quita el primero. "), inlineCode("todos()"), regular(" puede devolver una copia con "), inlineCode("toList()"), regular(".")),
                                 ),
                             extension = richText(regular("Cambia "), inlineCode("clasificacion"), regular(" para que devuelva una lista de "), inlineCode("data class Puntuacion(val jugador: String, val puntos: Int)"), regular(", con su orden natural, y ordénala con "), inlineCode("sorted()"), regular(". ¿Qué versión se lee mejor?")),
                             confirmation = richText(regular("Confirma que las dos ejecuciones dan la salida esperada, que ninguna de tus funciones usa "), inlineCode("for"), regular(" ni "), inlineCode("while"), regular(" y que "), inlineCode("./gradlew test"), regular(" termina con "), inlineCode("BUILD SUCCESSFUL"), regular(".")),
