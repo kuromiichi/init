@@ -422,7 +422,9 @@ val nullabilityExceptionsLessonContent =
                                         kotlinCode(
                                             """
                                             fun calificar(nota: Int): String {
-                                                require(nota >= 0 && nota <= 10) { "La nota debe estar entre 0 y 10" }
+                                                require(nota >= 0 && nota <= 10) {
+                                                    "La nota debe estar entre 0 y 10"
+                                                }
                                                 if (nota < 5) {
                                                     return "Suspenso"
                                                 }
@@ -492,7 +494,9 @@ val nullabilityExceptionsLessonContent =
 
                                                 @Test
                                                 fun `una nota de 11 lanza una excepcion`() {
-                                                    assertFailsWith<IllegalArgumentException> { calificar(11) }
+                                                    assertFailsWith<IllegalArgumentException> {
+                                                        calificar(11)
+                                                    }
                                                 }
 
                                                 @Test

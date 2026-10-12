@@ -322,7 +322,9 @@ val oopClassesObjectsLessonContent =
                                             class Alumno(val nombre: String) {
                                                 var nota: Int = 0
                                                     set(nueva) {
-                                                        require(nueva >= 0 && nueva <= 10) { "La nota debe estar entre 0 y 10" }
+                                                        require(nueva >= 0 && nueva <= 10) {
+                                                            "La nota debe estar entre 0 y 10"
+                                                        }
                                                         field = nueva
                                                     }
 
@@ -348,12 +350,12 @@ val oopClassesObjectsLessonContent =
                                     columns = listOf("Línea", "nota", "aprobado", "Muestra"),
                                     rows =
                                         listOf(
-                                            listOf("13", "0", "false", "–"),
-                                            listOf("14", "0", "false", "false"),
-                                            listOf("15", "7", "true", "–"),
-                                            listOf("16", "7", "true", "true"),
-                                            listOf("17", "3", "false", "–"),
-                                            listOf("18", "3", "false", "false"),
+                                            listOf("15", "0", "false", "–"),
+                                            listOf("16", "0", "false", "false"),
+                                            listOf("17", "7", "true", "–"),
+                                            listOf("18", "7", "true", "true"),
+                                            listOf("19", "3", "false", "–"),
+                                            listOf("20", "3", "false", "false"),
                                         ),
                                 ),
                         ),
@@ -643,7 +645,9 @@ val oopClassesObjectsLessonContent =
                                             class Alumno(val nombre: String) {
                                                 var nota: Int = 0
                                                     set(nueva) {
-                                                        require(nueva >= 0 && nueva <= 10) { "La nota debe estar entre 0 y 10" }
+                                                        require(nueva >= 0 && nueva <= 10) {
+                                                            "La nota debe estar entre 0 y 10"
+                                                        }
                                                         field = nueva
                                                     }
 
@@ -685,7 +689,9 @@ val oopClassesObjectsLessonContent =
                                                 fun `una nota fuera de rango se rechaza y no cambia la anterior`() {
                                                     val alumno = Alumno("Ana")
                                                     alumno.nota = 6
-                                                    assertFailsWith<IllegalArgumentException> { alumno.nota = 11 }
+                                                    assertFailsWith<IllegalArgumentException> {
+                                                        alumno.nota = 11
+                                                    }
                                                     assertEquals(6, alumno.nota)
                                                 }
                                             }

@@ -293,13 +293,19 @@ val oopInheritanceInterfacesLessonContent =
                                                 }
                                             }
 
-                                            class Rectangulo(val ancho: Int, val alto: Int) : Figura("Rectángulo") {
+                                            class Rectangulo(
+                                                val ancho: Int,
+                                                val alto: Int,
+                                            ) : Figura("Rectángulo") {
                                                 override fun area(): Int {
                                                     return ancho * alto
                                                 }
                                             }
 
-                                            class Triangulo(val base: Int, val alto: Int) : Figura("Triángulo") {
+                                            class Triangulo(
+                                                val base: Int,
+                                                val alto: Int,
+                                            ) : Figura("Triángulo") {
                                                 override fun area(): Int {
                                                     return base * alto / 2
                                                 }
@@ -359,20 +365,31 @@ val oopInheritanceInterfacesLessonContent =
                                                 }
                                             }
 
-                                            class Rectangulo(val ancho: Int, val alto: Int) : Figura("Rectángulo") {
+                                            class Rectangulo(
+                                                val ancho: Int,
+                                                val alto: Int,
+                                            ) : Figura("Rectángulo") {
                                                 override fun area(): Int {
                                                     return ancho * alto
                                                 }
                                             }
 
-                                            class Triangulo(val base: Int, val alto: Int) : Figura("Triángulo") {
+                                            class Triangulo(
+                                                val base: Int,
+                                                val alto: Int,
+                                            ) : Figura("Triángulo") {
                                                 override fun area(): Int {
                                                     return base * alto / 2
                                                 }
                                             }
 
                                             fun main() {
-                                                val figuras: List<Figura> = listOf(Rectangulo(3, 4), Triangulo(5, 4), Rectangulo(2, 2))
+                                                val figuras: List<Figura> =
+                                                    listOf(
+                                                        Rectangulo(3, 4),
+                                                        Triangulo(5, 4),
+                                                        Rectangulo(2, 2),
+                                                    )
                                                 var total = 0
                                                 for (figura in figuras) {
                                                     figura.describir()
@@ -421,20 +438,30 @@ val oopInheritanceInterfacesLessonContent =
                                                 abstract fun area(): Int
                                             }
 
-                                            class Rectangulo(val ancho: Int, val alto: Int) : Figura("Rectángulo") {
+                                            class Rectangulo(
+                                                val ancho: Int,
+                                                val alto: Int,
+                                            ) : Figura("Rectángulo") {
                                                 override fun area(): Int {
                                                     return ancho * alto
                                                 }
                                             }
 
-                                            class Triangulo(val base: Int, val alto: Int) : Figura("Triángulo") {
+                                            class Triangulo(
+                                                val base: Int,
+                                                val alto: Int,
+                                            ) : Figura("Triángulo") {
                                                 override fun area(): Int {
                                                     return base * alto / 2
                                                 }
                                             }
 
                                             fun main() {
-                                                val figuras: List<Figura> = listOf(Rectangulo(3, 4), Triangulo(5, 4))
+                                                val figuras: List<Figura> =
+                                                    listOf(
+                                                        Rectangulo(3, 4),
+                                                        Triangulo(5, 4),
+                                                    )
                                                 for (figura in figuras) {
                                                     if (figura is Rectangulo) {
                                                         println("Ancho: ${figura.ancho}")
@@ -457,7 +484,10 @@ val oopInheritanceInterfacesLessonContent =
                                                 abstract fun area(): Int
                                             }
 
-                                            class Rectangulo(val ancho: Int, val alto: Int) : Figura("Rectángulo") {
+                                            class Rectangulo(
+                                                val ancho: Int,
+                                                val alto: Int,
+                                            ) : Figura("Rectángulo") {
                                                 override fun area(): Int {
                                                     return ancho * alto
                                                 }
@@ -482,7 +512,10 @@ val oopInheritanceInterfacesLessonContent =
                                                 abstract fun area(): Int
                                             }
 
-                                            class Rectangulo(val ancho: Int, val alto: Int) : Figura("Rectángulo") {
+                                            class Rectangulo(
+                                                val ancho: Int,
+                                                val alto: Int,
+                                            ) : Figura("Rectángulo") {
                                                 override fun area(): Int {
                                                     return ancho * alto
                                                 }
@@ -600,7 +633,10 @@ val oopInheritanceInterfacesLessonContent =
                                                 }
                                             }
 
-                                            class Pato(nombre: String) : Animal(nombre), Nadador, Volador
+                                            class Pato(nombre: String) :
+                                                Animal(nombre),
+                                                Nadador,
+                                                Volador
 
                                             fun main() {
                                                 val pato = Pato("Donald")
@@ -621,7 +657,11 @@ val oopInheritanceInterfacesLessonContent =
 
                                             open class Mascota(val familia: String)
 
-                                            class Pato(nombre: String, familia: String) : Animal(nombre), ⟦Mascota⟧(familia)
+                                            class Pato(
+                                                nombre: String,
+                                                familia: String,
+                                            ) : Animal(nombre),
+                                                ⟦Mascota⟧(familia)
                                             """.trimIndent(),
                                         ),
                                     note = richText(regular("IntelliJ IDEA lo marca como error: aunque un pato pueda ser animal y mascota, en la lista de supertipos solo cabe una clase. Lo demás tienen que ser interfaces.")),
@@ -720,13 +760,19 @@ val oopInheritanceInterfacesLessonContent =
                                                 abstract fun area(): Int
                                             }
 
-                                            class Rectangulo(val ancho: Int, val alto: Int) : Figura("Rectángulo") {
+                                            class Rectangulo(
+                                                val ancho: Int,
+                                                val alto: Int,
+                                            ) : Figura("Rectángulo") {
                                                 override fun area(): Int {
                                                     return ancho * alto
                                                 }
                                             }
 
-                                            class Triangulo(val base: Int, val alto: Int) : Figura("Triángulo") {
+                                            class Triangulo(
+                                                val base: Int,
+                                                val alto: Int,
+                                            ) : Figura("Triángulo") {
                                                 override fun area(): Int {
                                                     return base * alto / 2
                                                 }
@@ -757,7 +803,11 @@ val oopInheritanceInterfacesLessonContent =
                                             }
 
                                             fun main() {
-                                                val escena: List<Dibujable> = listOf(Rectangulo(3, 2), Etiqueta("Hola"))
+                                                val escena: List<Dibujable> =
+                                                    listOf(
+                                                        Rectangulo(3, 2),
+                                                        Etiqueta("Hola"),
+                                                    )
                                                 for (elemento in escena) {
                                                     elemento.dibujar()
                                                 }
@@ -799,7 +849,12 @@ val oopInheritanceInterfacesLessonContent =
                                             }
 
                                             fun main() {
-                                                val pagos: List<Pago> = listOf(Tarjeta(30, "4242"), Efectivo(12, 20), Bizum(8, "600123456"))
+                                                val pagos: List<Pago> =
+                                                    listOf(
+                                                        Tarjeta(30, "4242"),
+                                                        Efectivo(12, 20),
+                                                        Bizum(8, "600123456"),
+                                                    )
                                                 for (pago in pagos) {
                                                     println(describir(pago))
                                                 }
@@ -893,7 +948,11 @@ val oopInheritanceInterfacesLessonContent =
                                             class Pinguino(nombre: String) : Ave(nombre)
 
                                             fun main() {
-                                                val aves: List<Ave> = listOf(Gorrion("Pepe"), Pinguino("Pingu"))
+                                                val aves: List<Ave> =
+                                                    listOf(
+                                                        Gorrion("Pepe"),
+                                                        Pinguino("Pingu"),
+                                                    )
                                                 for (ave in aves) {
                                                     if (ave is Volador) {
                                                         ave.volar()
@@ -935,7 +994,10 @@ val oopInheritanceInterfacesLessonContent =
                                                 }
                                             }
 
-                                            class Pedido(val cliente: String, private val notificador: Notificador) {
+                                            class Pedido(
+                                                val cliente: String,
+                                                private val notificador: Notificador,
+                                            ) {
                                                 private var enviado = false
 
                                                 fun enviar() {
@@ -973,7 +1035,10 @@ val oopInheritanceInterfacesLessonContent =
                                                     val notificador = NotificadorFalso()
                                                     val pedido = Pedido("Ana", notificador)
                                                     pedido.enviar()
-                                                    assertEquals(listOf("Pedido de Ana enviado"), notificador.mensajes)
+                                                    assertEquals(
+                                                        listOf("Pedido de Ana enviado"),
+                                                        notificador.mensajes,
+                                                    )
                                                 }
 
                                                 @Test

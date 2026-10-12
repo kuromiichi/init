@@ -285,7 +285,10 @@ val oopRelationshipsLessonContent =
                                             class Producto(val nombre: String, val precio: Int)
 
                                             class Pedido(val cliente: String) {
-                                                private class Linea(val producto: Producto, val cantidad: Int) {
+                                                private class Linea(
+                                                    val producto: Producto,
+                                                    val cantidad: Int,
+                                                ) {
                                                     fun subtotal(): Int {
                                                         return producto.precio * cantidad
                                                     }
@@ -453,7 +456,11 @@ val oopRelationshipsLessonContent =
                                                 }
                                             }
 
-                                            class Factura(val cliente: String, val importe: Int, private val descuento: Descuento) {
+                                            class Factura(
+                                                val cliente: String,
+                                                val importe: Int,
+                                                private val descuento: Descuento,
+                                            ) {
                                                 fun total(): Int {
                                                     return descuento.aplicar(importe)
                                                 }

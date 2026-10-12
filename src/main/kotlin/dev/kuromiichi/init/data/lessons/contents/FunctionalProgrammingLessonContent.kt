@@ -165,7 +165,8 @@ val functionalProgrammingLessonContent =
                                     lines =
                                         kotlinCode(
                                             $$"""
-                                                fun aplicar(n: Int, operacion: (Int) -> Int): Int = operacion(n)
+                                                fun aplicar(n: Int, operacion: (Int) -> Int): Int =
+                                                    operacion(n)
 
                                                 fun main() {
                                                     println(aplicar(5) { it * 2 })
@@ -214,7 +215,10 @@ val functionalProgrammingLessonContent =
                                             """
                                             fun esPar(n: Int): Boolean = n % 2 == 0
 
-                                            fun contarSi(numeros: List<Int>, condicion: (Int) -> Boolean): Int {
+                                            fun contarSi(
+                                                numeros: List<Int>,
+                                                condicion: (Int) -> Boolean,
+                                            ): Int {
                                                 var total = 0
                                                 for (n in numeros) {
                                                     if (condicion(n)) total++
@@ -352,7 +356,11 @@ val functionalProgrammingLessonContent =
                                             fun main() {
                                                 val notas = listOf(7, 4, 9)
                                                 println(notas.map { it + 1 })
-                                                val alumnos = listOf(Alumno("Ana", 7), Alumno("Luis", 4))
+                                                val alumnos =
+                                                    listOf(
+                                                        Alumno("Ana", 7),
+                                                        Alumno("Luis", 4),
+                                                    )
                                                 println(alumnos.map { it.nombre })
                                                 println(alumnos.map { it.copy(nota = it.nota + 1) })
                                             }
@@ -381,7 +389,13 @@ val functionalProgrammingLessonContent =
                                             data class Alumno(val nombre: String, val nota: Int)
 
                                             fun main() {
-                                                val alumnos = listOf(Alumno("Ana", 7), Alumno("Luis", 4), Alumno("Marta", 9))
+                                                val alumnos =
+                                                    listOf(
+                                                        Alumno("Ana", 7),
+                                                        Alumno("Luis", 4),
+                                                        Alumno("Marta", 9),
+                                                    )
+
                                                 println(alumnos.any { it.nota < 5 })
                                                 println(alumnos.all { it.nota >= 5 })
                                                 println(alumnos.none { it.nota == 10 })
@@ -399,12 +413,12 @@ val functionalProgrammingLessonContent =
                                     columns = listOf("Línea", "Pregunta", "Muestra"),
                                     rows =
                                         listOf(
-                                            listOf("5", "¿Alguien ha suspendido?", "true"),
-                                            listOf("6", "¿Han aprobado todos?", "false"),
-                                            listOf("7", "¿Nadie tiene un 10?", "true"),
-                                            listOf("8", "¿Cuántos han aprobado?", "2"),
-                                            listOf("9", "¿Quién tiene más de un 8?", "Alumno(nombre=Marta, nota=9)"),
-                                            listOf("10", "¿Quién tiene más de un 9?", "null"),
+                                            listOf("11", "¿Alguien ha suspendido?", "true"),
+                                            listOf("12", "¿Han aprobado todos?", "false"),
+                                            listOf("13", "¿Nadie tiene un 10?", "true"),
+                                            listOf("14", "¿Cuántos han aprobado?", "2"),
+                                            listOf("15", "¿Quién tiene más de un 8?", "Alumno(nombre=Marta, nota=9)"),
+                                            listOf("16", "¿Quién tiene más de un 9?", "null"),
                                         ),
                                 ),
                         ),
@@ -427,11 +441,17 @@ val functionalProgrammingLessonContent =
                                             data class Alumno(val nombre: String, val nota: Int)
 
                                             fun main() {
-                                                val alumnos = listOf(Alumno("Ana", 7), Alumno("Luis", 4), Alumno("Marta", 9))
+                                                val alumnos =
+                                                    listOf(
+                                                        Alumno("Ana", 7),
+                                                        Alumno("Luis", 4),
+                                                        Alumno("Marta", 9),
+                                                    )
                                                 println(alumnos.sumOf { it.nota })
                                                 println(alumnos.maxByOrNull { it.nota }?.nombre)
                                                 println(alumnos.sortedBy { it.nota }.map { it.nombre })
-                                                println(alumnos.sortedByDescending { it.nota }.map { it.nombre })
+                                                val deMayorAMenor = alumnos.sortedByDescending { it.nota }
+                                                println(deMayorAMenor.map { it.nombre })
                                                 val nadie = listOf<Alumno>()
                                                 println(nadie.maxByOrNull { it.nota })
                                             }
@@ -460,7 +480,14 @@ val functionalProgrammingLessonContent =
                                                 data class Alumno(val nombre: String, val nota: Int)
 
                                                 fun main() {
-                                                    val alumnos = listOf(Alumno("Ana", 7), Alumno("Luis", 4), Alumno("Marta", 9), Alumno("Pau", 6))
+                                                    val alumnos =
+                                                        listOf(
+                                                            Alumno("Ana", 7),
+                                                            Alumno("Luis", 4),
+                                                            Alumno("Marta", 9),
+                                                            Alumno("Pau", 6),
+                                                        )
+
                                                     val cuadro =
                                                         alumnos
                                                             .filter { it.nota >= 5 }
@@ -478,10 +505,10 @@ val functionalProgrammingLessonContent =
                                     columns = listOf("Línea", "Etapa", "Resultado"),
                                     rows =
                                         listOf(
-                                            listOf("6", "alumnos", "Ana 7, Luis 4, Marta 9, Pau 6"),
-                                            listOf("7", "filter", "Ana 7, Marta 9, Pau 6"),
-                                            listOf("8", "sortedByDescending", "Marta 9, Ana 7, Pau 6"),
-                                            listOf("9", "map", "[Marta (9), Ana (7), Pau (6)]"),
+                                            listOf("13", "alumnos", "Ana 7, Luis 4, Marta 9, Pau 6"),
+                                            listOf("14", "filter", "Ana 7, Marta 9, Pau 6"),
+                                            listOf("15", "sortedByDescending", "Marta 9, Ana 7, Pau 6"),
+                                            listOf("16", "map", "[Marta (9), Ana (7), Pau (6)]"),
                                         ),
                                 ),
                         ),
@@ -604,7 +631,8 @@ val functionalProgrammingLessonContent =
                                                     var unidades = 0
                                                 }
 
-                                                fun buscarNota(nombre: String): Int? = if (nombre == "Ana") 7 else null
+                                                fun buscarNota(nombre: String): Int? =
+                                                    if (nombre == "Ana") 7 else null
 
                                                 fun main() {
                                                     buscarNota("Ana")?.let { println("Ana tiene un $it") }
@@ -614,7 +642,10 @@ val functionalProgrammingLessonContent =
                                                             producto = "Teclado"
                                                             unidades = 2
                                                         }
-                                                    val total = (pedido.unidades * 25).also { println("Total calculado: $it") }
+                                                    val total =
+                                                        (pedido.unidades * 25).also {
+                                                            println("Total calculado: $it")
+                                                        }
                                                     println("${pedido.producto}: $total €")
                                                 }
                                             """.trimIndent(),
@@ -673,8 +704,17 @@ val functionalProgrammingLessonContent =
                                             class AlumnosTest {
                                                 @Test
                                                 fun `solo aparecen los aprobados en orden alfabetico`() {
-                                                    val alumnos = listOf(Alumno("Marta", 9), Alumno("Luis", 4), Alumno("Pau", 5), Alumno("Ana", 7))
-                                                    assertEquals(listOf("Ana", "Marta", "Pau"), aprobados(alumnos))
+                                                    val alumnos =
+                                                        listOf(
+                                                            Alumno("Marta", 9),
+                                                            Alumno("Luis", 4),
+                                                            Alumno("Pau", 5),
+                                                            Alumno("Ana", 7),
+                                                        )
+                                                    assertEquals(
+                                                        listOf("Ana", "Marta", "Pau"),
+                                                        aprobados(alumnos),
+                                                    )
                                                 }
 
                                                 @Test
@@ -716,7 +756,11 @@ val functionalProgrammingLessonContent =
                                                     mostrar(inventario)
                                                 }
 
-                                                data class Producto(val nombre: String, val precio: Double, val unidades: Int)
+                                                data class Producto(
+                                                    val nombre: String,
+                                                    val precio: Double,
+                                                    val unidades: Int,
+                                                )
 
                                                 fun mostrar(productos: List<Producto>) {
                                                     for (producto in productos) {

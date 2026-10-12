@@ -400,7 +400,11 @@ val setsMapsLessonContent =
                                         kotlinCode(
                                             """
                                             fun main() {
-                                                val palabras = listOf("sol", "luna", "sol", "mar", "sol", "luna")
+                                                val palabras =
+                                                    listOf(
+                                                        "sol", "luna", "sol",
+                                                        "mar", "sol", "luna",
+                                                    )
                                                 val conteo = mutableMapOf<String, Int>()
                                                 for (palabra in palabras) {
                                                     conteo[palabra] = (conteo[palabra] ?: 0) + 1
@@ -443,7 +447,12 @@ val setsMapsLessonContent =
                                         kotlinCode(
                                             """
                                             fun main() {
-                                                val examenes = listOf("Ana" to 7, "Luis" to 4, "Ana" to 9)
+                                                val examenes =
+                                                    listOf(
+                                                        "Ana" to 7,
+                                                        "Luis" to 4,
+                                                        "Ana" to 9,
+                                                    )
                                                 val notas = mutableMapOf<String, MutableList<Int>>()
                                                 for ((alumno, nota) in examenes) {
                                                     val lista = notas[alumno]
@@ -525,7 +534,10 @@ val setsMapsLessonContent =
                                             class ConteoTest {
                                                 @Test
                                                 fun `cada palabra cuenta las veces que aparece`() {
-                                                    assertEquals(mapOf("sol" to 2, "luna" to 1), contar(listOf("sol", "luna", "sol")))
+                                                    assertEquals(
+                                                        mapOf("sol" to 2, "luna" to 1),
+                                                        contar(listOf("sol", "luna", "sol")),
+                                                    )
                                                 }
 
                                                 @Test
