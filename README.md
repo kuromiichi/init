@@ -97,10 +97,10 @@ Tus datos (nombre, ajustes y progreso) se guardan fuera de la instalación y se 
 
 ## Itinerario
 
-Hay contenido disponible hasta la lección 20; el resto del recorrido está planificado y se irá publicando.
+Hay contenido disponible hasta la lección 22; el resto del recorrido está planificado y se irá publicando.
 
 <details>
-<summary><b>Lecciones disponibles (20 de 32)</b></summary>
+<summary><b>Lecciones disponibles (22 de 32)</b></summary>
 
 1. Bienvenida y mapa del camino
 2. Qué es el software y cómo se construye
@@ -122,13 +122,13 @@ Hay contenido disponible hasta la lección 20; el resto del recorrido está plan
 18. UML: diagramas de clases
 19. Programación funcional aplicada
 20. Genéricos, abstracciones y colecciones avanzadas
+21. Código limpio y refactorización
+22. SOLID, patrones y arquitectura básica
 </details>
 
 <details>
 <summary><b>Próximamente</b></summary>
 
-21. Código limpio y refactorización
-22. SOLID, patrones y arquitectura básica
 23. Gradle y dependencias
 24. Leer y escribir ficheros
 25. JSON, XML y formatos de intercambio
