@@ -19,6 +19,7 @@ import dev.kuromiichi.init.data.lessons.contents.oopInheritanceInterfacesLessonC
 import dev.kuromiichi.init.data.lessons.contents.oopRelationshipsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.setsMapsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.softwareDevelopmentLessonContent
+import dev.kuromiichi.init.data.lessons.contents.solidPatternsArchitectureLessonContent
 import dev.kuromiichi.init.data.lessons.contents.terminalFileSystemLessonContent
 import dev.kuromiichi.init.data.lessons.contents.welcomeRoadmapLessonContent
 import dev.kuromiichi.init.data.preferences.TargetOperatingSystem
@@ -317,6 +318,7 @@ object LessonContentCatalog {
             functionalProgrammingLessonContent,
             genericsCollectionsLessonContent,
             cleanCodeRefactoringLessonContent,
+            solidPatternsArchitectureLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

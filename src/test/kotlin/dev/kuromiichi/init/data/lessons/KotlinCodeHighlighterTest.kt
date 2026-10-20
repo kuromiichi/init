@@ -434,6 +434,7 @@ class KotlinCodeHighlighterTest {
                 val orden = compareBy<Alumno> { it.curso }
                 val cola = ArrayDeque<Int>()
                 if (n < limite) println(n)
+                val oyentes = mutableListOf<(String) -> Unit>()
                 """.trimIndent(),
             )
 
@@ -446,6 +447,8 @@ class KotlinCodeHighlighterTest {
         assertEquals(LessonCodeTokenKind.Function, lines[2].tokens.kindOf("listOf"))
         assertEquals(LessonCodeTokenKind.ClassName, lines[2].tokens.kindOf("String"))
         assertEquals(LessonCodeTokenKind.Function, lines[3].tokens.kindOf("compareBy"))
+        assertEquals(LessonCodeTokenKind.Function, lines[6].tokens.kindOf("mutableListOf"))
+        assertEquals(LessonCodeTokenKind.ClassName, lines[6].tokens.kindOf("Unit"))
         assertEquals(LessonCodeTokenKind.ImplicitParameter, lines[3].tokens.kindOf("it"))
         assertEquals(LessonCodeTokenKind.Constant, lines[4].tokens.kindOf("ArrayDeque"))
         assertEquals(LessonCodeTokenKind.Plain, lines[5].tokens.kindOf("limite"))

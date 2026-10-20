@@ -211,11 +211,12 @@ private class KotlinClassifier(
     }
 
     /**
-     * Si en esa posición empiezan unos argumentos de tipo (`<String, Int>`) seguidos de `(` o `{`, devuelve ese corchete.
-     * Así se distingue `listOf<Int>()` de una comparación como `n < limite`.
+     * Si en esa posición empiezan unos argumentos de tipo (`<String, Int>`, `<(String) -> Unit>`) seguidos de `(` o `{`,
+     * devuelve ese corchete. Así se distingue `listOf<Int>()` de una comparación como `n < limite`.
      */
     private fun afterTypeArguments(open: Int): String? {
         var depth = 0
+        var parentheses = 0
         var cursor = open
         while (cursor < significant.size) {
             val token = raw[significant[cursor]]
@@ -223,6 +224,10 @@ private class KotlinClassifier(
             when {
                 text == "<" -> depth++
                 text == ">" -> if (--depth == 0) return significant.getOrNull(cursor + 1)?.let { textOf(raw[it]) }?.takeIf { it == "(" || it == "{" }
+                // Los paréntesis y la flecha de un tipo función; un `)` sin abrir es el final de una condición.
+                text == "(" -> parentheses++
+                text == ")" -> if (--parentheses < 0) return null
+                text == "->" && parentheses == 0 -> Unit
                 token.group == Group.Identifier && text !in KotlinKeywords -> Unit
                 text !in TypeArgumentSymbols -> return null
             }
