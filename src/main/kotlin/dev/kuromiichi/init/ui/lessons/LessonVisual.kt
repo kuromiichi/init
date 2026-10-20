@@ -42,6 +42,8 @@ import dev.kuromiichi.init.generated.resources.intellij_git_log_light
 import dev.kuromiichi.init.generated.resources.intellij_ide_workspace_dark
 import dev.kuromiichi.init.generated.resources.intellij_ide_workspace_light
 import dev.kuromiichi.init.generated.resources.intellij_idea
+import dev.kuromiichi.init.generated.resources.intellij_inspections_dark
+import dev.kuromiichi.init.generated.resources.intellij_inspections_light
 import dev.kuromiichi.init.generated.resources.intellij_mermaid_class_dark
 import dev.kuromiichi.init.generated.resources.intellij_mermaid_class_light
 import dev.kuromiichi.init.generated.resources.intellij_test_results_dark
@@ -266,6 +268,7 @@ private fun LessonCodeTokenKind.toLearningCodeTokenKind(): LearningCodeTokenKind
         LessonCodeTokenKind.Constant -> LearningCodeTokenKind.Constant
         LessonCodeTokenKind.MutableVariable -> LearningCodeTokenKind.MutableVariable
         LessonCodeTokenKind.ExtensionProperty -> LearningCodeTokenKind.ExtensionProperty
+        LessonCodeTokenKind.TopLevelConstant -> LearningCodeTokenKind.TopLevelConstant
         LessonCodeTokenKind.LambdaDelimiter -> LearningCodeTokenKind.LambdaDelimiter
         LessonCodeTokenKind.Bracket0 -> LearningCodeTokenKind.Bracket0
         LessonCodeTokenKind.Bracket1 -> LearningCodeTokenKind.Bracket1
@@ -296,4 +299,5 @@ private fun LessonScreenshot.drawableResource(isDark: Boolean): DrawableResource
         LessonScreenshot.IntellijGitConflicts -> if (isDark) Res.drawable.intellij_git_conflicts_dark else Res.drawable.intellij_git_conflicts_light
         LessonScreenshot.IntellijTestResults -> if (isDark) Res.drawable.intellij_test_results_dark else Res.drawable.intellij_test_results_light
         LessonScreenshot.IntellijMermaidClass -> if (isDark) Res.drawable.intellij_mermaid_class_dark else Res.drawable.intellij_mermaid_class_light
+        LessonScreenshot.IntellijInspections -> if (isDark) Res.drawable.intellij_inspections_dark else Res.drawable.intellij_inspections_light
     }

@@ -307,6 +307,28 @@ class KotlinCodeHighlighterTest {
     }
 
     @Test
+    fun `top level constants are teal and companion constants stay plain`() {
+        val lines =
+            kotlinCode(
+                """
+                const val IVA = 0.21
+
+                class Nota {
+                    companion object {
+                        const val MAXIMA = 10
+                    }
+                }
+
+                fun precioFinal(base: Double): Double = base * (1 + IVA)
+                """.trimIndent(),
+            )
+
+        assertEquals(LessonCodeTokenKind.TopLevelConstant, lines[0].tokens.kindOf("IVA"))
+        assertEquals(LessonCodeTokenKind.Plain, lines[4].tokens.kindOf("MAXIMA"))
+        assertEquals(LessonCodeTokenKind.TopLevelConstant, lines[8].tokens.kindOf("IVA"))
+    }
+
+    @Test
     fun `calls with only a trailing lambda are coloured as functions`() {
         val lines =
             kotlinCode(

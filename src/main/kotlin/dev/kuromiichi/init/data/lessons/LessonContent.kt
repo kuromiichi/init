@@ -3,6 +3,7 @@ package dev.kuromiichi.init.data.lessons
 import dev.kuromiichi.init.data.lessons.contents.arraysListsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.basicTestingLessonContent
 import dev.kuromiichi.init.data.lessons.contents.basicUmlLessonContent
+import dev.kuromiichi.init.data.lessons.contents.cleanCodeRefactoringLessonContent
 import dev.kuromiichi.init.data.lessons.contents.debuggingLessonContent
 import dev.kuromiichi.init.data.lessons.contents.developmentEnvironmentLessonContent
 import dev.kuromiichi.init.data.lessons.contents.firstProgramsLessonContent
@@ -251,6 +252,7 @@ enum class LessonCodeTokenKind {
     Constant,
     MutableVariable,
     ExtensionProperty,
+    TopLevelConstant,
     LambdaDelimiter,
     Bracket0,
     Bracket1,
@@ -283,6 +285,7 @@ enum class LessonScreenshot {
     IntellijGitConflicts,
     IntellijTestResults,
     IntellijMermaidClass,
+    IntellijInspections,
 }
 
 data class LessonContent(
@@ -313,6 +316,7 @@ object LessonContentCatalog {
             basicUmlLessonContent,
             functionalProgrammingLessonContent,
             genericsCollectionsLessonContent,
+            cleanCodeRefactoringLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

@@ -106,6 +106,7 @@ private class KotlinClassifier(
     private val functionNames = collectFunctionNames()
     private val enumEntries = collectEnumEntries()
     private val typeParameterNames = collectTypeParameterNames()
+    private val topLevelConstantNames = collectTopLevelConstantNames()
 
     private val stack = mutableListOf<Frame>()
     private val pieces = mutableListOf<Piece>()
@@ -184,6 +185,7 @@ private class KotlinClassifier(
             !afterDot && name == "field" -> LessonCodeTokenKind.MutableVariable
             !afterDot && name == "it" && stack.any { it.role == Role.Lambda } -> LessonCodeTokenKind.ImplicitParameter
             !afterDot && name in typeParameterNames -> LessonCodeTokenKind.Plain
+            !afterDot && name in topLevelConstantNames -> LessonCodeTokenKind.TopLevelConstant
             isNamedArgument -> LessonCodeTokenKind.Constant
             name in enumEntries -> LessonCodeTokenKind.Constant
             next == "(" && previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
@@ -619,6 +621,24 @@ private class KotlinClassifier(
                 val before = textOf(raw[significant[cursor - 1]])
                 if (depth == 1 && token.group == Group.Identifier && (before == "<" || before == ",")) names += text
                 cursor++
+            }
+        }
+        return names
+    }
+
+    /** Las `const val` declaradas fuera de cualquier llave; las de un `companion object` conservan el color del texto. */
+    private fun collectTopLevelConstantNames(): Set<String> {
+        val names = mutableSetOf<String>()
+        var depth = 0
+        significant.forEachIndexed { position, rawIndex ->
+            when (textOf(raw[rawIndex])) {
+                "{" -> depth++
+                "}" -> depth--
+                "const" -> {
+                    val next = significant.getOrNull(position + 1)?.let { textOf(raw[it]) }
+                    val name = significant.getOrNull(position + 2)?.let { raw[it] }
+                    if (depth == 0 && next == "val" && name?.group == Group.Identifier) names += textOf(name).trim('`')
+                }
             }
         }
         return names
