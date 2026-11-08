@@ -88,6 +88,8 @@ class LessonContentRulesTest {
             .flatMap(LessonStep::allContents)
             .flatMap { it.visual.codeExamples() }
             .filter(LessonCodeExample::isCopyable)
+            // Los archivos de datos para copiar (como un .txt de partida) no son programas.
+            .filter { it.fileName.endsWith(".kt") }
             .forEach { example ->
                 assertTrue(example.sourceText.startsWith("fun main() {"), example.title)
                 assertTrue(example.sourceText.endsWith("}"), example.title)
@@ -156,6 +158,7 @@ class LessonContentRulesTest {
                 "clean-code-refactoring" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """(?<!companion )\bobject\b""", """\b(asSequence|sequenceOf|buildList|buildMap)\b""", """\b(File|Path|readLines|readText)\b""", """\b(dependencies|implementation|plugins)\b"""),
                 "solid-patterns-architecture" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """\b(asSequence|sequenceOf|buildList|buildMap)\b""", """\b(File|Path|readLines|readText)\b""", """\b(dependencies|implementation|plugins)\b"""),
                 "gradle-dependencies" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """\b(asSequence|sequenceOf|buildList|buildMap)\b""", """\b(File|Path|readLines|readText)\b""", """@Serializable|\bkotlinx\.serialization\b|\bJson\b"""),
+                "files-directories" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """@Serializable|\bkotlinx\.serialization\b|\bJson\b""", """\b(Connection|DriverManager|ResultSet)\b"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 

@@ -31,6 +31,17 @@ class KotlinCodeHighlighterTest {
     }
 
     @Test
+    fun `path functions and properties look as in IntelliJ IDEA`() {
+        val tokens = kotlinCode("val notas = Path(\"datos\") / File(\"a\").extension").single().tokens
+
+        assertEquals(LessonCodeTokenKind.Function, tokens.kindOf("Path"))
+        assertEquals(LessonCodeTokenKind.Plain, tokens.kindOf("File"))
+        assertEquals(LessonCodeTokenKind.ExtensionProperty, tokens.kindOf("extension"))
+        assertEquals(LessonCodeTokenKind.Plain, kotlinCode("import kotlin.io.path.Path").single().tokens.kindOf("Path"))
+        assertEquals(LessonCodeTokenKind.ClassName, kotlinCode("import java.io.File").single().tokens.kindOf("File"))
+    }
+
+    @Test
     fun `range operators are not confused with decimal numbers`() {
         val closed = kotlinCode("for (i in 1..5 step 2)").single().tokens
         val open = kotlinCode("val decimal = 1.5 + (0..<3).count()").single().tokens

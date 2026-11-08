@@ -52,14 +52,14 @@ Comprobados en IntelliJ IDEA (modo K2, Catppuccin con corchetes de colores). Fue
 | Elemento | Color |
 |---|---|
 | Palabras clave | mauve |
-| Llamadas a función (también extensiones, llamadas con solo una lambda: `filter {`, y con argumentos de tipo: `listOf<Int>()`, `compareBy<Alumno> {`) y declaraciones | blue cursiva |
+| Llamadas a función (también extensiones, llamadas con solo una lambda: `filter {`, y con argumentos de tipo: `listOf<Int>()`, `compareBy<Alumno> {`), funciones con mayúscula inicial (`Path("datos")`; importadas van en text) y declaraciones | blue cursiva |
 | Clases, tipos y anotaciones (`@Test`) | yellow cursiva |
 | Parámetros (también lambda `{ n ->` y llamado: `operacion(n)`) | maroon cursiva |
 | `it` | maroon |
 | Variables `val` (también llamadas: `doble(4)`), propiedades y constantes de `companion object` | text |
 | Variables y propiedades `var` | text cursiva |
-| Constructores (`Alumno(`), argumentos con nombre, valores de enum y `?` de tipo nulable | peach |
-| `const val` de nivel superior y propiedades de extensión (`indices`, `lastIndex`) | teal |
+| Constructores de Kotlin (`Alumno(`; los de clases Java, como `File(`, van en text), argumentos con nombre, valores de enum y `?` de tipo nulable | peach |
+| `const val` de nivel superior y propiedades de extensión (`indices`, `lastIndex`, `extension`) | teal |
 | Números | peach |
 | Textos | green; `$`, `\n` en pink; dentro de `$nombre` y `${…}`, cada token con su color |
 | Operadores, `?:`, `!!` | sky |

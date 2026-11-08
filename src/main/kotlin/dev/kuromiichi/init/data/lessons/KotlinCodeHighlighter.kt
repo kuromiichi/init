@@ -189,7 +189,8 @@ private class KotlinClassifier(
             isNamedArgument -> LessonCodeTokenKind.Constant
             name in enumEntries -> LessonCodeTokenKind.Constant
             next == "(" && previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
-            next == "(" && name.first().isUpperCase() && !afterDot -> LessonCodeTokenKind.Constant
+            next == "(" && !afterDot && name in JavaConstructors -> LessonCodeTokenKind.Plain
+            next == "(" && name.first().isUpperCase() && !afterDot && name !in CapitalizedFunctions -> LessonCodeTokenKind.Constant
             // Una variable o un parámetro que guarda una función se llama como una, pero conserva su color.
             next == "(" && !afterDot && name !in functionNames && name in parameterNames -> LessonCodeTokenKind.Parameter
             next == "(" && !afterDot && name !in functionNames && name in variableNames ->
@@ -199,6 +200,7 @@ private class KotlinClassifier(
             isInfixCall -> LessonCodeTokenKind.Function
             previous in DeclarationKeywords -> LessonCodeTokenKind.ClassName
             name.length > 1 && name.all { it.isUpperCase() || it.isDigit() || it == '_' } -> LessonCodeTokenKind.Plain
+            afterDot && name in CapitalizedFunctions -> LessonCodeTokenKind.Plain
             name.first().isUpperCase() -> LessonCodeTokenKind.ClassName
             afterDot && name in ExtensionProperties -> LessonCodeTokenKind.ExtensionProperty
             afterDot -> if (name in mutableNames) LessonCodeTokenKind.MutableVariable else LessonCodeTokenKind.Plain
@@ -693,7 +695,13 @@ private val ControlKeywords = setOf("if", "for", "while", "catch")
 private val BlockKeywords = setOf("else", "try", "finally", "do", "init")
 
 /** Propiedades de extensión de la biblioteca estándar que aparecen en las lecciones; IntelliJ IDEA las colorea aparte. */
-private val ExtensionProperties = setOf("indices", "lastIndex")
+private val ExtensionProperties = setOf("indices", "lastIndex", "extension", "nameWithoutExtension")
+
+/** Funciones de la biblioteca estándar cuyo nombre empieza por mayúscula: se llaman como un constructor, pero IntelliJ IDEA las colorea como funciones. */
+private val CapitalizedFunctions = setOf("Path")
+
+/** Clases de Java que aparecen en las lecciones: IntelliJ IDEA no colorea sus constructores como los de Kotlin. */
+private val JavaConstructors = setOf("File")
 
 private val AccessorNames = setOf("get", "set")
 

@@ -6,6 +6,7 @@ import dev.kuromiichi.init.data.lessons.contents.basicUmlLessonContent
 import dev.kuromiichi.init.data.lessons.contents.cleanCodeRefactoringLessonContent
 import dev.kuromiichi.init.data.lessons.contents.debuggingLessonContent
 import dev.kuromiichi.init.data.lessons.contents.developmentEnvironmentLessonContent
+import dev.kuromiichi.init.data.lessons.contents.filesDirectoriesLessonContent
 import dev.kuromiichi.init.data.lessons.contents.firstProgramsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.functionalProgrammingLessonContent
 import dev.kuromiichi.init.data.lessons.contents.functionsModularityLessonContent
@@ -321,6 +322,7 @@ object LessonContentCatalog {
             cleanCodeRefactoringLessonContent,
             solidPatternsArchitectureLessonContent,
             gradleDependenciesLessonContent,
+            filesDirectoriesLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }
