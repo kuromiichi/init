@@ -11,6 +11,7 @@ import dev.kuromiichi.init.data.lessons.contents.functionalProgrammingLessonCont
 import dev.kuromiichi.init.data.lessons.contents.functionsModularityLessonContent
 import dev.kuromiichi.init.data.lessons.contents.genericsCollectionsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.gitVersionControlLessonContent
+import dev.kuromiichi.init.data.lessons.contents.gradleDependenciesLessonContent
 import dev.kuromiichi.init.data.lessons.contents.inputDecisionsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.loopsLessonContent
 import dev.kuromiichi.init.data.lessons.contents.nullabilityExceptionsLessonContent
@@ -319,6 +320,7 @@ object LessonContentCatalog {
             genericsCollectionsLessonContent,
             cleanCodeRefactoringLessonContent,
             solidPatternsArchitectureLessonContent,
+            gradleDependenciesLessonContent,
         )
 
     fun findByLessonId(lessonId: String): LessonContent? = lessons.firstOrNull { it.lessonId == lessonId }

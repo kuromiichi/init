@@ -155,6 +155,7 @@ class LessonContentRulesTest {
                 "generics-collections" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """(?<!companion )\bobject\b""", """\b(asSequence|sequenceOf|buildList|buildMap)\b""", """\b(File|Path|readLines|readText)\b"""),
                 "clean-code-refactoring" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """(?<!companion )\bobject\b""", """\b(asSequence|sequenceOf|buildList|buildMap)\b""", """\b(File|Path|readLines|readText)\b""", """\b(dependencies|implementation|plugins)\b"""),
                 "solid-patterns-architecture" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """\b(asSequence|sequenceOf|buildList|buildMap)\b""", """\b(File|Path|readLines|readText)\b""", """\b(dependencies|implementation|plugins)\b"""),
+                "gradle-dependencies" to listOf("""\b(lateinit|lazy|inner|by|inline|reified|operator|suspend|where)\b""", """\b(asSequence|sequenceOf|buildList|buildMap)\b""", """\b(File|Path|readLines|readText)\b""", """@Serializable|\bkotlinx\.serialization\b|\bJson\b"""),
                 "loops" to listOf("""\bfun (?!main\b)""", """\b(listOf|arrayOf|Array)\b""", """\bRandom\b""", """\brepeat\b"""),
             )
 
